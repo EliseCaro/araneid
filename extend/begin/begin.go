@@ -9,6 +9,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/attachment"
 	"github.com/beatrice950201/araneid/extend/model/collect"
 	"github.com/beatrice950201/araneid/extend/model/config"
+	"github.com/beatrice950201/araneid/extend/model/dictionaries"
 	"github.com/beatrice950201/araneid/extend/model/inform"
 	"github.com/beatrice950201/araneid/extend/model/menus"
 	"github.com/beatrice950201/araneid/extend/model/roles"
@@ -40,15 +41,9 @@ func databasesBegin() {
 	_ = orm.RegisterDataBase("default", "mysql", fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%s`, username, password, host, port, database, charset, `Asia%2FShanghai`), 30)
 	orm.RegisterModelWithPrefix(
 		prefix,
-		new(users.Users),
-		new(roles.Roles),
-		new(menus.Menus),
-		new(attachment.Attachment),
-		new(collect.Collect),
-		new(collect.Result),
-		new(config.Config),
-		new(inform.Inform),
-		new(inform.Context),
+		new(users.Users), new(roles.Roles), new(menus.Menus), new(attachment.Attachment),
+		new(collect.Collect), new(collect.Result), new(config.Config), new(inform.Inform),
+		new(inform.Context), new(dictionaries.DictConfig), new(dictionaries.DictCate),
 	)
 	_ = orm.RunSyncdb("default", false, true)
 }
