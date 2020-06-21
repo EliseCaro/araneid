@@ -13,19 +13,20 @@ import (
 
 type Main struct {
 	controllers.Base
-	UserInfo         users.Users
-	controllerName   string
-	actionName       string
-	tableBuilder     table.BuilderTable
-	verifyBase       service.DefaultBaseVerify
-	menusService     service.DefaultMenusService
-	usersService     service.DefaultUsersService
-	rolesService     service.DefaultRolesService
-	adjunctService   service.DefaultAdjunctService
-	collectService   service.DefaultCollectService
-	collectorService service.DefaultCollectorService
-	configService    service.DefaultConfigService
-	informService    service.DefaultInformService
+	UserInfo            users.Users
+	controllerName      string
+	actionName          string
+	tableBuilder        table.BuilderTable
+	verifyBase          service.DefaultBaseVerify
+	menusService        service.DefaultMenusService
+	usersService        service.DefaultUsersService
+	rolesService        service.DefaultRolesService
+	adjunctService      service.DefaultAdjunctService
+	collectService      service.DefaultCollectService
+	collectorService    service.DefaultCollectorService
+	configService       service.DefaultConfigService
+	informService       service.DefaultInformService
+	dictionariesService service.DefaultDictionariesService
 }
 
 /** 准备下一级构造函数 **/
