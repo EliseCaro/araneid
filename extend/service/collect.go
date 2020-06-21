@@ -40,11 +40,14 @@ func (service *DefaultCollectService) PushDetailAPI(item collect.Result) {
 			service.pushDetailAPIResult(item.Id, -1, err)
 		} else {
 			result := make(map[string]interface{})
-			_ = json.Unmarshal(body, &result)
-			if result["status"].(bool) == true {
-				service.pushDetailAPIResult(item.Id, 1, errors.New(result["message"].(string)))
+			if err := json.Unmarshal(body, &result); err != nil && len(result) > 0 {
+				if result["status"].(bool) == true {
+					service.pushDetailAPIResult(item.Id, 1, errors.New(result["message"].(string)))
+				} else {
+					service.pushDetailAPIResult(item.Id, -1, errors.New(result["message"].(string)))
+				}
 			} else {
-				service.pushDetailAPIResult(item.Id, -1, errors.New(result["message"].(string)))
+				service.pushDetailAPIResult(item.Id, -1, errors.New("接口返回结果解析失败！请检查返回格式！"))
 			}
 		}
 		defer resp.Body.Close()
