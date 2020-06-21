@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{config "String" "web_name" ""}}</title>
+    <link rel="shortcut icon" href="/static/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/admin/favicon/favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/admin/favicon/apple-touch-icon-180x180.png">
+    <link rel="stylesheet" id="css-main" href="/static/admin/modality/oneui.min.css">
+    {{.header}}
+</head>
+<body>
+<div id="page-container">
+    <main id="main-container">
+        <div class="hero">
+            <div class="hero-inner text-center">
+                <div class="bg-white">
+                    <div class="content content-full overflow-hidden">
+                        <div class="py-4">
+                            <h1 class="display-1 text-city invisible" data-toggle="appear" data-class="animated flipInX">{{$.title}}</h1>
+                            <h2 class="h3 font-w300 text-muted invisible mb-5" data-toggle="appear" data-class="animated fadeInUp">{{$.content}}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="content content-full font-size-sm text-muted">
+                    <p class="mb-1">
+                       如果您愿意，请提交关于此次问题的详细信息；便于我们更好的完善产品。
+                    </p>
+                    <a class="link-fx" href="{{urlfor "Admin.Index" }}">返回系统主面板</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="/static/admin/scripting/oneui.core.min.js"></script>
+<script src="/static/admin/scripting/oneui.app.min.js?v={{$.versions}}"></script>
+{{.footer}}
+</body>
+</html>

@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/static/admin/plugins/jquery-jsonview/jquery.jsonview.css" />
+<script type="text/javascript" src="/static/admin/plugins/jquery-jsonview/jquery.jsonview.js"></script>
+<style>
+    .result_context{
+        height: 295px;
+        overflow-y: scroll;
+        background: #eee;
+        padding: 0.5rem;
+    }
+    .jsonview{
+        font-size: .875rem!important;
+    }
+    #page-container{
+        background: #ffffff;
+    }
+    .js-tooltip{
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        const json = {{$.info.Result}};
+        $(".result_context").JSONView(json);
+    })
+</script>

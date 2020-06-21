@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>{{config "String" "web_name" ""}}</title>
+        <!-- Icons -->
+        <link rel="shortcut icon" href="/static/favicon.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/static/admin/favicon/favicon-192x192.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/admin/favicon/apple-touch-icon-180x180.png">
+        <!-- END Icons -->
+        <!-- Stylesheets -->
+        <link rel="stylesheet" id="css-main" href="/static/admin/modality/oneui.min.css">
+        <link rel="stylesheet" id="css-theme" href="/static/admin/modality/themes/amethyst.min.css">
+        <link rel="stylesheet" href="/static/admin/plugins/sweet-alert/sweetalert.css?v={{$.versions}}">
+    </head>
+    <body>
+        <div id="page-loader" class="hide"></div>
+        <div id="page-container">
+            <main id="main-container">
+                <div class="hero-static d-flex align-items-center">
+                    <div class="w-100">
+                        <div class="bg-white">
+                            <div class="content content-full">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8 col-lg-6 col-xl-4 py-4">
+                                        <div class="text-center">
+                                            <p class="mb-2">
+                                                <i class="fa fa-2x fa-circle-notch text-primary"></i>
+                                            </p>
+                                            <h1 class="h4 mb-1">资料管理中心</h1>
+                                        </div>
+                                        <form class="js-validation-signin ajax_from" action="" method="POST">
+                                            <div class="py-3">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control form-control-lg form-control-alt" name="username" placeholder="您的账号" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control form-control-lg form-control-alt" name="password" placeholder="您的密码" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="d-md-flex align-items-md-center justify-content-md-between">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="login-remember" name="remember" />
+                                                            <label class="custom-control-label font-w400" for="login-remember">自动登录</label>
+                                                        </div>
+                                                        <div class="py-2">
+                                                            <a class="font-size-sm" href="javascript:void(0)">忘记密码?</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row justify-content-center mb-0">
+                                                <div class="col-md-6 col-xl-5">
+                                                    <button type="submit" class="btn btn-block btn-primary">
+                                                        <i class="fa fa-fw fa-sign-in-alt mr-1"></i> 马上登录
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="font-size-sm text-center text-muted py-3">
+                            <strong>{{config "String" "web_name" ""}} {{config "String" "web_versions" ""}}</strong> &copy; <span data-toggle="year-copy"></span>
+                        </div>
+                        <!-- END Footer -->
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script> const layout_theme_type = "";</script>
+        <!-- Core -->
+        <script src="/static/admin/scripting/jquery.min.js"></script>
+        <script src="/static/admin/scripting/oneui.core.min.js"></script>
+        <script src="/static/admin/scripting/oneui.app.min.js"></script>
+        <!-- Plugins -->
+        <script src="/static/admin/plugins/sweet-alert/sweetalert.min.js?v={{$.versions}}"></script>
+        <!-- Application -->
+        <script src="/static/admin/scripting/application.js?v={{$.versions}}"></script>
+    </body>
+</html>

@@ -1,0 +1,251 @@
+<!-- 右边侧滑动 -->
+<aside id="side-overlay" class="font-size-sm">
+    <div class="content-header border-bottom">
+        <a class="img-link mr-1" href="javascript:void(0)">
+            <img class="img-avatar img-avatar32" src="{{.users.Avatar | fileBuyPath}}" alt="{{$.users.Nickname}}">
+        </a>
+        <div class="ml-2">
+            <a class="link-fx text-dark font-w600" href="javascript:void(0)">{{$.users.Nickname}}</a>
+        </div>
+        <a class="ml-auto btn btn-sm btn-alt-danger" href="javascript:void(0)" data-toggle="layout" data-action="side_overlay_close">
+            <i class="fa fa-fw fa-times text-danger"></i>
+        </a>
+    </div>
+    <div class="content-side">
+        <div class="block block-transparent pull-x pull-t">
+            <ul class="nav nav-tabs nav-tabs-alt nav-justified" data-toggle="tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#so-backlog"><i class="fa fa-fw fa-coffee text-gray mr-1"></i>  待办事项</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#so-setting"><i class="fa fa-fw fa-chart-line text-gray mr-1"></i> 系统设置</a>
+                </li>
+            </ul>
+            <div class="block-content tab-content overflow-hidden">
+                <div class="tab-pane pull-x fade fade-left show active" id="so-backlog" role="tabpanel">
+                    <div class="block mb-0">
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title">基本设置</h3>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle"></button>
+                            </div>
+                        </div>
+                        <div class="block-content">
+                            <form action="javascript:void(0);" method="POST" onsubmit="return false;">
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch mb-1">
+                                        <input type="checkbox" class="custom-control-input" id="so-settings-check2" name="so-settings-check2" checked>
+                                        <label class="custom-control-label" for="so-settings-check2">开启或者关闭缓存</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane pull-x fade fade-right" id="so-setting" role="tabpanel">
+                    <div class="block mb-0">
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title">基本设置</h3>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle"></button>
+                            </div>
+                        </div>
+                        <div class="block-content">
+                            <form action="javascript:void(0);" method="POST" onsubmit="return false;">
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch mb-1">
+                                        <input type="checkbox" class="custom-control-input" id="so-settings-check1" name="so-settings-check1" checked>
+                                        <label class="custom-control-label" for="so-settings-check1">开启或者关闭系统</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+<!-- 右边侧滑动结束 -->
+<!-- 开始左侧内容 -->
+<nav id="sidebar" aria-label="Main Navigation">
+    <div class="content-header bg-white-5">
+        <a class="font-w600 text-dual" href="{{urlfor "Admin.Index"}}">
+            <i class="fa fa-circle-notch text-primary"></i>
+            <span class="smini-hide">
+                <span class="font-w700 font-size-h5">{{config "String" "web_name" ""}}</span>
+            </span>
+        </a>
+        <div class="dropdown d-inline-block ml-2">
+            <a class="btn btn-sm btn-dual" id="sidebar-themes-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
+                <i class="si si-drop"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right font-size-sm smini-hide border-0" aria-labelledby="sidebar-themes-dropdown">
+                <a class="dropdown-item d-flex align-items-center justify-content-between" data-toggle="theme" data-theme="/static/admin/modality/themes/amethyst.css" href="javascript:void(0);">
+                    <span>烂漫紫色</span>
+                    <i class="fa fa-circle text-amethyst"></i>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" data-toggle="theme" data-theme="/static/admin/modality/themes/modern.min.css" href="javascript:void(0);">
+                    <span>清新绿色</span>
+                    <i class="fa fa-circle text-modern"></i>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" data-toggle="theme" data-theme="/static/admin/modality/themes/smooth.min.css" href="javascript:void(0);">
+                    <span>少女粉色</span>
+                    <i class="fa fa-circle text-smooth"></i>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" data-toggle="layout" data-action="light" href="javascript:void(0);">
+                    <span>白色主题</span>
+                    <i class="fa fa-circle text-white"></i>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" data-toggle="layout" data-action="dark" href="javascript:void(0);">
+                    <span>黑色主题</span>
+                    <i class="fa fa-circle text-black"></i>
+                </a>
+            </div>
+        </div>
+        <a class="d-lg-none btn btn-sm btn-dual ml-2" data-toggle="layout" data-action="sidebar_close" href="javascript:void(0)">
+            <i class="fa fa-fw fa-times"></i>
+        </a>
+    </div>
+    <div class="content-side content-side-full pt-2">
+        <ul class="nav-main">
+            {{range $index, $elem := .side_bar_menus}}
+                {{if le ($elem.Child|len) 0 }}
+                    <li class="nav-main-item">
+                        <a class="nav-main-link {{if eq $.breadcrumb_menus.Id $elem.Id }} active {{end}}" href="{{if $elem.UrlValue }} {{$elem.UrlValue}} {{else}} javascript:void(0); {{end}}">
+                            <i class="fa fa-fw fa-{{$elem.Icon}}"></i>&nbsp;
+                            <span class="nav-main-link-name">{{$elem.Title}}</span>
+                        </a>
+                    </li>
+                {{else}}
+                    <li class="nav-main-item {{if eq $.breadcrumb_menus.Pid $elem.Id }} open {{end}} ">
+                        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="{{if eq $.breadcrumb_menus.Pid $elem.Id }} true {{else}} false {{end}}" href="javascript:void(0);">
+                            <i class="fa fa-fw fa-{{$elem.Icon}}"></i>&nbsp;
+                            <span class="nav-main-link-name"> {{$elem.Title}}</span>
+                        </a>
+                        <ul class="nav-main-submenu">
+                            {{range $i, $e := $elem.Child}}
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{if eq $.breadcrumb_menus.Id $e.Id }} active {{end}}" href="{{if $e.UrlValue }} {{$e.UrlValue}} {{else}} javascript:void(0); {{end}}">
+                                        <i class="fa fa-fw fa-{{$e.Icon}}"></i>&nbsp;
+                                        <span class="nav-main-link-name">{{$e.Title}}</span>
+                                    </a>
+                                </li>
+                            {{end}}
+                        </ul>
+                    </li>
+                {{end}}
+            {{end}}
+        </ul>
+    </div>
+</nav>
+<!-- 结束左侧内容 -->
+<!-- Header -->
+<header id="page-header">
+    <div class="content-header pl-3 pr-3">
+        <div class="d-flex align-items-center">
+            <button type="button" class="btn btn-dual mr-2 d-none d-lg-inline-block" data-toggle="layout" data-action="sidebar_mini_toggle">
+                <i class="fa fa-fw fa-ellipsis-v"></i>
+            </button>
+            {{range $index, $elem := .header_menus}}
+                <a href="{{$elem.UrlValue}}" class="{{if eq $.breadcrumb_menus.Vertex $elem.Id }} btn-alt-primary {{else}} btn-dual {{end}} btn mr-2 font-weight-normal">{{$elem.Title}}</a>
+            {{end}}
+        </div>
+        <!-- END Left Section -->
+        <!-- Right Section -->
+        <div class="d-flex align-items-center">
+            <!-- User Dropdown -->
+            <div class="dropdown d-inline-block ml-2">
+                <button type="button" class="btn btn-dual" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded" src="{{.users.Avatar | fileBuyPath}}" alt="{{$.users.Nickname}}" style="width: 18px;">
+                    <span class="d-none d-sm-inline-block ml-1 font-weight-normal">{{$.users.Nickname}}</span>
+                    <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-user-dropdown">
+                    <div class="p-3 text-center bg-primary">
+                        <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{.users.Avatar | fileBuyPath}}" alt="{{$.users.Nickname}}">
+                    </div>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between open_iframe" data-area="580px,370px" href="{{urlfor "Users.Edit" ":id" $.users.Id ":popup" 1}}">
+                        <span>个人资料</span>
+                        <span><i class="si si-user ml-1"></i></span>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{urlfor "Sign.Quit"}}">
+                        <span>安全退出</span>
+                        <i class="si si-logout ml-1"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- END User Dropdown -->
+
+            <!-- 消息中心 -->
+            <div class="dropdown d-inline-block ml-2">
+                <button type="button" class="btn btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="si si-bell"></i>
+                    <span class="badge badge-primary badge-pill js_count_notifications">{{$.inform_items.count}}</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-notifications-dropdown">
+                    <div class="p-2 bg-primary text-center">
+                        <h5 class="dropdown-header text-uppercase text-white">我的消息中心</h5>
+                    </div>
+                    <ul class="nav-items mb-0 js_dynamic_notifications">
+                        {{range $index, $elem := .inform_items.items}}
+                            <li>
+                                <a class="text-dark media py-2 open_iframe" data-area="380px,240px"  href="{{urlfor "Inform.Check" ":id" $elem.Id ":popup" 1}}">
+                                    <div class="mr-2 ml-3">
+                                        <i class="fa fa-fw fa-eye text-amethyst-dark"></i>
+                                    </div>
+                                    <div class="media-body pr-2">
+                                        <div class="font-weight-normal font-size-sm">{{$elem.Context}}...</div>
+                                        <small class="text-muted">{{date $elem.CreateTime "Y-m-d H:i:s"}}</small>
+                                    </div>
+                                </a>
+                            </li>
+                        {{end}}
+                    </ul>
+                    <div class="p-2 border-top">
+                        <a class="btn btn-sm btn-light btn-block text-center" href="{{urlfor "Inform.Index"}}"><i class="fa fa-fw fa-arrow-down mr-1"></i> 查看全部消息</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 结束我的消息 -->
+            <!-- Toggle Side Overlay -->
+            <button type="button" class="btn btn-dual ml-2" data-toggle="layout" data-action="side_overlay_toggle">
+                <i class="fa fa-fw fa-list-ul fa-flip-horizontal"></i>
+            </button>
+            <!-- END Toggle Side Overlay -->
+        </div>
+        <!-- END Right Section -->
+    </div>
+    <!-- END Header Content -->
+
+    <!-- Header Search -->
+    <div id="page-header-search" class="overlay-header bg-white">
+        <div class="content-header">
+            <form class="w-100" action="be_pages_generic_search.html" method="POST">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+                        <button type="button" class="btn btn-danger" data-toggle="layout" data-action="header_search_off">
+                            <i class="fa fa-fw fa-times-circle"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Search or hit ESC.." id="page-header-search-input" name="page-header-search-input">
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END Header Search -->
+
+    <!-- Header Loader -->
+    <!-- Please check out the Loaders page under Components category to see examples of showing/hiding it -->
+    <div id="page-header-loader" class="overlay-header bg-white">
+        <div class="content-header">
+            <div class="w-100 text-center">
+                <i class="fa fa-fw fa-circle-notch fa-spin"></i>
+            </div>
+        </div>
+    </div>
+    <!-- END Header Loader -->
+</header>
+<!-- END Header -->

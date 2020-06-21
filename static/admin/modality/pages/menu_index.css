@@ -1,0 +1,77 @@
+#menu_list{
+    min-height: 160px;
+}
+/*.dd3-content{*/
+/*    margin-top: 13px;*/
+/*}*/
+
+.dd3-handle {
+    background: #ECECEC;
+    cursor: move;
+}
+.dd3-handle:before {
+    color: #A0A0A0;
+}
+.dd3-content {
+    background: #f9f9f9;
+    color: #5A5A5A;
+}
+.dd3-content:hover {
+    background: #ECECEC;
+    color: #5A5A5A;
+}
+.dd3-content .link {
+    margin-left: 10px;
+    font-weight: normal;
+}
+.dd3-content .action {
+    display: inline-block;
+    margin-left: 10px;
+}
+.dd3-content .list-icon{
+    color: #5A5A5A;
+    margin-left: 10px;
+    display: none;
+}
+.dd3-content .list-icon:hover,
+.dd-disable .list-icon:hover{
+    color: #9A9A9A;
+}
+.dd-disable .dd3-content{
+    background: #FFD5D0;
+    color: #D2847B;
+}
+.dd-disable .dd3-content:hover{
+    background: #FDC7C1;
+}
+.dd3-content:hover .list-icon{
+    display: inline;
+}
+.dd-disable .dd3-handle{
+    background: #FDC7C1;
+}
+.dd-disable .dd3-handle:hover{
+    background: #E49D9D;
+}
+.dd3-item > button[data-action="collapse"],
+.dd3-item > button[data-action="expand"] {
+    color: #5A5A5A;
+}
+.dd-placeholder,
+.dd-empty {
+    background: #FFFFF3;
+    border: 1px dashed #F3DDC6;
+}
+.connectedSortable {
+    overflow: hidden;
+}
+.connectedSortable .sortable-item {
+    border: 1px solid #DADADA;
+    margin-right: 10px;
+    padding: 8px 10px;
+    background: #F7F7F7;
+    cursor: move;
+}
+.connectedSortable .sortable-item:hover {
+    background: #EFEFEF;
+}

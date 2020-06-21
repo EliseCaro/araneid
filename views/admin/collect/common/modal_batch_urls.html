@@ -1,0 +1,37 @@
+<!-- 批量生成器 -->
+<div class="modal fade" id="modal-batch-urls" tabindex="-1" role="dialog" aria-labelledby="modal-batch-urls" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-dialog-centered" role="document" style="max-width: 850px;">
+        <div class="modal-content rounded-lg overflow-hidden">
+            <div class="block block-themed block-transparent mb-0">
+                <div class="block-header">
+                    <h3 class="block-title">批量生成URL工具</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-fw fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content font-size-sm">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                        <label class="col-xs-12 font-weight-normal mb-2">生成参数</label>
+                        <div class="col-xs-12">
+                            <form class="form-inline" onsubmit="return false;">
+                                <input type="text"    class="font-size-sm form-control form-control-sm mr-sm-3 col-5" name="role_init"    placeholder="初始规则(*)号代替页码">
+                                <input type="number"  class="font-size-sm form-control form-control-sm mr-sm-3"       name="start_number" placeholder="开始页码(数字)">
+                                <input type="number"  class="font-size-sm form-control form-control-sm mr-sm-3"       name="end_number"   placeholder="结束页码(数字)">
+                                <button type="button" class="font-size-sm font-weight-normal btn btn-alt-primary btn-sm batch_urls_btn">点击生成</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <label class="col-xs-12 font-weight-normal mb-2" for="batch_urls_values">生成结果</label>
+                        <div class="col-xs-12">
+                            <textarea disabled id="batch_urls_values" name="batch_urls_values" class="form-control font-size-sm font-weight-normal" rows="8" placeholder="生成结果队列。。。"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END 批量生成器 -->

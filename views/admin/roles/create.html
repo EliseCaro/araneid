@@ -1,0 +1,90 @@
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <div class="content p-3">
+        <div class="js-wizard-simple block block overflow-hidden">
+            <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="nav nav-tabs nav-tabs-alt nav-justified font-size-sm" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link rounded-0 font-weight-normal  active" href="#base" data-toggle="tab">基础信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-0 font-weight-normal " href="#expert" data-toggle="tab">节点授权</a>
+                </li>
+            </ul>
+            <form action="{{urlfor "Roles.Create"}}" class="post_action" method="post">
+                <div class="block-content tab-content pt-0">
+                    <div class="tab-pane active pt-3" id="base" role="tabpanel">
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="pid">所属角色</label>
+                            <div class="col-sm-11">
+                                <select class="form-control form-control-alt font-size-sm" id="pid" name="pid">
+                                    <option value="0">顶级角色</option>
+                                    {{range $i, $e := .pid}}
+                                        <option value="{{$e.Id}}">{{str2html $e.Name}}</option>
+                                    {{end}}
+                                </select>
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请选择角色等级; &nbsp;<code>不选则为顶级角色</code></div>
+                            </div>
+                        </div>
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="name">角色名称</label>
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control form-control-alt font-size-sm" id="name" name="name" placeholder="请输入角色名称">
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请输入角色名称; &nbsp;<code>请填写中文字符的角色名称</code></div>
+                            </div>
+                        </div>
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="description">角色描述</label>
+                            <div class="col-sm-11">
+                                <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="5" placeholder="请输入角色描述.."></textarea>
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请输入角色描述; &nbsp;<code>此选项用于您对此角色的备注</code></div>
+                            </div>
+                        </div>
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal">后台登录</label>
+                            <div class="col-sm-11">
+                                <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                    <input type="radio" value="1" class="custom-control-input" id="access_1" name="access">
+                                    <label class="custom-control-label" for="access_1">允许登录</label>
+                                </div>
+                                <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                    <input type="radio" value="0" class="custom-control-input" id="access_0" name="access" checked>
+                                    <label class="custom-control-label" for="access_0">禁止登录</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="expert" role="tabpanel">
+                        <ul class="nav nav-tabs nav-tabs-alt" id="menu-tab" data-toggle="tabs" role="tablist">
+                            {{range $i, $e := .group}}
+                                <li class="nav-item">
+                                    <a class="nav-link {{if eq $i 0}}active{{end}}" data-tab="{{$e.Id}}" href="#role_auth_tab_{{$e.Id}}">{{$e.Title}}</a>
+                                </li>
+                            {{end}}
+                        </ul>
+                        <div class="block-content tab-content font-size-sm">
+                            {{range $i, $e := .group}}
+                                <div class="tab-pane js-tree {{if eq $i 0}}active{{end}}" data-tab="{{$e.Id}}" id="role_auth_tab_{{$e.Id}}" role="tabpanel">
+                                    {{str2html $e.HtmlTree}}
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+                <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                            <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

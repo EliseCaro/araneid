@@ -1,0 +1,20 @@
+<!-- Hero -->
+<div class="bg-body-light p-3">
+    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+        <h1 class="flex-sm-fill h3 my-2">{{.breadcrumb_map | breadcrumbMapTitle}}</h1>
+        <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-alt">
+                {{range $i, $e := .breadcrumb_map}}
+                    {{if $e.UrlValue }}
+                        <li class="breadcrumb-item font-weight-normal" aria-current="page">
+                            <a class="link-fx" href="{{$e.UrlValue}}">{{$e.Title}}</a>
+                        </li>
+                    {{else}}
+                        <li class="breadcrumb-item font-weight-normal">{{$e.Title}}</li>
+                    {{end}}
+                {{end}}
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- END Hero -->

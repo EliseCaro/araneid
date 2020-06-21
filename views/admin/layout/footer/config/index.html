@@ -1,0 +1,20 @@
+<script src="/static/admin/plugins/wizard/bs4/jquery.bootstrap.wizard.min.js?v={{$.versions}}"></script>
+<link href="/static/admin/plugins/jquery_file_upload/uploadfile.css?v={{$.versions}}" rel="stylesheet" >
+<script src="/static/admin/plugins/jquery_file_upload/jquery.uploadfile.min.js?v={{$.versions}}"></script>
+<script src="/static/admin/plugins/jquery_file_upload/module_upload.js?v={{$.versions}}"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-wizard-simple').bootstrapWizard({
+            nextSelector: '[data-wizard="next"]',
+            previousSelector: '[data-wizard="prev"]',
+            finishSelector: '[data-wizard="finish"]',
+            onTabShow: (tab, nav, index) => {
+                let percent = ((index + 1) / nav.find('li').length) * 100;
+                let progress = nav.parents('.block').find('[data-wizard="progress"] > .progress-bar');
+                if (progress.length) {
+                    progress.css({width: percent + 1 + '%'});
+                }
+            }
+        });
+    })
+</script>

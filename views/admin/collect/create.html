@@ -1,0 +1,160 @@
+{{template "admin/collect/common/head_html_style.html" .}}
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <div class="content p-3">
+        <div class="js-wizard-simple block">
+            <div class="progress rounded-0" data-wizard="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+                <li class="nav-item"><a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">基础信息</a></li>
+                <li class="nav-item"><a class="nav-link rounded-0 font-weight-normal" href="#filed" data-toggle="tab">字段匹配</a></li>
+            </ul>
+            <form action="{{urlfor "Collect.Create"}}" class="ajax_from_custom" method="post">
+                <div class="block-content block-content-full tab-content pb-0 overflow-hidden">
+                    <div class="fade fade-left tab-pane active show" id="base" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal" for="name">爬虫名称</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-control-alt font-size-sm" id="name" name="name" placeholder="请输入爬虫名称">
+                                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>爬虫名称必填；用于您的快速搜索跟备注</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal text-right" for="domain">推送地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-control-alt font-size-sm" id="domain" name="domain" placeholder="请输入爬虫推送地址">
+                                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>将结果推送到那个接口地址上；</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-1 col-form-label font-weight-normal" for="source_rule">采集规则</label>
+                                    <div class="col-sm-11">
+                                        <input type="text" class="form-control form-control-alt font-size-sm" id="source_rule" name="source_rule" placeholder="请输入匹配规则">
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">
+                                            匹配规则为内容检索的一个条件；该条件决定了在采集连接中你所想要的内容URL;例如：<code>https://www.xxx.com/news_([a-z]+)_([0-9]+)/</code>
+                                            <a class="label label-danger modal_source_rule_test_btn" data-action="{{urlfor "Collect.Test" ":type" "rule"}}" href="javascript:void(0)">检索测试？</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal" style="line-height: 77px;" for="source">采集连接</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-alt font-size-sm" id="source" name="source" rows="3" placeholder="请输入采集连接池..."></textarea>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">
+                                            每行一条URL;可使用工具批量生成；
+                                            <a class="label label-danger" data-toggle="modal" data-target="#modal-batch-urls" href="javascript:void(0)">批量生成工具？</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal text-right" style="line-height: 77px;" for="remark">爬虫备注</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control form-control-alt font-size-sm" id="remark" name="remark" rows="3" placeholder="请输入爬虫备注..."></textarea>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">请填写您的爬虫备注；<code>必填</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal" for="interval">最大并发</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <input class="form-control" type="number" id="interval" value="5" name="interval" placeholder="请输入最大并发次数">
+                                            <div class="input-group-append"><span class="input-group-text font-size-sm">次</span></div>
+                                        </div>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">控制抓取的频率；<code>不给对方网站带来压力和资源消耗</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm">
+                                    <label class="col-sm-2 col-form-label font-weight-normal text-right" for="push_time">发布间隔</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <input class="form-control" type="number" id="push_time" value="6" name="push_time" placeholder="请输入发布间隔时间">
+                                            <div class="input-group-append"><span class="input-group-text font-size-sm">小时</span></div>
+                                        </div>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">每隔几小时发布一条数据；<code>提高收录质量</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm mb-3">
+                                    <label class="col-sm-2 col-form-label font-weight-normal">语言转换</label>
+                                    <div class="col-sm-10">
+                                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                            <input type="radio" class="custom-control-input" id="translate_0" name="translate" value="0" checked>
+                                            <label class="custom-control-label" for="translate_0">禁止转换</label>
+                                        </div>
+                                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                            <input type="radio" class="custom-control-input" id="translate_1" name="translate" value="1">
+                                            <label class="custom-control-label" for="translate_1">简体转繁体</label>
+                                        </div>
+                                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                            <input type="radio" class="custom-control-input" id="translate_2" name="translate" value="2">
+                                            <label class="custom-control-label" for="translate_2">繁体转简体</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row font-size-sm mb-3">
+                                    <label class="col-sm-2 col-form-label font-weight-normal text-right">资源下载</label>
+                                    <div class="col-sm-10">
+                                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                            <input type="radio" class="custom-control-input" id="download_0" name="download" value="0" checked>
+                                            <label class="custom-control-label" for="download_0">禁止下载</label>
+                                        </div>
+                                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                                            <input type="radio" class="custom-control-input" id="download_1" name="download" value="1">
+                                            <label class="custom-control-label" for="download_1">启用下载</label>
+                                        </div>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">启用下载将联动到；<code>系统设置->采集设置->云端储存</code></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fade fade-left tab-pane" id="filed" role="tabpanel">
+                        <div class="block">
+                            <div class="block-header block-header-default">
+                                <h3 class="block-title font-weight-normal font-size-sm">字段匹配</h3>
+                                <div class="block-options">
+                                    <button type="button" class="filed_create btn btn-sm btn-alt-primary font-weight-normal font-size-sm">添加字段</button>
+                                    <button type="button" data-action="{{urlfor "Collect.Test" ":type" "filed"}}" class="matching_test btn btn-sm btn-alt-success font-weight-normal font-size-sm">字段效应</button>
+                                </div>
+                            </div>
+                            <div class="block-content field_create_child_box" data-key="0">{{/*jsadd*/}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block-content block-content-sm block-content-full bg-body-light">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                            <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{{template "admin/collect/common/field_create_child.html" .}}
+{{template "admin/collect/common/modal_batch_urls.html" .}}
+{{template "admin/collect/common/modal_test_retrieve.html" .}}
+{{template "admin/collect/common/modal_test_field.html" .}}

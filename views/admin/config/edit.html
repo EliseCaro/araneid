@@ -1,0 +1,96 @@
+<div class="js-wizard-simple block block overflow-hidden" style="height:370px">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">基本</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#extend" data-toggle="tab">扩展</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Config.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="tab-pane active" id="base" role="tabpanel">
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">配置标识</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="name" value="{{$.info.Name}}" type="text" name="name" placeholder="配置标识"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>英文小写+下划线；不能重复；</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="title">配置标题</label>
+                    <div class="col-sm-4">
+                        <input class="form-control form-control-alt font-size-sm" id="title" value="{{$.info.Title}}" type="text" name="title" placeholder="配置标题"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>当前配置的用途或使用方式；</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="class">配置分组</label>
+                    <div class="col-sm-4 mr-4">
+                        <select class="form-control form-control-alt font-size-sm pr-0" id="class" name="class">
+                            {{range $i, $e := .class}}
+                                <option {{if eq $i $.info.Class}} selected {{end}} value="{{$i}}">{{$e}}</option>
+                            {{end}}
+                        </select>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>请选择当前配置属于那个分组；</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="form">配置类型</label>
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-alt font-size-sm pr-0" id="form" name="form">
+                            {{range $i, $e := .form}}
+                                <option {{if eq $i $.info.Form}} selected {{end}} value="{{$i}}">{{$e}}</option>
+                            {{end}}
+                        </select>
+                        <code>请选择当前配置属于那种类型；</code>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="tips">配置提示</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control form-control-alt font-size-sm" value="{{$.info.Tips}}" id="tips" name="tips" placeholder="请输入配置提示">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">用于该配置描述提示；<code>正是此处的内容～</code></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="extend" role="tabpanel">
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="option">配置选项</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="option" name="option" rows="3" placeholder="请输入您的配置...">{{$.info.Option}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">此选项用于radio构建器等特殊构建器；每行一组；实例：<code>1:启用状态</code> ；</div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="sort">配置顺序</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Sort}}" id="sort" type="number" name="sort" placeholder="配置顺序"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>用于显示顺序；越小越靠前</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="status">是否启用：</label>
+                    <div class="col-sm-4">
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="1" class="custom-control-input" id="status_1" name="status" {{if eq 1 $.info.Status}} checked {{end}}>
+                            <label class="custom-control-label" for="status_1">启用</label>
+                        </div>
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="0" class="custom-control-input" id="status_0" name="status" {{if eq 0 $.info.Status}} checked {{end}}>
+                            <label class="custom-control-label" for="status_0">禁用</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

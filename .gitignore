@@ -1,0 +1,13 @@
+.idea/
+.git/
+lastupdate.tmp
+movie.exe
+movie
+movie.exe~
+.DS_Store
+
+/static/data/*
+!/static/data/cache
+
+*_controllers_admin.go
+*_controllers_index.go

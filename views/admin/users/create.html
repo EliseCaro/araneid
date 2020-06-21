@@ -1,0 +1,102 @@
+<div class="js-wizard-simple block block overflow-hidden mb-0" style="height: 370px;">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">基础信息</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#expert" data-toggle="tab">扩展资料</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Users.Create"}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="tab-pane active" id="base" role="tabpanel">
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="username">用户账号</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="username" type="text" name="username" placeholder="用户账号"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">用户登录凭证（必填）</div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="mobile">用户手机</label>
+                    <div class="col-sm-4">
+                        <input class="form-control form-control-alt font-size-sm" id="mobile" type="text" name="mobile" placeholder="用户手机"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">您的手机类型登录凭证（必填）</div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="password">用户密码</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="password" type="password" name="password" placeholder="用户密码"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">您的登录凭证（必填）</div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="verify_password">验证密码</label>
+                    <div class="col-sm-4">
+                        <input class="form-control form-control-alt font-size-sm" id="verify_password" type="password" name="verify_password" placeholder="验证密码"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">与(用户密码)一致的字符</div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="email">用户邮箱</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="email" type="email" name="email" placeholder="用户邮箱"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">您的邮箱类型登录凭证（必填）</div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="role">所属角色</label>
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-alt font-size-sm" name="role" id="role">
+                            {{range $i, $item := .roles}}
+                                 <option value="{{$item.Id}}">{{$item.Name}}</option>
+                            {{end}}
+                        </select>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">该用户所授权的权限组（必选）</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="expert" role="tabpanel">
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2 text-center" for="nickname">用户昵称</label>
+                    <div class="col-sm-10">
+                        <input class="form-control form-control-alt font-size-sm" id="nickname" type="text" name="nickname" placeholder="用户昵称"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">您的个性昵称（必填）</div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="upload_single_label col-form-label font-weight-normal pr-0 pl-2 text-center" for="avatar">用户头像</label>
+                    <div class="ml-2 upload_single" data-name="image"></div>
+                    <div class="upload_onLoad">{{/*默认加载*/}}</div>
+                    <input type="hidden" name="avatar" id="avatar" value="0"/>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="sort">用户序号</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="sort" type="number" name="sort" placeholder="用户序号"/>
+                    </div>
+                    <label class="col-form-label font-weight-normal">是否启用</label>
+                    <div class="col-sm-4 pl-2">
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="1" class="custom-control-input" id="status_1" name="status">
+                            <label class="custom-control-label" for="status_1">启用</label>
+                        </div>
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="0" class="custom-control-input" id="status_0" name="status" checked>
+                            <label class="custom-control-label" for="status_0">禁用</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

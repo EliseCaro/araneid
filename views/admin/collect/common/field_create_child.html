@@ -1,0 +1,54 @@
+{{/*添加匹配字段字符串*/}}
+<div class="field_create_child_string">
+    <div class="row pt-3 pb-3 mb-3" style="border: 2px dashed #ddd;position: relative">
+        <div class="col-lg-3">
+            <div class="row font-size-sm">
+                <label class="col-sm-4 col-form-label font-weight-normal pr-0" for="matching[__KEY__][selector]">选择对象</label>
+                <div class="col-sm-8 pl-0">
+                    <input type="text" class="form-control form-control-alt font-size-sm" id="matching[__KEY__][selector]" data-name="selector" placeholder="请输入选择器">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row font-size-sm">
+                <label class="col-sm-4 col-form-label font-weight-normal text-right pr-0" for="matching[__KEY__][field]">对应字段</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-alt font-size-sm" id="matching[__KEY__][field]" data-name="field" placeholder="请输入对应字段">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row font-size-sm">
+                <label class="col-sm-4 col-form-label font-weight-normal text-right pr-0" for="matching[__KEY__][form]">字段类型</label>
+                <div class="col-sm-8">
+                    <select class="form-control form-control-alt font-size-sm" data-name="form" id="matching[__KEY__][form]">
+                        <option value="0">文本字符</option>
+                        <option value="1">资源提取</option>
+                        <option value="2">属性提取</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row font-size-sm">
+                <label class="col-sm-4 col-form-label font-weight-normal text-right pr-0" for="matching[__KEY__][attr_name]">属性名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-alt font-size-sm" id="matching[__KEY__][attr_name]" data-name="attr_name" placeholder="请输入提取属性名称">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 mt-3">
+            <div class="row font-size-sm">
+                <label class="col-sm-4 col-form-label font-weight-normal pr-0" for="matching[__KEY__][filtration]">过滤方式</label>
+                <div class="col-sm-8 pl-0">
+                    <select class="form-control form-control-alt font-size-sm" data-name="filtration" id="matching[__KEY__][filtration]">
+                        <option value="0">不做过滤</option>
+                        <option value="1">过滤HTML</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="field_delete"><i class="si si-close"></i></div>
+    </div>
+</div>
+{{/*添加匹配字段字符串结束*/}}

@@ -1,0 +1,44 @@
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <!-- Page Content -->
+    <div class="content p-3">
+        <div class="alert alert-primary alert-dismissable" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p class="mb-0 font-size-sm font-weight-normal">
+                <strong><i class="fa fa-fw fa-info-circle"></i> 提示：</strong>按住表头可拖动节点，调整后将自动生效。
+            </p>
+        </div>
+        <!-- Full Table -->
+        <div class="block">
+            <ul class="nav nav-tabs nav-tabs-block">
+                {{range $i, $e := .groupMenu}}
+                    <li class="nav-item">
+                        <a class="nav-link font-weight-normal {{if eq $.current $e.Id }} active {{end}}" href='{{urlfor "Menu.Index" ":id" $e.Id}}'>{{$e.Title}}</a>
+                    </li>
+                {{end}}
+            </ul>
+            <div class="block-content tab-content p-2">
+                <div class="tab-pane active">
+                    <div class="row data-table-toolbar">
+                        <div class="col-sm-12">
+                            <div class="toolbar-btn-action">
+                                <a title="新增节点" class="btn btn-primary btn-sm font-weight-normal open_iframe" data-area="580px,395px" href='{{urlfor "Menu.Create" ":root" $.current ":id" $.current  ":popup" 1}}'><i class="fa fa-plus-circle"></i> 新增节点</a>
+                                <a title="展开节点" class="btn btn-success btn-sm font-weight-normal expand_all" href="javascript:void(0);"><i class="fa fa-plus"></i> 展开节点</a>
+                                <a title="收起节点" class="btn btn-warning btn-sm font-weight-normal collapse_all" href="javascript:void(0);"><i class="fa fa-minus"></i> 收起节点</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive dd" id="menu_list" data-root="{{$.current}}" data-action='{{urlfor "Menu.Sort"}}'>
+                        <ol class="dd-list">
+                            {{str2html $.htmlMenus}}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Full Table -->
+    </div>
+    <!-- END Page Content -->
+</main>

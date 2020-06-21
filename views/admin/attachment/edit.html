@@ -1,0 +1,52 @@
+<div class="block overflow-hidden block-themed mb-0">
+    <div class="col-12 p-0 block-header">
+        {{ if eq $.info.Mime "image/jpeg"}}
+            <div style="background: url('{{$.info.Path}}') center;background-size: cover;height: 168px;" class="block-content block-content-full text-center"></div>
+        {{else}}
+            <div class="block-content block-content-full text-center">
+                <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto js-appear-enabled animated fadeIn" data-toggle="appear" data-offset="50" data-class="animated fadeIn">
+                    <i class="si si-folder-alt fa-2x text-white-75"></i>
+                </div>
+            </div>
+        {{end}}
+    </div>
+    <div class="block-content block-content-full tab-content px-md-5 p-3 pr-0" style="margin-left: 6px;">
+        <div class="form-group row font-size-sm mb-3">
+            <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">名称</label>
+            <div class="col-sm-6">
+                <input class="form-control form-control-alt font-size-sm" disabled value="{{$.info.Name}}" id="name" type="text"/>
+            </div>
+            <label class="col-form-label font-weight-normal" for="mime">类型</label>
+            <div class="col-sm-4">
+                <input class="form-control form-control-alt font-size-sm" disabled value="{{$.info.Mime}}" id="mime" type="text"/>
+            </div>
+        </div>
+        <div class="form-group row font-size-sm mb-3">
+            <label class="col-form-label font-weight-normal pr-0 pl-2" for="sha1">散列</label>
+            <div class="col-sm-6">
+                <input class="form-control form-control-alt font-size-sm" disabled value="{{$.info.Sha1}}" id="sha1" type="text"/>
+            </div>
+            <label class="col-form-label font-weight-normal" for="size">大小</label>
+            <div class="col-sm-4">
+                <input class="form-control form-control-alt font-size-sm" disabled value="{{$.info.Size}} 字节" id="size" type="text"/>
+            </div>
+        </div>
+        <div class="form-group row font-size-sm mb-3">
+            <label class="col-form-label font-weight-normal pr-0 pl-2" for="update_time">更新时间</label>
+            <div class="col-sm-4 mr-4">
+                <input class="form-control form-control-alt font-size-sm" disabled value="{{date $.info.UpdateTime "Y-m-d H:i:s"}}" id="update_time" type="text"/>
+            </div>
+            <label class="col-form-label font-weight-normal ml-3" for="usage">挂载次数</label>
+            <div class="col-sm-4">
+                <input class="form-control form-control-alt font-size-sm" disabled value="当前被挂载 {{$.info.Usage}} 次" id="usage" type="text"/>
+            </div>
+        </div>
+        <div class="form-group row font-size-sm mb-0">
+            <label class="col-form-label font-weight-normal pr-0 pl-2 text-center" for="path">资源地址</label>
+            <div class="col-sm-10">
+                <input class="form-control form-control-alt font-size-sm ml-3" id="path" disabled value="{{$.info.Path}}" type="text"/>
+            </div>
+        </div>
+    </div>
+</div>
+

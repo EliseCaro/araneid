@@ -1,0 +1,113 @@
+<div class="js-wizard-simple block block overflow-hidden" style="height:370px">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base_menu" data-toggle="tab">基础信息</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#expert_menu" data-toggle="tab">高级设置</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Menu.Edit" ":id" $.info.Id ":root" $.root}}" class="ajax_from" method="post">
+        <input type="hidden" name="id" value="{{$.info.Id}}" />
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="tab-pane active" id="base_menu" role="tabpanel">
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="module">所属模块</label>
+                    <div class="col-sm-4 mr-4">
+                        <select class="form-control form-control-alt font-size-sm" data-active="{{$.info.Pid}}" data-action='{{urlfor "Menu.Tree"}}' id="module">
+                            <option value="0">顶级</option>
+                            {{range $i, $e := .groupMenu}}
+                                <option {{if eq $.root $e.Id }}selected{{end}} value="{{$e.Id}}">{{$e.Title}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="pid">所属节点</label>
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-alt font-size-sm pr-0" id="pid" name="pid">{{/*JSADD*/}}</select>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="title">节点标题</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" id="title" value="{{$.info.Title}}" type="text" name="title" placeholder="节点标题"/>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="url_type">链接类型</label>
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-alt font-size-sm pr-0" id="url_type" name="url_type">
+                            {{range $i, $e := .urlsType}}
+                                <option {{if eq $.info.UrlType $i }} selected {{end}} value="{{$i}}">{{$e}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="url_value">节点连接</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control form-control-alt font-size-sm" value="{{$.info.UrlValue}}" id="url_value" name="url_value" placeholder="请输入节点连接">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">模块链接示例：<code>Index.Index</code> ；普通链接示例：<code>http://www.eibk.com</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="params">附加参数</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control form-control-alt font-size-sm" value="{{$.info.Params}}" id="params" name="params" placeholder="请输入附加参数">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">如：[ <code>:a=1&:b=2</code>]；请务必按照规范填写；</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="expert_menu" role="tabpanel">
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="icon">节点图标</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control form-control-alt font-size-sm" id="icon" value="{{$.info.Icon}}" name="icon" placeholder="请输入节点图标">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">如：fa fa-fw fa-github-<code>square</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-3">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="is_menu">左侧菜单：</label>
+                    <div class="col-sm-4 mr-4">
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="1" class="custom-control-input" id="is_menu_1" name="is_menu" {{if eq $.info.IsMenu 1 }} checked {{end}} >
+                            <label class="custom-control-label" for="is_menu_1">是</label>
+                        </div>
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="0" class="custom-control-input" id="is_menu_0" name="is_menu" {{if eq $.info.IsMenu 0 }} checked {{end}}>
+                            <label class="custom-control-label" for="is_menu_0">否</label>
+                        </div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="status">是否启用：</label>
+                    <div class="col-sm-4">
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="1" class="custom-control-input" id="status_1" name="status" {{if eq $.info.Status 1 }} checked {{end}}>
+                            <label class="custom-control-label" for="status_1">启用</label>
+                        </div>
+                        <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                            <input type="radio" value="0" class="custom-control-input" id="status_0" name="status" {{if eq $.info.Status 0 }} checked {{end}}>
+                            <label class="custom-control-label" for="status_0">禁用</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="sort">节点排序</label>
+                    <div class="col-sm-10">
+                         <input class="form-control form-control-alt font-size-sm" id="sort" value="{{$.info.Sort}}" type="number" name="sort" placeholder="请输入排序数字"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

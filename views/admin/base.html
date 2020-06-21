@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{config "String" "web_name" ""}}</title>
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/static/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/admin/favicon/favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/admin/favicon/apple-touch-icon-180x180.png">
+    <!-- END Icons -->
+    <!-- Page JS Plugins CSS -->
+    <link rel="stylesheet" href="/static/admin/plugins/datatables/dataTables.bootstrap4.css">
+    <!-- END Page JS Plugins CSS -->
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/static/admin/modality/oneui.min.css" id="css-main">
+    {{if $.theme_style }}<link rel="stylesheet" id="css-theme" href="{{$.theme_style}}">{{end}}
+    <link rel="stylesheet" href="/static/admin/plugins/sweet-alert/sweetalert.css?v={{$.versions}}">
+    <link rel="stylesheet" href="/static/admin/modality/application.css?v={{$.versions}}">
+    <!-- Stylesheets Custom -->
+    {{.header}}
+    <!-- Stylesheets Custom End-->
+</head>
+<body>
+    <div id="page-loader" class="hide"></div>
+    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed" >
+        {{if eq $.popup 0 }}
+            {{template "admin/header.html" .}}
+        {{end}}
+            {{.LayoutContent}}
+        {{if eq $.popup 0 }}
+            {{template "admin/footer.html" .}}
+        {{end}}
+    </div>
+    <!-- Core -->
+    <script> const layout_theme_type = "{{$.layout_style}}";</script>
+    <script src="/static/admin/scripting/jquery.min.js"></script>
+    <script src="/static/admin/scripting/oneui.core.min.js"></script>
+    <!-- Plugins -->
+    <script src="/static/admin/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/admin/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/static/admin/plugins/datatables/buttons/dataTables.buttons.min.js"></script>
+    <script src="/static/admin/plugins/datatables/buttons/buttons.html5.min.js"></script>
+
+    <script src="/static/admin/plugins/layer/layer.js"></script>
+    <script src="/static/admin/plugins/sweet-alert/sweetalert.min.js?v={{$.versions}}"></script>
+    <!-- Custom -->
+    <script src="/static/admin/scripting/oneui.app.min.js?v={{$.versions}}"></script>
+    <!-- Application -->
+    <script src="/static/admin/scripting/application.js?v={{$.versions}}"></script>
+    {{if eq $.popup 0 }}<script src="/static/admin/pages/socket_begin.js?v={{$.versions}}"></script>{{end}}
+    {{.footer}}
+    <!-- Custom End-->
+</body>
+</html>
