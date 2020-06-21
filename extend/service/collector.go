@@ -69,7 +69,7 @@ func (service *DefaultCollectorService) DataTableButtons(id int) []*table.TableB
 		Text:      "发布选中",
 		ClassName: "btn btn-sm btn-alt-primary mt-1 ids_enables",
 		Attribute: map[string]string{
-			"data-action": beego.URLFor("Collector.Status"),
+			"data-action": beego.URLFor("Collector.Status", ":parent", id),
 			"data-field":  "status",
 		},
 	})
