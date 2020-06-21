@@ -4,12 +4,12 @@ import "time"
 
 type Inform struct {
 	Id        int  `orm:"pk;auto;column(id);type(int);description(主键,自增)" json:"id" form:"id"`
-	Form      int8 `orm:"index;column(form);default(1);description(站内信类型[1:大众爬虫日志])" json:"form" form:"form"`
-	Statue    int8 `orm:"index;column(statue);default(0);description(是否查看)" json:"statue" form:"statue"`
-	Receiver  int  `orm:"index;column(receiver);default(0);description(接受者ID)" json:"receiver" form:"receiver" validate:"required" label:"接受者ID"`
-	ObjectId  int  `orm:"index;column(object_id);default(0);description(类型对象ID)" json:"object_id" form:"object_id"`
+	Form      int8 `orm:"column(form);default(1);description(站内信类型[1:大众爬虫日志])" json:"form" form:"form"`
+	Statue    int8 `orm:"column(statue);default(0);description(是否查看)" json:"statue" form:"statue"`
+	Receiver  int  `orm:"column(receiver);default(0);description(接受者ID)" json:"receiver" form:"receiver" validate:"required" label:"接受者ID"`
+	ObjectId  int  `orm:"column(object_id);default(0);description(类型对象ID)" json:"object_id" form:"object_id"`
 	ContextId int  `orm:"column(context_id);default(0);description(消息内容ID)" json:"context_id" form:"context_id" validate:"required" label:"消息内容ID"`
-	Expediter int  `orm:"index;column(expediter);default(0);description(发送者ID)" json:"expediter" form:"expediter" validate:"required" label:"发送者ID"`
+	Expediter int  `orm:"column(expediter);default(0);description(发送者ID)" json:"expediter" form:"expediter" validate:"required" label:"发送者ID"`
 }
 
 /** 设置引擎 **/
