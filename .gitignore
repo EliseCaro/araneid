@@ -1,9 +1,9 @@
 .idea/
 .git/
 lastupdate.tmp
-movie.exe
-movie
-movie.exe~
+araneid.exe
+araneid
+araneid.exe~
 .DS_Store
 
 /static/data/*
