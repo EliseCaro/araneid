@@ -52,10 +52,12 @@ func (c *Dictionaries) Config() {
 // @router /dictionaries/status_cate [post]
 func (c *Dictionaries) StatusCate() {
 	status, _ := c.GetInt("status", 0)
+	field := c.GetMustString("field", "非法操作～")
 	service.SocketInstanceGet().InstructHandle(map[string]interface{}{
-		"status": status, "command": "dict_cate", "uid": c.UserInfo.Id,
+		"status": status, "command": "dict_cate",
+		"uid": c.UserInfo.Id, "field": field,
 	})
-	c.Succeed(&controllers.ResultJson{Message: "采集器状态已经更改！", Url: beego.URLFor("Dictionaries.Cate")})
+	c.Succeed(&controllers.ResultJson{Message: "指令状态已经更改！", Url: beego.URLFor("Dictionaries.Cate")})
 }
 
 /** 爬虫启动与停止 **/
@@ -79,6 +81,18 @@ func (c *Dictionaries) DeleteCate() {
 func (c *Dictionaries) DetailCate() {
 	id := c.GetMustInt(":id", "结果ID不合法...")
 	c.Data["info"] = c.dictionariesService.DetailCateOne(id)
+}
+
+/** 发布分类结果  **/
+// @router /dictionaries/push_cate [post]
+func (c *Dictionaries) PushCate() {
+	array := c.checkBoxIds(":ids[]", ":ids")
+	for _, v := range array {
+		one := c.dictionariesService.OneCate(v)
+		c.dictionariesService.PushDetailAPICate(one)
+	}
+	c.Succeed(&controllers.ResultJson{Message: "提交发布成功！马上返回中。。。", Url: beego.URLFor("Dictionaries.Cate")})
+
 }
 
 // 采集分类

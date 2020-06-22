@@ -5,6 +5,7 @@ const dict_cate = {
           $(".handle_collect").click(function () {
             application.ajax.post($(this).data("action"),{
                 status : $(this).data("status"),
+                field  : $(this).data("field"),
             },function (result) {
                 application.ajax.requestBack(result.message,result.status,result.url);
             })

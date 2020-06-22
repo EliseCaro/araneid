@@ -11,6 +11,9 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/dictionaries"
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"time"
@@ -47,11 +50,71 @@ func (service *DefaultDictionariesService) ConfigMaps() map[string]interface{} {
 
 /** 爬虫操纵命令 **/
 func (service *DefaultDictionariesService) CateInstanceBegin(instruct map[string]interface{}) {
-	if instruct["status"].(int) == 1 {
-		service.StartCate(instruct["uid"].(int))
-	} else {
-		service.StopCate(instruct["uid"].(int), "停止爬取查字词典分类")
+	if instruct["field"].(string) == "status" {
+		if instruct["status"].(int) == 1 {
+			service.StartCate(instruct["uid"].(int))
+		} else {
+			service.StopCate(instruct["uid"].(int), "停止爬取查字词典分类")
+		}
 	}
+	if instruct["field"].(string) == "send_status" {
+		if instruct["status"].(int) == 1 {
+			service.StartPushCate(instruct["uid"].(int))
+		} else {
+			service.StopPushCate(instruct["uid"].(int), "停止发布查字词典分类")
+		}
+	}
+}
+
+/** 发布一条分类数据;返回格式：{status:[false|true],message:[message]} **/
+func (service *DefaultDictionariesService) PushDetailAPICate(item dictionaries.DictCate) {
+	config := service.ConfigMaps()
+	detail := service.DetailCateOne(item.Id)
+	if resp, err := http.PostForm(config["send_domain"].(string), url.Values{
+		"password": {beego.AppConfig.String("collect_collect_password")},
+		"title":    {item.Title}, "source": {item.Source}, "result": {detail["result"]},
+		"update": {strconv.FormatInt(item.UpdateTime.Unix(), 10)},
+		"create": {strconv.FormatInt(item.CreateTime.Unix(), 10)},
+	}); err == nil {
+		if body, err := ioutil.ReadAll(resp.Body); err != nil {
+			service.pushDetailAPIResultCate(item.Id, -1, err)
+		} else {
+			result := make(map[string]interface{})
+			if err := json.Unmarshal(body, &result); err != nil && len(result) > 0 {
+				if result["status"].(bool) == true {
+					service.pushDetailAPIResultCate(item.Id, 1, errors.New(result["message"].(string)))
+				} else {
+					service.pushDetailAPIResultCate(item.Id, -1, errors.New(result["message"].(string)))
+				}
+			} else {
+				service.pushDetailAPIResultCate(item.Id, -1, errors.New("接口返回结果解析失败！请检查返回格式！"))
+			}
+		}
+		defer resp.Body.Close()
+	} else {
+		service.pushDetailAPIResultCate(item.Id, -1, err)
+	}
+}
+
+/** 分类数据 发布器 **/
+func (service *DefaultDictionariesService) StartPushCate(uid int) {
+	if _, err := orm.NewOrm().Update(&dictionaries.DictConfig{Id: 8, Value: "1"}, "Value"); err != nil {
+		logs.Warn("启动[%s]发布器失败！失败原因:%s", "查字词典", error.Error(err))
+	} else {
+		config := service.ConfigMaps()
+		pushTime, _ := strconv.ParseInt(config["push_time"].(string), 10, 64)
+		service.createLogsInformStatusPushCate("查字词典分类发布任务启动", uid)
+		for {
+			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 0 {
+				break
+			} else {
+				item := service.pushDetailCate()
+				service.PushDetailAPICate(item)
+				time.Sleep(time.Duration(pushTime*60*60) * time.Second)
+			}
+		}
+	}
+	defer func() { service.StopPushCate(uid, "查字词典分类发布任务完成") }()
 }
 
 /** 启动爬虫 **/
@@ -110,6 +173,15 @@ func (service *DefaultDictionariesService) StopCate(uid int, message string) {
 	}
 }
 
+/** 停止分类发布 **/
+func (service *DefaultDictionariesService) StopPushCate(uid int, message string) {
+	if _, err := orm.NewOrm().Update(&dictionaries.DictConfig{Id: 8, Value: "0"}, "Value"); err != nil {
+		logs.Warn("停止查字词典发布器失败！失败原因:%s", error.Error(err))
+	} else {
+		service.createLogsInformStatusPushCate(message, uid)
+	}
+}
+
 /** 批量删除分类采集结果 **/
 func (service *DefaultDictionariesService) DeleteArrayCate(array []int) (message error) {
 	_ = orm.NewOrm().Begin()
@@ -157,6 +229,19 @@ func (service *DefaultDictionariesService) createLogsInformStatusCate(status str
 	inform.SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
 }
 
+/** 发送发布分类状态通知 **/
+func (service *DefaultDictionariesService) createLogsInformStatusPushCate(status string, receiver int) {
+	var htmlInfo string
+	nowTime := beego.Date(time.Now(), "m月d日 H:i")
+	htmlInfo = fmt.Sprintf(`
+		名为<a href="javascript:void(0);">查字词典</a>的发布器;在%s的时候%s；
+		您可以<a target="_blank" href="%s">查看发布结果</a>;`,
+		nowTime, status, beego.URLFor("Dictionaries.Cate"),
+	)
+	inform := DefaultInformService{}
+	inform.SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
+}
+
 /** 创建一条分类结果数据 */
 func (service *DefaultDictionariesService) createOneResultCate(item *dictionaries.DictCate) (err error) {
 	verify := DefaultBaseVerify{}
@@ -183,6 +268,20 @@ func (service *DefaultDictionariesService) oneResultLinkCate(url string) diction
 func (service *DefaultDictionariesService) int2HtmlStatus(val interface{}, id interface{}, url string) string {
 	t := table.BuilderTable{}
 	return t.AnalysisTypeSwitch(map[string]interface{}{"status": val, "id": id}, "status", url, map[int64]string{-1: "已失败", 0: "待发布", 1: "已发布"})
+}
+
+/** 获取一条可以发布的数据;从ID升序发布 **/
+func (service *DefaultDictionariesService) pushDetailCate() dictionaries.DictCate {
+	var item dictionaries.DictCate
+	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("status", 0).OrderBy("id").One(&item)
+	return item
+}
+
+/**  更新分类发布结果 **/
+func (service *DefaultDictionariesService) pushDetailAPIResultCate(id int, status int8, message error) {
+	if _, err := orm.NewOrm().Update(&dictionaries.DictCate{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
+		logs.Warn("更新发布结果失败；失败原因：%s", error.Error(err))
+	}
 }
 
 /************************************************分类表格渲染机制 ************************************************************/
@@ -230,6 +329,7 @@ func (service *DefaultDictionariesService) DataTableCateButtons() []*table.Table
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Dictionaries.StatusCate"),
 				"data-status": "0",
+				"data-field":  "status",
 			},
 		})
 	} else {
@@ -239,6 +339,7 @@ func (service *DefaultDictionariesService) DataTableCateButtons() []*table.Table
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Dictionaries.StatusCate"),
 				"data-status": "1",
+				"data-field":  "status",
 			},
 		})
 	}
@@ -247,11 +348,32 @@ func (service *DefaultDictionariesService) DataTableCateButtons() []*table.Table
 		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
 		Attribute: map[string]string{"data-action": beego.URLFor("Dictionaries.DeleteCate")},
 	})
+	if config["send_status"].(string) == "1" {
+		array = append(array, &table.TableButtons{
+			Text:      "停止发布",
+			ClassName: "btn btn-sm btn-alt-danger mt-1 handle_collect",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Dictionaries.StatusCate"),
+				"data-status": "0",
+				"data-field":  "send_status",
+			},
+		})
+	} else {
+		array = append(array, &table.TableButtons{
+			Text:      "启动发布",
+			ClassName: "btn btn-sm btn-alt-success mt-1 handle_collect",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Dictionaries.StatusCate"),
+				"data-status": "1",
+				"data-field":  "send_status",
+			},
+		})
+	}
 	array = append(array, &table.TableButtons{
 		Text:      "发布选中",
 		ClassName: "btn btn-sm btn-alt-primary mt-1 ids_enables",
 		Attribute: map[string]string{
-			"data-action": beego.URLFor("Dictionaries.Status"),
+			"data-action": beego.URLFor("Dictionaries.PushCate"),
 			"data-field":  "status",
 		},
 	})
