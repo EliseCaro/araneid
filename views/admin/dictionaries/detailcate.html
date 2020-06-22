@@ -1,0 +1,24 @@
+<div class="block mb-0">
+    <div class="block-content">
+        <div class="col-md-12 p-0">
+            <!-- Info -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="font-size-sm font-w600" style="line-height: 25px">{{$.info.title}}</div>
+                    <div class="font-size-sm text-muted">{{$.info.update_time}}</div>
+                </div>
+                <div class="font-size-base">
+                    {{if eq $.info.status "0"}}
+                            <span class="badge badge-danger badge-pill pt-1 pb-1">待发布</span>
+                        {{else if eq $.info.status "-1"}}
+                             <span data-toggle="tooltip" data-original-title="{{$.info.logs}}" class="badge badge-danger badge-pill pt-1 pb-1 js-tooltip">已失败</span>
+                        {{else}}
+                            <span class="badge badge-primary badge-pill pt-1 pb-1">已发布</span>
+                    {{end}}
+                </div>
+            </div>
+            <form class="d-flex justify-content-between my-2 border-top border-bottom"></form>
+            <div class="font-size-sm result_context font-size-sm"></div>
+        </div>
+    </div>
+</div>

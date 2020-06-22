@@ -47,7 +47,7 @@ const application = {
             One.layout("sidebar_style_" + o)
         },
         layer_iframe:function (option = {}) {
-            const options = {type: 2,scrollbar: false,offset: 'auto',zIndex:100, shadeClose : true, anim: 1, fixed: false};
+            const options = {type: 2,scrollbar: false,offset: 'auto',zIndex:100,resize:false, shadeClose : true, anim: 1, fixed: false};
             return layer.open(
                 $.extend({
                     title: option.title || false,

@@ -24,6 +24,7 @@ type DictCate struct {
 	Id          int       `orm:"pk;auto;column(id);type(int);default(0);description(主键,自增)" json:"id" form:"id"`
 	Logs        string    `orm:"column(logs);size(150);type(char);default();description(发布日志)" json:"logs" form:"logs"`
 	Name        string    `orm:"column(name);size(15);type(char);default();description(名称)" json:"name" form:"name" validate:"required" label:"分类名称"`
+	Title       string    `orm:"column(title);size(150);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"分类标题"`
 	Keywords    string    `orm:"column(keywords);size(80);type(char);default();description(关键字)" json:"keywords" form:"keywords" validate:"required" label:"分类关键字"`
 	Description string    `orm:"column(description);size(200);type(char);default();description(描述)" json:"description" form:"description" validate:"required" label:"分类描述"`
 	Source      string    `orm:"column(source);size(150);type(char);default();description(任务地址)" json:"source" form:"source" validate:"required" label:"任务地址"`

@@ -1,0 +1,62 @@
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">查字词典 - 爬虫配置</h3>
+    </div>
+    <div class="block-content">
+        <form action="{{urlfor "Dictionaries.Config"}}" class="ajax_from" method="post">
+            <div class="form-group row font-size-sm">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="interval">最大并发</label>
+                <div class="col-sm-4 mr-5">
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="interval" value="{{$.config.interval}}" name="interval" placeholder="请输入最大并发次数">
+                        <div class="input-group-append"><span class="input-group-text font-size-sm">次</span></div>
+                    </div>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">控制抓取频率；<code>减少采集源压力</code></div>
+                </div>
+                <label class="col-form-label font-weight-normal" for="push_time">发布间隔</label>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="push_time" value="{{$.config.push_time}}" name="push_time" placeholder="请输入发布间隔时间">
+                        <div class="input-group-append"><span class="input-group-text font-size-sm">H</span></div>
+                    </div>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">隔多久发布单条数据；<code>提高质量</code></div>
+                </div>
+            </div>
+            <div class="form-group row font-size-sm">
+                <label class="col-form-label font-weight-normal">语言转换</label>
+                <div class="col-sm-10">
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="translate_0" name="translate" value="0" {{if eq "0" $.config.translate}} checked {{end}}>
+                        <label class="custom-control-label" for="translate_0">禁止转换</label>
+                    </div>
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="translate_1" name="translate" value="1" {{if eq "1" $.config.translate}} checked {{end}}>
+                        <label class="custom-control-label" for="translate_1">简转繁体</label>
+                    </div>
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="translate_2" name="translate" value="2" {{if eq "2" $.config.translate}} checked {{end}}>
+                        <label class="custom-control-label" for="translate_2">繁转简体</label>
+                    </div>
+                    <div class="help-block pt-2 pb-2 font-size-minimum">启用语言转换；<code>将语言转换到结果语言；转换结果不可逆转；</code></div>
+                </div>
+            </div>
+            <div class="form-group row font-size-sm">
+                <label class="col-form-label font-weight-normal text-right">资源下载</label>
+                <div class="col-sm-10">
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="download_0" name="download" value="0" {{if eq "0" $.config.download}} checked {{end}}>
+                        <label class="custom-control-label" for="download_0">禁止下载</label>
+                    </div>
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="download_1" name="download" value="1" {{if eq "1" $.config.download}} checked {{end}}>
+                        <label class="custom-control-label" for="download_1">启用下载</label>
+                    </div>
+                    <div class="help-block pt-2 pb-2 font-size-minimum">启用下载将联动到；<code>系统设置->采集设置->云端储存</code></div>
+                </div>
+            </div>
+            <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
+                <button type="submit" class="btn btn-sm btn-primary">保存配置</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -8,12 +8,13 @@ import (
 )
 
 type DefaultSocketService struct {
-	Subscribe      chan DefaultSocketSubscriber // 新加入用户的chan。
-	Unsubscribe    chan int                     // 离开用户的chan。
-	Command        chan map[string]interface{}  // 需要处理的指令 比如爬虫指令等
-	Message        chan inform.Message          // 需要处理的指令 比如爬虫指令等
-	Subscribers    *list.List                   // 目前的用户列表
-	collectService DefaultCollectService        //  采集层逻辑
+	Subscribe           chan DefaultSocketSubscriber // 新加入用户的chan。
+	Unsubscribe         chan int                     // 离开用户的chan。
+	Command             chan map[string]interface{}  // 需要处理的指令 比如爬虫指令等
+	Message             chan inform.Message          // 需要处理的指令 比如爬虫指令等
+	Subscribers         *list.List                   // 目前的用户列表
+	collectService      DefaultCollectService        // 采集层逻辑
+	dictionariesService DefaultDictionariesService   // 词典采集逻辑层
 }
 
 /** socket常驻内存实例 **/
@@ -66,6 +67,8 @@ func (service *DefaultSocketService) commandHandle(instruct map[string]interface
 	switch instruct["command"].(string) {
 	case "collect": // 采集器移交主要服务层处理
 		go service.collectService.InstanceBegin(instruct)
+	case "dict_cate": // 词典采集器移交主要服务层处理
+		go service.dictionariesService.CateInstanceBegin(instruct)
 	}
 }
 
