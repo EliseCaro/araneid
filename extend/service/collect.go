@@ -424,7 +424,7 @@ func (service *DefaultCollectService) collectStatus(id int, status int8, uid int
 	}
 }
 
-/** 启动采集器 **/
+/** 启动采集器 todo 停止无效，需要在研究 **/
 func (service *DefaultCollectService) collectStart(id, uid int) {
 	detail := service.FindOneDetail(id)
 	source := table.ParseAttrConfigArray(detail.Source)
@@ -434,13 +434,14 @@ func (service *DefaultCollectService) collectStart(id, uid int) {
 			_ = e.Request.Visit(e.Attr("href"))
 		}
 	})
-	collector.OnResponse(func(r *colly.Response) {
+	collector.OnRequest(func(r *colly.Request) {
 		if service.acquireCollectStatus(id, "Status") == 1 {
-			if service.checkSourceRule(detail.SourceRule, r.Request.URL.String()) {
-				service.handleSourceRuleBody(r.Request.URL.String(), uid, detail)
+			if service.checkSourceRule(detail.SourceRule, r.URL.String()) {
+				service.handleSourceRuleBody(r.URL.String(), uid, detail)
 			}
 		} else {
-			r.Request.Abort()
+			r.Abort()
+			logs.Warn("取消一条采集器链接；链接为：[%s]", r.URL.String())
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
@@ -494,9 +495,13 @@ func (service *DefaultCollectService) pushStart(id, uid int) {
 	} else {
 		service.createLogsInformPushStatus("开始发布数据", uid, detail.Id, detail.Name)
 		for {
-			item := service.pushDetail(id)
-			service.PushDetailAPI(item)
-			time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
+			if service.acquireCollectStatus(id, "Status") == 1 {
+				service.PushDetailAPI(service.pushDetail(id))
+				time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
+			} else {
+				logs.Warn("[%s]停止了发布任务器！已成功退出！", detail.Name, error.Error(err))
+				break
+			}
 		}
 	}
 	defer func() { service.pushStop(id, uid, "发布任务完成") }()
