@@ -59,6 +59,7 @@ func (service *DefaultDictionariesService) DetailOne(id int) map[string]string {
 		"name": detail.Name, "title": detail.Title,
 		"keywords": detail.Keywords, "description": detail.Description,
 		"source": detail.Source, "initial": detail.Initial,
+		"context": detail.Context,
 	}
 	stringJson, _ := json.Marshal(maps)
 	result["result"] = string(stringJson)
@@ -109,9 +110,11 @@ func (service *DefaultDictionariesService) Stop(uid int, message string) {
 
 /** 启动爬虫 **/
 func (service *DefaultDictionariesService) Start(uid int) {
-	object := DefaultCollectService{}
-	config := service.ConfigMaps()
-	interval, _ := strconv.Atoi(config["interval"].(string))
+	var (
+		object      = DefaultCollectService{}
+		config      = service.ConfigMaps()
+		interval, _ = strconv.Atoi(config["interval"].(string))
+	)
 	collector := object.collectInstance(interval, 3, "www.chazidian.com")
 	collector.OnResponse(func(r *colly.Response) {
 		if status, _ := strconv.Atoi(service.ConfigMaps()["status"].(string)); status == 0 {
@@ -125,49 +128,16 @@ func (service *DefaultDictionariesService) Start(uid int) {
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile("https://www.chazidian.com/ci_([a-z]+)_([0-9]+)/$").MatchString(e.Request.URL.String()) {
-			keywords, _ := e.DOM.Find("head > meta[name=keywords]").Attr("content")
-			description, _ := e.DOM.Find("head > meta[name=description]").Attr("content")
-			id, message := service.createOneResult(&dictionaries.DictCate{
-				Title:   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
-				Source:  e.Request.URL.String(),
-				Name:    e.ChildText(".main_left > div:last-child > .box_head > .box_title > h2 > b"),
-				Initial: e.ChildText(".main_left > div:nth-child(3) > .box_head > .box_title > h2 > b"),
-				Status:  0, Keywords: keywords,
-				Description: description, Context: "NONE", Pid: 0,
-			})
-			if message != nil {
+			if id, message := service.collectOnResultCate(e); message != nil {
 				service.createLogsInformStatus("查字词典分类采集到一条非法数据；<a href='"+e.Request.URL.String()+"'>查看原文</a>;非法原因："+error.Error(message)+";", uid)
 			} else {
-				e.ForEach(".main_left > div:last-child >.box_content a[href]", func(_ int, el *colly.HTMLElement) {
-					href := el.Attr("href")
-					if o := strings.Index(href, "https://www.chazidian.com"); o < 0 {
-						href = "https://www.chazidian.com" + href
-					}
-					if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_([a-z0-9]+)/$`).MatchString(e.Request.URL.String()) {
-						href = href + "?dict=" + strconv.FormatInt(id, 10)
-					}
-					beego.Info(href)
-					_ = e.Request.Visit(href)
-				})
+				service.collectVisitDetailHref(id, e)
 			}
 		}
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_(.*?)/\?dict=([0-9]+)$`).MatchString(e.Request.URL.String()) {
-			keywords, _ := e.DOM.Find("head > meta[name=keywords]").Attr("content")
-			description, _ := e.DOM.Find("head > meta[name=description]").Attr("content")
-			context, _ := e.DOM.Find(".content > div:last-child").Html()
-			pidParent := e.Request.URL.Query()["dict"]
-			pid, _ := strconv.Atoi(pidParent[0])
-			result := &dictionaries.DictCate{
-				Title:  object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
-				Source: e.Request.URL.String(),
-				Name:   e.ChildText(".bktitle > h1"),
-				Status: 0, Keywords: keywords, Description: description,
-				Context: context, Pid: pid, Initial: "NONE",
-			}
-			_, message := service.createOneResult(result)
-			if message != nil {
+			if message := service.collectOnResultDetail(e); message != nil {
 				service.createLogsInformStatus("查字词典详情采集到一条非法数据；<a href='"+e.Request.URL.String()+"'>查看原文</a>;非法原因："+error.Error(message)+";", uid)
 			}
 		}
@@ -194,12 +164,11 @@ func (service *DefaultDictionariesService) StartPush(uid int) {
 		pushTime, _ := strconv.ParseInt(config["push_time"].(string), 10, 64)
 		service.createLogsInformStatusPush("查字词典发布任务启动", uid)
 		for {
-			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 0 {
-				break
-			} else {
-				item := service.pushDetail()
-				service.PushDetailAPI(item)
+			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 1 {
+				service.PushDetailAPI(service.pushDetail())
 				time.Sleep(time.Duration(pushTime*60*60) * time.Second)
+			} else {
+				break
 			}
 		}
 	}
@@ -222,6 +191,7 @@ func (service *DefaultDictionariesService) PushDetailAPI(item dictionaries.DictC
 	if resp, err := http.PostForm(config["send_domain"].(string), url.Values{
 		"password": {beego.AppConfig.String("collect_collect_password")},
 		"title":    {item.Title}, "source": {item.Source}, "result": {detail["result"]},
+		"pid": {strconv.Itoa(item.Pid)}, "id": {strconv.Itoa(item.Id)},
 		"update": {strconv.FormatInt(item.UpdateTime.Unix(), 10)},
 		"create": {strconv.FormatInt(item.CreateTime.Unix(), 10)},
 	}); err == nil {
@@ -440,7 +410,7 @@ func (service *DefaultDictionariesService) int2HtmlStatus(val interface{}, id in
 /** 获取一条可以发布的数据;从ID升序发布 **/
 func (service *DefaultDictionariesService) pushDetail() dictionaries.DictCate {
 	var item dictionaries.DictCate
-	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("status", 0).OrderBy("id").One(&item)
+	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("status", 0).OrderBy("pid").One(&item)
 	return item
 }
 
@@ -449,4 +419,54 @@ func (service *DefaultDictionariesService) pushDetailAPIResult(id int, status in
 	if _, err := orm.NewOrm().Update(&dictionaries.DictCate{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
 		logs.Warn("更新发布结果失败；失败原因：%s", error.Error(err))
 	}
+}
+
+/** 采集分类结果解析创建分类 **/
+func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElement) (int64, error) {
+	object := DefaultCollectService{}
+	keywords, _ := e.DOM.Find("head > meta[name=keywords]").Attr("content")
+	description, _ := e.DOM.Find("head > meta[name=description]").Attr("content")
+	id, message := service.createOneResult(&dictionaries.DictCate{
+		Title:   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
+		Source:  e.Request.URL.String(),
+		Name:    e.ChildText(".main_left > div:last-child > .box_head > .box_title > h2 > b"),
+		Initial: e.ChildText(".main_left > div:nth-child(3) > .box_head > .box_title > h2 > b"),
+		Status:  0, Keywords: keywords,
+		Description: description, Context: "NONE", Pid: 0,
+	})
+	return id, message
+}
+
+/** 采集结果创建详情数据 **/
+func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLElement) error {
+	var (
+		keyword, _  = e.DOM.Find("head > meta[name=keywords]").Attr("content")
+		describe, _ = e.DOM.Find("head > meta[name=description]").Attr("content")
+		context, _  = e.DOM.Find(".content > div:last-child").Html()
+		parent      = e.Request.URL.Query()["dict"]
+		reagent, _  = strconv.Atoi(parent[0])
+		object      = DefaultCollectService{}
+	)
+	_, message := service.createOneResult(&dictionaries.DictCate{
+		Title:  object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
+		Source: e.Request.URL.String(),
+		Name:   e.ChildText(".bktitle > h1"),
+		Status: 0, Keywords: keyword, Description: describe,
+		Context: context, Pid: reagent, Initial: "NONE",
+	})
+	return message
+}
+
+/** 匹配创建所有详情链接 **/
+func (service *DefaultDictionariesService) collectVisitDetailHref(id int64, e *colly.HTMLElement) {
+	e.ForEach(".main_left > div:last-child >.box_content a[href]", func(_ int, el *colly.HTMLElement) {
+		href := el.Attr("href")
+		if o := strings.Index(href, "https://www.chazidian.com"); o < 0 {
+			href = "https://www.chazidian.com" + href
+		}
+		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_([a-z0-9]+)/$`).MatchString(e.Request.URL.String()) {
+			href = href + "?dict=" + strconv.FormatInt(id, 10)
+		}
+		_ = e.Request.Visit(href)
+	})
 }

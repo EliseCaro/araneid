@@ -20,7 +20,6 @@ func (c *Dictionaries) NextPrepare() {
 		"interval":    "最大并发",
 		"push_time":   "发布间隔",
 		"translate":   "语言转换",
-		"download":    "资源下载",
 		"send_domain": "推送接口",
 	}
 }
@@ -76,7 +75,7 @@ func (c *Dictionaries) Detail() {
 	c.Data["info"] = c.dictionariesService.DetailOne(id)
 }
 
-/** 爬虫启动与停止 **/
+/** 爬取结果删除 **/
 // @router /dictionaries/delete [post]
 func (c *Dictionaries) Delete() {
 	array := c.checkBoxIds(":ids[]", ":ids")
@@ -104,7 +103,7 @@ func (c *Dictionaries) Status() {
 	c.Succeed(&controllers.ResultJson{Message: "指令状态已经更改！", Url: beego.URLFor("Dictionaries.Index")})
 }
 
-/** 发布结果  **/
+/** 发布结果；指定发布  **/
 // @router /dictionaries/push [post]
 func (c *Dictionaries) Push() {
 	array := c.checkBoxIds(":ids[]", ":ids")
