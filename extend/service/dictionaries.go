@@ -466,7 +466,7 @@ func (service *DefaultDictionariesService) translate(res map[string]string) map[
 			} else {
 				res[k] = ccst.T2S(v)
 			}
-			res[k] = service.eliminateTrim(res[k], []string{"\n"})
+			res[k] = service.deleteExtraSpace(service.eliminateTrim(res[k], []string{"\n"}))
 		}
 	}
 	return res
@@ -478,6 +478,21 @@ func (service *DefaultDictionariesService) eliminateTrim(str string, symbol []st
 		str = strings.Replace(str, v, "", -1)
 	}
 	return str
+}
+
+/** 去除连续两个以上的空格 **/
+func (service *DefaultDictionariesService) deleteExtraSpace(s string) string {
+	s1 := strings.Replace(s, "	", " ", -1)
+	regString := "\\s{2,}"
+	reg, _ := regexp.Compile(regString)
+	s2 := make([]byte, len(s1))
+	copy(s2, s1)
+	spcIndex := reg.FindStringIndex(string(s2))
+	for len(spcIndex) > 0 {
+		s2 = append(s2[:spcIndex[0]+1], s2[spcIndex[1]:]...)
+		spcIndex = reg.FindStringIndex(string(s2))
+	}
+	return strings.Trim(string(s2), " ")
 }
 
 /** 采集结果创建详情数据 **/
