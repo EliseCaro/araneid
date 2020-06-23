@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/dictionaries"
+	ccst "github.com/go-cc/cc-jianfan"
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
 	"io/ioutil"
@@ -137,7 +138,7 @@ func (service *DefaultDictionariesService) Start(uid int) {
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_(.*?)/\?dict=([0-9]+)$`).MatchString(e.Request.URL.String()) {
-			if message := service.collectOnResultDetail(e); message != nil {
+			if _, message := service.collectOnResultDetail(e); message != nil {
 				service.createLogsInformStatus("查字词典详情采集到一条非法数据；<a href='"+e.Request.URL.String()+"'>查看原文</a>;非法原因："+error.Error(message)+";", uid)
 			}
 		}
@@ -424,37 +425,64 @@ func (service *DefaultDictionariesService) pushDetailAPIResult(id int, status in
 /** 采集分类结果解析创建分类 **/
 func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElement) (int64, error) {
 	object := DefaultCollectService{}
-	keywords, _ := e.DOM.Find("head > meta[name=keywords]").Attr("content")
-	description, _ := e.DOM.Find("head > meta[name=description]").Attr("content")
-	id, message := service.createOneResult(&dictionaries.DictCate{
-		Title:   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
-		Source:  e.Request.URL.String(),
-		Name:    e.ChildText(".main_left > div:last-child > .box_head > .box_title > h2 > b"),
-		Initial: e.ChildText(".main_left > div:nth-child(3) > .box_head > .box_title > h2 > b"),
-		Status:  0, Keywords: keywords,
-		Description: description, Context: "NONE", Pid: 0,
-	})
-	return id, message
+	result := map[string]string{
+		"title":   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
+		"name":    e.ChildText(".main_left > div:last-child > .box_head > .box_title > h2 > b"),
+		"initial": e.ChildText(".main_left > div:nth-child(3) > .box_head > .box_title > h2 > b"),
+		"context": "NONE",
+	}
+	result["keyword"], _ = e.DOM.Find("head > meta[name=keywords]").Attr("content")
+	result["describe"], _ = e.DOM.Find("head > meta[name=description]").Attr("content")
+	return service.createOneResultDict(result, e.Request.URL.String(), 0)
+}
+
+/** 创建一条数据库记录 **/
+func (service *DefaultDictionariesService) createOneResultDict(res map[string]string, source string, pid int) (int64, error) {
+	translate := service.translate(res)
+	item := &dictionaries.DictCate{
+		Title:       translate["title"],
+		Name:        translate["name"],
+		Initial:     translate["initial"],
+		Context:     translate["context"],
+		Keywords:    translate["keyword"],
+		Description: translate["describe"],
+		Status:      0, Source: source, Pid: pid,
+	}
+	return service.createOneResult(item)
+}
+
+/** 语言转换 **/
+func (service *DefaultDictionariesService) translate(res map[string]string) map[string]string {
+	config := service.ConfigMaps()
+	translate, _ := strconv.Atoi(config["translate"].(string))
+	if translate > 0 {
+		for k, v := range res {
+			if translate == 1 {
+				res[k] = ccst.S2T(v)
+			} else {
+				res[k] = ccst.T2S(v)
+			}
+		}
+	}
+	return res
 }
 
 /** 采集结果创建详情数据 **/
-func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLElement) error {
+func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLElement) (int64, error) {
 	var (
-		keyword, _  = e.DOM.Find("head > meta[name=keywords]").Attr("content")
-		describe, _ = e.DOM.Find("head > meta[name=description]").Attr("content")
-		context, _  = e.DOM.Find(".content > div:last-child").Html()
-		parent      = e.Request.URL.Query()["dict"]
-		reagent, _  = strconv.Atoi(parent[0])
-		object      = DefaultCollectService{}
+		parent     = e.Request.URL.Query()["dict"]
+		reagent, _ = strconv.Atoi(parent[0])
+		object     = DefaultCollectService{}
 	)
-	_, message := service.createOneResult(&dictionaries.DictCate{
-		Title:  object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
-		Source: e.Request.URL.String(),
-		Name:   e.ChildText(".bktitle > h1"),
-		Status: 0, Keywords: keyword, Description: describe,
-		Context: context, Pid: reagent, Initial: "NONE",
-	})
-	return message
+	result := map[string]string{
+		"title":   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
+		"name":    e.ChildText(".bktitle > h1"),
+		"initial": "NONE",
+	}
+	result["context"], _ = e.DOM.Find(".content > div:last-child").Html()
+	result["keyword"], _ = e.DOM.Find("head > meta[name=keywords]").Attr("content")
+	result["describe"], _ = e.DOM.Find("head > meta[name=description]").Attr("content")
+	return service.createOneResultDict(result, e.Request.URL.String(), reagent)
 }
 
 /** 匹配创建所有详情链接 **/
