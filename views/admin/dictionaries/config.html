@@ -40,9 +40,10 @@
                     <div class="help-block pt-2 pb-2 font-size-minimum">启用语言转换；<code>将语言转换到结果语言；转换结果不可逆转；</code></div>
                 </div>
             </div>
+
             <div class="form-group row font-size-sm">
-                <label class="col-form-label font-weight-normal text-right">资源下载</label>
-                <div class="col-sm-10">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="download">资源下载</label>
+                <div class="col-sm-5 mr-1">
                     <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
                         <input type="radio" class="custom-control-input" id="download_0" name="download" value="0" {{if eq "0" $.config.download}} checked {{end}}>
                         <label class="custom-control-label" for="download_0">禁止下载</label>
@@ -51,7 +52,12 @@
                         <input type="radio" class="custom-control-input" id="download_1" name="download" value="1" {{if eq "1" $.config.download}} checked {{end}}>
                         <label class="custom-control-label" for="download_1">启用下载</label>
                     </div>
-                    <div class="help-block pt-2 pb-2 font-size-minimum">启用下载将联动到；<code>系统设置->采集设置->云端储存</code></div>
+                    <div class="help-block pt-2 pb-2 font-size-minimum"><code>将载资下载到该品台或云储存；</code></div>
+                </div>
+                <label class="col-form-label font-weight-normal" for="send_domain">推送接口</label>
+                <div class="col-sm-4">
+                    <input class="form-control font-size-sm" id="send_domain" value="{{$.config.send_domain}}" type="text" name="send_domain" placeholder="推送接口地址"/>
+                    <div class="help-block pt-2 pb-2 font-size-minimum"><code>请正确填写并返回正确格式；</code></div>
                 </div>
             </div>
             <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">

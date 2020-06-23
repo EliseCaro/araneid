@@ -22,11 +22,13 @@ func (m *DictConfig) TableName() string {
 
 type DictCate struct {
 	Id          int       `orm:"pk;auto;column(id);type(int);default(0);description(主键,自增)" json:"id" form:"id"`
+	Pid         int       `orm:"index;column(pid);type(int);default(0);description(上级ID)"  json:"pid" form:"pid"`
 	Logs        string    `orm:"column(logs);size(150);type(char);default();description(发布日志)" json:"logs" form:"logs"`
-	Name        string    `orm:"column(name);size(15);type(char);default();description(名称)" json:"name" form:"name" validate:"required" label:"分类名称"`
+	Name        string    `orm:"column(name);size(50);type(char);default();description(名称)" json:"name" form:"name" validate:"required" label:"分类名称"`
 	Title       string    `orm:"column(title);size(150);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"分类标题"`
 	Keywords    string    `orm:"column(keywords);size(80);type(char);default();description(关键字)" json:"keywords" form:"keywords" validate:"required" label:"分类关键字"`
 	Description string    `orm:"column(description);size(200);type(char);default();description(描述)" json:"description" form:"description" validate:"required" label:"分类描述"`
+	Context     string    `orm:"column(context);type(text);default();description(文本内容)" json:"context" form:"context" validate:"required" label:"内容详情"`
 	Source      string    `orm:"column(source);size(150);type(char);default();description(任务地址)" json:"source" form:"source" validate:"required" label:"任务地址"`
 	Status      int8      `orm:"index;column(status);type(tinyint);default(0);description(发布状态[-1:失败 0:等待 1:成功])" json:"status" form:"status"`
 	Initial     string    `orm:"column(initial);size(5);type(char);default();description(首字母)" json:"initial" form:"initial" validate:"required" label:"分类首字母"`

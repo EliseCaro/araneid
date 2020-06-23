@@ -67,7 +67,7 @@ func (service *DefaultSocketService) commandHandle(instruct map[string]interface
 	switch instruct["command"].(string) {
 	case "collect": // 采集器移交主要服务层处理
 		go service.collectService.InstanceBegin(instruct)
-	case "dict_cate": // 词典采集器移交主要服务层处理
+	case "dict": // 词典采集器移交主要服务层处理
 		go service.dictionariesService.CateInstanceBegin(instruct)
 	}
 }
