@@ -459,15 +459,15 @@ func (service *DefaultDictionariesService) createOneResultDict(res map[string]st
 func (service *DefaultDictionariesService) translate(res map[string]string) map[string]string {
 	config := service.ConfigMaps()
 	translate, _ := strconv.Atoi(config["translate"].(string))
-	if translate > 0 {
-		for k, v := range res {
+	for k, v := range res {
+		if translate > 0 {
 			if translate == 1 {
 				res[k] = ccst.S2T(v)
 			} else {
 				res[k] = ccst.T2S(v)
 			}
-			res[k] = service.deleteExtraSpace(service.eliminateTrim(res[k], []string{"\n"}))
 		}
+		res[k] = service.deleteExtraSpace(service.eliminateTrim(res[k], []string{"\n"}))
 	}
 	return res
 }
