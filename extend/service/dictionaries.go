@@ -466,9 +466,18 @@ func (service *DefaultDictionariesService) translate(res map[string]string) map[
 			} else {
 				res[k] = ccst.T2S(v)
 			}
+			res[k] = service.eliminateTrim(res[k], []string{"\n"})
 		}
 	}
 	return res
+}
+
+/** 剔除字符规定字符 **/
+func (service *DefaultDictionariesService) eliminateTrim(str string, symbol []string) string {
+	for _, v := range symbol {
+		str = strings.Replace(str, v, "", -1)
+	}
+	return str
 }
 
 /** 采集结果创建详情数据 **/
