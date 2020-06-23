@@ -31,6 +31,9 @@ func (service *DefaultDictionariesService) ConfigMaps() map[string]interface{} {
 	for _, v := range item {
 		maps[v.Name] = v.Value
 	}
+	if maps["status"] == nil {
+		maps = service.ConfigMaps()
+	}
 	return maps
 }
 
@@ -117,9 +120,9 @@ func (service *DefaultDictionariesService) Start(uid int) {
 		interval, _ = strconv.Atoi(config["interval"].(string))
 	)
 	collector := object.collectInstance(interval, 3, "www.chazidian.com")
-	collector.OnResponse(func(r *colly.Response) {
+	collector.OnRequest(func(r *colly.Request) {
 		if status, _ := strconv.Atoi(service.ConfigMaps()["status"].(string)); status == 0 {
-			r.Request.Abort()
+			r.Abort()
 		}
 	})
 	collector.OnHTML(".pinyin_sou", func(e *colly.HTMLElement) {
@@ -169,6 +172,7 @@ func (service *DefaultDictionariesService) StartPush(uid int) {
 				service.PushDetailAPI(service.pushDetail())
 				time.Sleep(time.Duration(pushTime*60*60) * time.Second)
 			} else {
+				logs.Warn("[%s]停止了发布任务器！已成功退出！", "查字词典", error.Error(err))
 				break
 			}
 		}
@@ -492,7 +496,7 @@ func (service *DefaultDictionariesService) collectVisitDetailHref(id int64, e *c
 		if o := strings.Index(href, "https://www.chazidian.com"); o < 0 {
 			href = "https://www.chazidian.com" + href
 		}
-		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_([a-z0-9]+)/$`).MatchString(e.Request.URL.String()) {
+		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_([a-zA-Z0-9]{32})/$`).MatchString(href) {
 			href = href + "?dict=" + strconv.FormatInt(id, 10)
 		}
 		_ = e.Request.Visit(href)
