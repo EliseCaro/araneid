@@ -246,7 +246,7 @@ func (service *DefaultDictionariesService) PageListItems(length, draw, page int,
 	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "name", "initial", "source", "status", "update_time")
 	for _, v := range lists {
-		v[4] = service.int2HtmlStatus(v[4], v[0], beego.URLFor("Dictionaries.Push"))
+		v[4] = service.Int2HtmlStatus(v[4], v[0], beego.URLFor("Dictionaries.Push"))
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -271,7 +271,7 @@ func (service *DefaultDictionariesService) TableColumnsType() map[string][]strin
 func (service *DefaultDictionariesService) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
 		{
-			Text:      "查看结果",
+			Text:      "查看",
 			ClassName: "btn btn-sm btn-alt-primary open_iframe",
 			Attribute: map[string]string{
 				"href":      beego.URLFor("Dictionaries.Detail", ":id", "__ID__", ":popup", 1),
@@ -279,7 +279,7 @@ func (service *DefaultDictionariesService) TableButtonsType() []*table.TableButt
 			},
 		},
 		{
-			Text:      "删除结果",
+			Text:      "删除",
 			ClassName: "btn btn-sm btn-alt-danger ids_delete",
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Dictionaries.Delete"),
@@ -287,10 +287,10 @@ func (service *DefaultDictionariesService) TableButtonsType() []*table.TableButt
 			},
 		},
 		{
-			Text:      "子文章",
+			Text:      "列表",
 			ClassName: "btn btn-sm btn-alt-success jump_urls",
 			Attribute: map[string]string{
-				"data-action": beego.URLFor("Dictionaries.Result", ":id", "__ID__"),
+				"data-action": beego.URLFor("Lexicon.Index", ":id", "__ID__"),
 			},
 		},
 	}
@@ -407,9 +407,21 @@ func (service *DefaultDictionariesService) oneResultLink(url string) dictionarie
 }
 
 /** 将状态码转为html **/
-func (service *DefaultDictionariesService) int2HtmlStatus(val interface{}, id interface{}, url string) string {
+func (service *DefaultDictionariesService) Int2HtmlStatus(val interface{}, id interface{}, url string) string {
 	t := table.BuilderTable{}
 	return t.AnalysisTypeSwitch(map[string]interface{}{"status": val, "id": id}, "status", url, map[int64]string{-1: "已失败", 0: "待发布", 1: "已发布"})
+}
+
+/**  转为pop提示 **/
+func (service *DefaultDictionariesService) Substr2HtmlSpan(s string, start, end int) string {
+	html := fmt.Sprintf(`<span class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</span>`, s, beego.Substr(s, start, end))
+	return html
+}
+
+/**  转为pop提示 **/
+func (service *DefaultDictionariesService) Substr2HtmlHref(s string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, s, s, beego.Substr(s, start, end))
+	return html
 }
 
 /** 获取一条可以发布的数据;从ID升序发布 **/

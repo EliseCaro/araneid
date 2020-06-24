@@ -33,6 +33,7 @@ func init() {
 			&admin.Inform{},
 			&admin.Collector{},
 			&admin.Dictionaries{},
+			&admin.Lexicon{},
 		)),
 	)
 }

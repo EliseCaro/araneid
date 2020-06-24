@@ -43,7 +43,7 @@ func (service *DefaultCollectorService) DataTableColumns() []map[string]interfac
 	maps = append(maps, map[string]interface{}{"title": "采集地址", "name": "source", "className": "text-center data_table_btn_style", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "发布状态", "name": "status", "className": "text-center data_table_btn_style", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "爬虫操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "结果操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
 	return maps
 }
 

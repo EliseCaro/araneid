@@ -108,8 +108,7 @@ func (c *Dictionaries) Status() {
 func (c *Dictionaries) Push() {
 	array := c.checkBoxIds(":ids[]", ":ids")
 	for _, v := range array {
-		one := c.dictionariesService.One(v)
-		c.dictionariesService.PushDetailAPI(one)
+		c.dictionariesService.PushDetailAPI(c.dictionariesService.One(v))
 	}
 	c.Succeed(&controllers.ResultJson{Message: "提交发布成功！马上返回中。。。", Url: beego.URLFor("Dictionaries.Index")})
 }
