@@ -454,7 +454,7 @@ func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElem
 
 /** 创建一条数据库记录 **/
 func (service *DefaultDictionariesService) createOneResultDict(res map[string]string, source string, pid int) (int64, error) {
-	translate := service.translate(res)
+	translate := service.Translate(res)
 	item := &dictionaries.DictCate{
 		Title:       translate["title"],
 		Name:        translate["name"],
@@ -468,7 +468,7 @@ func (service *DefaultDictionariesService) createOneResultDict(res map[string]st
 }
 
 /** 语言转换 **/
-func (service *DefaultDictionariesService) translate(res map[string]string) map[string]string {
+func (service *DefaultDictionariesService) Translate(res map[string]string) map[string]string {
 	config := service.ConfigMaps()
 	translate, _ := strconv.Atoi(config["translate"].(string))
 	for k, v := range res {
@@ -479,7 +479,7 @@ func (service *DefaultDictionariesService) translate(res map[string]string) map[
 				res[k] = ccst.T2S(v)
 			}
 		}
-		res[k] = service.deleteExtraSpace(service.eliminateTrim(res[k], []string{"\n"}))
+		res[k] = service.deleteScriptSpace(service.deleteExtraSpace(service.eliminateTrim(res[k], []string{"\n"})))
 	}
 	return res
 }
@@ -490,6 +490,12 @@ func (service *DefaultDictionariesService) eliminateTrim(str string, symbol []st
 		str = strings.Replace(str, v, "", -1)
 	}
 	return str
+}
+
+/** 过滤SCRIPT **/
+func (service *DefaultDictionariesService) deleteScriptSpace(src string) string {
+	re, _ := regexp.Compile("\\<script[\\S\\s]+?\\</script\\>")
+	return re.ReplaceAllString(src, "")
 }
 
 /** 去除连续两个以上的空格 **/
