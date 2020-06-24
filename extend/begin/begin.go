@@ -43,7 +43,7 @@ func databasesBegin() {
 		prefix,
 		new(users.Users), new(roles.Roles), new(menus.Menus), new(attachment.Attachment),
 		new(collect.Collect), new(collect.Result), new(config.Config), new(inform.Inform),
-		new(inform.Context), new(dictionaries.DictConfig), new(dictionaries.DictCate),
+		new(inform.Context), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
 	)
 	_ = orm.RunSyncdb("default", false, true)
 }

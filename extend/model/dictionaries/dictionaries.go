@@ -20,7 +20,7 @@ func (m *DictConfig) TableName() string {
 
 /*************** 爬虫分类结果 **/
 
-type DictCate struct {
+type Dictionaries struct {
 	Id          int       `orm:"pk;auto;column(id);type(int);default(0);description(主键,自增)" json:"id" form:"id"`
 	Pid         int       `orm:"index;column(pid);type(int);default(0);description(上级ID)"  json:"pid" form:"pid"`
 	Logs        string    `orm:"column(logs);size(150);type(char);default();description(发布日志)" json:"logs" form:"logs"`
@@ -37,11 +37,11 @@ type DictCate struct {
 }
 
 /** 设置引擎 **/
-func (m *DictCate) TableEngine() string {
+func (m *Dictionaries) TableEngine() string {
 	return "INNODB"
 }
 
 /** 设置表名 **/
-func (m *DictCate) TableName() string {
-	return "dictionaries_cate"
+func (m *Dictionaries) TableName() string {
+	return "dictionaries"
 }

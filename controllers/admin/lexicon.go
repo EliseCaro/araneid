@@ -103,7 +103,7 @@ func (c *Lexicon) dataTableButtons(id int) []*_func.TableButtons {
 /** 处理分页 **/
 func (c *Lexicon) pageListItems(length, draw, page int, search string, id int) map[string]interface{} {
 	var lists []orm.ParamsList
-	qs := orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("pid", id)
+	qs := orm.NewOrm().QueryTable(new(dictionaries.Dictionaries)).Filter("pid", id)
 	recordsTotal, _ := qs.Count()
 	if search != "" {
 		qs = qs.Filter("title__icontains", search)

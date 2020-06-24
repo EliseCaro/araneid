@@ -45,9 +45,9 @@ func (service *DefaultDictionariesService) ConfigByName(name string) dictionarie
 }
 
 /** 获取一条分类数据 **/
-func (service *DefaultDictionariesService) One(id int) dictionaries.DictCate {
-	var item dictionaries.DictCate
-	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("id", id).One(&item)
+func (service *DefaultDictionariesService) One(id int) dictionaries.Dictionaries {
+	var item dictionaries.Dictionaries
+	_ = orm.NewOrm().QueryTable(new(dictionaries.Dictionaries)).Filter("id", id).One(&item)
 	return item
 }
 
@@ -74,7 +74,7 @@ func (service *DefaultDictionariesService) DetailOne(id int) map[string]string {
 func (service *DefaultDictionariesService) DeleteArray(array []int) (message error) {
 	_ = orm.NewOrm().Begin()
 	for _, v := range array {
-		if _, message = orm.NewOrm().Delete(&dictionaries.DictCate{Id: v}); message != nil {
+		if _, message = orm.NewOrm().Delete(&dictionaries.Dictionaries{Id: v}); message != nil {
 			_ = orm.NewOrm().Rollback()
 			break
 		}
@@ -190,7 +190,7 @@ func (service *DefaultDictionariesService) StopPush(uid int, message string) {
 }
 
 /** 发布一条分类数据;返回格式：{status:[false|true],message:[message]} **/
-func (service *DefaultDictionariesService) PushDetailAPI(item dictionaries.DictCate) {
+func (service *DefaultDictionariesService) PushDetailAPI(item dictionaries.Dictionaries) {
 	config := service.ConfigMaps()
 	detail := service.DetailOne(item.Id)
 	if resp, err := http.PostForm(config["send_domain"].(string), url.Values{
@@ -239,7 +239,7 @@ func (service *DefaultDictionariesService) DataTableColumns() []map[string]inter
 /*** 获取分页数据 **/
 func (service *DefaultDictionariesService) PageListItems(length, draw, page int, search string) map[string]interface{} {
 	var lists []orm.ParamsList
-	qs := orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("pid", 0)
+	qs := orm.NewOrm().QueryTable(new(dictionaries.Dictionaries)).Filter("pid", 0)
 	if search != "" {
 		qs = qs.Filter("initial__icontains", search)
 	}
@@ -384,7 +384,7 @@ func (service *DefaultDictionariesService) createLogsInformStatusPush(status str
 }
 
 /** 创建一条分类结果数据 */
-func (service *DefaultDictionariesService) createOneResult(item *dictionaries.DictCate) (id int64, err error) {
+func (service *DefaultDictionariesService) createOneResult(item *dictionaries.Dictionaries) (id int64, err error) {
 	verify := DefaultBaseVerify{}
 	if message := verify.Begin().Struct(item); message != nil {
 		return 0, errors.New(verify.Translate(message.(validator.ValidationErrors)))
@@ -400,9 +400,9 @@ func (service *DefaultDictionariesService) createOneResult(item *dictionaries.Di
 }
 
 /** 根据链接获取一条结果数据 **/
-func (service *DefaultDictionariesService) oneResultLink(url string) dictionaries.DictCate {
-	var item dictionaries.DictCate
-	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("source", url).One(&item)
+func (service *DefaultDictionariesService) oneResultLink(url string) dictionaries.Dictionaries {
+	var item dictionaries.Dictionaries
+	_ = orm.NewOrm().QueryTable(new(dictionaries.Dictionaries)).Filter("source", url).One(&item)
 	return item
 }
 
@@ -425,15 +425,15 @@ func (service *DefaultDictionariesService) Substr2HtmlHref(s string, start, end 
 }
 
 /** 获取一条可以发布的数据;从ID升序发布 **/
-func (service *DefaultDictionariesService) pushDetail() dictionaries.DictCate {
-	var item dictionaries.DictCate
-	_ = orm.NewOrm().QueryTable(new(dictionaries.DictCate)).Filter("status", 0).OrderBy("pid").One(&item)
+func (service *DefaultDictionariesService) pushDetail() dictionaries.Dictionaries {
+	var item dictionaries.Dictionaries
+	_ = orm.NewOrm().QueryTable(new(dictionaries.Dictionaries)).Filter("status", 0).OrderBy("pid").One(&item)
 	return item
 }
 
 /**  更新分类发布结果 **/
 func (service *DefaultDictionariesService) pushDetailAPIResult(id int, status int8, message error) {
-	if _, err := orm.NewOrm().Update(&dictionaries.DictCate{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
+	if _, err := orm.NewOrm().Update(&dictionaries.Dictionaries{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
 		logs.Warn("更新发布结果失败；失败原因：%s", error.Error(err))
 	}
 }
@@ -455,7 +455,7 @@ func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElem
 /** 创建一条数据库记录 **/
 func (service *DefaultDictionariesService) createOneResultDict(res map[string]string, source string, pid int) (int64, error) {
 	translate := service.Translate(res)
-	item := &dictionaries.DictCate{
+	item := &dictionaries.Dictionaries{
 		Title:       translate["title"],
 		Name:        translate["name"],
 		Initial:     translate["initial"],
