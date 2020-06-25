@@ -27,6 +27,9 @@ type Main struct {
 	configService       service.DefaultConfigService
 	informService       service.DefaultInformService
 	dictionariesService service.DefaultDictionariesService
+	modelsService       service.DefaultModelsService
+	disguiseService     service.DefaultDisguiseService
+	templateService     service.DefaultTemplateService
 }
 
 /** 准备下一级构造函数 **/

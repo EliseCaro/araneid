@@ -1,14 +1,41 @@
 <div class="block block-themed">
     <div class="block-header">
-        <h3 class="block-title">查字词典 - 爬虫配置</h3>
+        <h3 class="block-title">创建模型</h3>
     </div>
     <div class="block-content">
-        <form action="{{urlfor "Dictionaries.Config"}}" class="ajax_from" method="post">
+        <form action="{{urlfor "Models.Create"}}" class="ajax_from" method="post">
+
+            <div class="form-group row font-size-sm">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">模型名称</label>
+                <div class="col-sm-4 mr-1">
+                    <input class="form-control form-control-alt font-size-sm" id="name" value="" type="text" name="name" placeholder="模型名称"/>
+                    <div class="help-block pt-2 pb-2 font-size-minimum">用于模型标识,中英文；<code>必填；</code></div>
+                </div>
+                <label class="col-form-label font-weight-normal" for="collect">内容爬虫</label>
+                <div class="col-sm-5">
+                    <select class="form-control form-control-alt font-size-sm" name="collect" id="collect">
+                        {{range $i, $item := .collect}}
+                            <option value="{{$item.Id}}">{{$item.Name}}</option>
+                        {{end}}
+                    </select>
+                    <div class="help-block pt-2 pb-2 font-size-minimum">数据模型的内容爬虫；<code>必选；</code></div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
             <div class="form-group row font-size-sm">
                 <label class="col-form-label font-weight-normal pr-0 pl-2" for="interval">最大并发</label>
                 <div class="col-sm-4 mr-5">
                     <div class="input-group">
-                        <input class="form-control" type="number" id="interval" value="{{$.config.interval}}" name="interval" placeholder="请输入最大并发次数">
+                        <input class="form-control" type="number" id="interval" value="" name="interval" placeholder="请输入最大并发次数">
                         <div class="input-group-append"><span class="input-group-text font-size-sm">次</span></div>
                     </div>
                     <div class="help-block pt-1 pb-1 font-size-minimum">控制抓取频率；<code>减少采集源压力</code></div>
@@ -16,7 +43,7 @@
                 <label class="col-form-label font-weight-normal" for="push_time">发布间隔</label>
                 <div class="col-sm-4">
                     <div class="input-group">
-                        <input class="form-control" type="number" id="push_time" value="{{$.config.push_time}}" name="push_time" placeholder="请输入发布间隔时间">
+                        <input class="form-control" type="number" id="push_time" value="" name="push_time" placeholder="请输入发布间隔时间">
                         <div class="input-group-append"><span class="input-group-text font-size-sm">H</span></div>
                     </div>
                     <div class="help-block pt-1 pb-1 font-size-minimum">隔多久发布单条数据；<code>提高质量</code></div>
@@ -26,15 +53,15 @@
                 <label class="col-form-label font-weight-normal">语言转换</label>
                 <div class="col-sm-10">
                     <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
-                        <input type="radio" class="custom-control-input" id="translate_0" name="translate" value="0" {{if eq "0" $.config.translate}} checked {{end}}>
+                        <input type="radio" class="custom-control-input" id="translate_0" name="translate" value="0" >
                         <label class="custom-control-label" for="translate_0">禁止转换</label>
                     </div>
                     <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
-                        <input type="radio" class="custom-control-input" id="translate_1" name="translate" value="1" {{if eq "1" $.config.translate}} checked {{end}}>
+                        <input type="radio" class="custom-control-input" id="translate_1" name="translate" value="1">
                         <label class="custom-control-label" for="translate_1">简转繁体</label>
                     </div>
                     <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
-                        <input type="radio" class="custom-control-input" id="translate_2" name="translate" value="2" {{if eq "2" $.config.translate}} checked {{end}}>
+                        <input type="radio" class="custom-control-input" id="translate_2" name="translate" value="2">
                         <label class="custom-control-label" for="translate_2">繁转简体</label>
                     </div>
                     <div class="help-block pt-2 pb-2 font-size-minimum">启用语言转换；<code>将语言转换到结果语言；转换结果不可逆转；</code></div>
@@ -43,7 +70,7 @@
             <div class="form-group row font-size-sm">
                 <label class="col-form-label font-weight-normal" for="send_domain">推送接口</label>
                 <div class="col-sm-10">
-                    <input class="form-control font-size-sm" id="send_domain" value="{{$.config.send_domain}}" type="text" name="send_domain" placeholder="推送接口地址"/>
+                    <input class="form-control font-size-sm" id="send_domain" value="" type="text" name="send_domain" placeholder="推送接口地址"/>
                     <div class="help-block pt-2 pb-2 font-size-minimum">采集结果在推送时应该往那个地址进行推送；<code>请正确填写并返回正确格式；</code></div>
                 </div>
             </div>

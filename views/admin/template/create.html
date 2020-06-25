@@ -1,0 +1,26 @@
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">创建模板分组</h3>
+    </div>
+    <div class="block-content pr-0 overflow-hidden">
+        <form action="{{urlfor "Template.Create"}}" class="ajax_from" method="post">
+            <div class="form-group font-size-sm row mb-2">
+                <label class="col-form-label font-weight-normal" for="name">分组名称</label>
+                <div class="col-sm-10">
+                    <input class="form-control form-control-alt font-size-sm" id="name" type="text" name="name" placeholder="分组名称"/>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写中英文名称；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group font-size-sm row mb-2">
+                <label class="col-form-label font-weight-normal" for="remark">分组备注</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-alt font-size-sm" id="remark" name="remark" rows="3" placeholder="请输入分组备注..."></textarea>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写中英文备注；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
+                <button type="submit" class="btn btn-sm btn-primary">提交保存</button>
+            </div>
+        </form>
+    </div>
+</div>

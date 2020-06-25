@@ -1,0 +1,53 @@
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <div class="content p-3">
+        <!-- Block Tabs Animated Slide Right -->
+        <div class="block">
+            <ul class="nav nav-tabs nav-tabs-block" data-toggle="tabs" role="tablist">
+                {{range $i, $e := .class}}
+                    <li class="nav-item">
+                        <a class="nav-link  {{if eq 0 $i }}active{{end}}" href="#tab_{{$i}}">
+                            {{$e.Name}}&nbsp;
+                            <i class="si si-settings open_iframe js-tooltip" data-area="576px,310px" href="{{urlfor "Template.Edit" ":id" $e.Id ":popup" 1}}" data-original-title="编辑分组"></i>&nbsp;
+                            <i class="fa fa-times-circle ids_delete js-tooltip" data-action="{{urlfor "Template.Delete"}}" data-ids="{{$e.Id}}" data-original-title="删除分组"></i>
+                        </a>
+                    </li>
+                {{end}}
+                <li class="nav-item ml-auto">
+                    <a class="nav-link font-size-lg p-1 pr-3 pl-3 open_iframe" data-area="576px,310px" href="{{urlfor "Template.Create" ":popup" 1}}" style="line-height: 37px;">
+                        <i class="fa fa-plus-circle js-tooltip" data-placement="left" data-original-title="添加分组"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="block-content tab-content overflow-hidden">
+                {{range $i, $e := .class}}
+                    <div class="tab-pane fade fade-right  {{if eq 0 $i }}show active{{end}}" id="tab_{{$i}}" role="tabpanel">
+                        <div class="row row-deck js-gallery push">
+                            {{range $index, $item := $e.Child}}
+                               <div class="col-xl-2 animated fadeIn">
+                                <div class="block">
+                                    <div class="options-container fx-item-rotate-r">
+                                        <img class="img-fluid options-item" src="data:image/png;base64,{{$item.Cover}}" alt="{{$item.Title}}">
+                                        <div class="options-overlay bg-black-75">
+                                            <div class="options-overlay-content">
+                                                <a class="btn btn-sm btn-alt-primary img-lightbox" href="data:image/png;base64,{{$item.Cover}}">
+                                                    <i class="fa fa-search-plus mr-1"></i> 预览
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="block-content block-header-default pl-3 pr-3 pb-2 pt-2">
+                                        <div class="text-success float-right font-size-sm">{{$item.Name}}</div>
+                                        <span class="font-size-sm">{{$item.Title}}</span>
+                                    </div>
+                                </div>
+                               </div>
+                            {{end}}
+                        </div>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+        <!-- END Block Tabs Animated Slide Right -->
+    </div>
+</main>

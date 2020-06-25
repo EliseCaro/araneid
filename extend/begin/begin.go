@@ -13,6 +13,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/inform"
 	"github.com/beatrice950201/araneid/extend/model/menus"
 	"github.com/beatrice950201/araneid/extend/model/roles"
+	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/beatrice950201/araneid/extend/model/users"
 	"github.com/beatrice950201/araneid/extend/service"
 	_ "github.com/go-sql-driver/mysql"
@@ -44,6 +45,7 @@ func databasesBegin() {
 		new(users.Users), new(roles.Roles), new(menus.Menus), new(attachment.Attachment),
 		new(collect.Collect), new(collect.Result), new(config.Config), new(inform.Inform),
 		new(inform.Context), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
+		new(spider.Disguise), new(spider.Template),
 	)
 	_ = orm.RunSyncdb("default", false, true)
 }

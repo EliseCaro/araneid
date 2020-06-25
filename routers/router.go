@@ -35,6 +35,8 @@ func init() {
 			&admin.Dictionaries{},
 			&admin.Lexicon{},
 			&admin.Models{},
+			&admin.Disguise{},
+			&admin.Template{},
 		)),
 	)
 }
