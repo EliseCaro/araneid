@@ -22,18 +22,11 @@ func init() {
 	// 后台
 	beego.AddNamespace(
 		beego.NewNamespace("/admin", beego.NSInclude(
-			&admin.Admin{},
-			&admin.Sign{},
-			&admin.Menu{},
-			&admin.Roles{},
-			&admin.Users{},
-			&admin.Attachment{},
-			&admin.Collect{},
-			&admin.Config{},
-			&admin.Inform{},
-			&admin.Collector{},
-			&admin.Dictionaries{},
-			&admin.Lexicon{},
+			&admin.Admin{}, &admin.Sign{}, &admin.Menu{},
+			&admin.Roles{}, &admin.Users{}, &admin.Attachment{},
+			&admin.Config{}, &admin.Inform{},
+			&admin.Collect{}, &admin.Collector{},
+			&admin.Dictionaries{}, &admin.Lexicon{},
 			&admin.Models{},
 			&admin.Disguise{},
 			&admin.Template{},
