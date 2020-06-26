@@ -46,6 +46,7 @@ func databasesBegin() {
 		new(collect.Collect), new(collect.Result), new(config.Config), new(inform.Inform),
 		new(inform.Context), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
 		new(spider.Disguise), new(spider.Template), new(spider.Models), new(spider.Class),
+		new(spider.Article),
 	)
 	_ = orm.RunSyncdb("default", false, true)
 }

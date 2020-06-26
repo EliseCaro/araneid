@@ -30,6 +30,7 @@ type Main struct {
 	modelsService       service.DefaultModelsService
 	disguiseService     service.DefaultDisguiseService
 	templateService     service.DefaultTemplateService
+	articleService      service.DefaultArticleService
 }
 
 /** 准备下一级构造函数 **/

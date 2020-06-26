@@ -1,0 +1,20 @@
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <div class="content p-3">
+        <!-- Full Table -->
+        <div class="block block-themed">
+            <div class="block-header border-bottom">
+                <h3 class="block-title font-weight-normal">内容中心 -  文档库</h3>
+                <div class="block-options">
+                    <button type="button" class="btn-block-option font-size-sm" data-toggle="block-option" data-action="fullscreen_toggle"></button>
+                </div>
+            </div>
+            <div class="block-content pt-2">
+                <div class="table-responsive pb-2 font-size-sm table-responsive-custom">
+                    <table class="js-table-checkable table table-bordered table-striped table-vcenter js-dataTable_init" data-action="{{$.action}}"></table>
+                </div>
+            </div>
+        </div>
+        <!-- END Full Table -->
+    </div>
+</main>

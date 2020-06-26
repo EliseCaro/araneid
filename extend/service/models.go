@@ -154,7 +154,7 @@ func (service *DefaultModelsService) TableButtonsType() []*table.TableButtons {
 			Text:      "内容库",
 			ClassName: "btn btn-sm btn-alt-success jump_urls",
 			Attribute: map[string]string{
-				"data-action": beego.URLFor("Collector.Index", ":id", "__ID__"),
+				"data-action": beego.URLFor("Article.Index", ":model", "__ID__"),
 			},
 		},
 		{

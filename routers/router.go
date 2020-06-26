@@ -31,6 +31,7 @@ func init() {
 			&admin.Disguise{},
 			&admin.Template{},
 			&admin.Class{},
+			&admin.Article{},
 		)),
 	)
 }
