@@ -30,6 +30,7 @@ func init() {
 			&admin.Models{},
 			&admin.Disguise{},
 			&admin.Template{},
+			&admin.Class{},
 		)),
 	)
 }
