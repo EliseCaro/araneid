@@ -134,12 +134,12 @@ func (c *Attachment) localUpload(fileKey, uploadMimeType string) attachment.Atta
 	if one := c.adjunctService.FindMd5(fileSha1); one.Id > 0 {
 		return one
 	}
-	pathString, err := c.adjunctService.DateFolder(beego.AppConfig.String("upload_folder") + "/image/")
+	pathString, err := c.adjunctService.DateFolder(beego.AppConfig.String("upload_folder") + "/" + fileKey + "/")
 	if err != nil {
 		c.Fail(&controllers.ResultJson{Message: "创建文件夹失败～"})
 	}
 	filePath := pathString + "/" + fileSha1 + extend
-	if c.SaveToFile(c.imageName, filePath) != nil {
+	if c.SaveToFile(fileKey, filePath) != nil {
 		c.Fail(&controllers.ResultJson{Message: "创建文件失败～"})
 	}
 	id, err := c.adjunctService.CreateFileLogs(&attachment.Attachment{
@@ -151,7 +151,7 @@ func (c *Attachment) localUpload(fileKey, uploadMimeType string) attachment.Atta
 		Path: filePath,
 	})
 	if err != nil {
-		c.Fail(&controllers.ResultJson{Message: "创建文件记录失败～"})
+		c.Fail(&controllers.ResultJson{Message: "创建文件记录失败;失败原因：" + error.Error(err)})
 	}
 	return c.adjunctService.FindId(*(*int)(unsafe.Pointer(&id)))
 }

@@ -2,12 +2,14 @@ package admin
 
 import (
 	"errors"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/go-playground/validator"
+	"strconv"
 )
 
 /** 蜘蛛池资源栏目库管理 **/
@@ -39,9 +41,26 @@ func (c *Class) Index() {
 func (c *Class) Import() {
 	model, _ := c.GetInt(":model", 0)
 	if c.IsAjax() {
-
+		file := c.GetMustInt("files", "请上传正确格式的xlsx文件！")
+		path := c.adjunctService.FindId(file).Path
+		if f, err := excelize.OpenFile("." + path); err == nil {
+			rows, _ := f.GetRows("Sheet1")
+			var items []*spider.Class
+			for _, row := range rows {
+				if len(row) >= 4 {
+					model, _ := strconv.Atoi(row[0])
+					items = append(items, &spider.Class{Model: model, Title: row[1], Keywords: row[2], Description: row[3]})
+				}
+			}
+			if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
+				c.Succeed(&controllers.ResultJson{Message: "批量导入栏目共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Class.Index", ":model", model)})
+			} else {
+				c.Fail(&controllers.ResultJson{Message: "批量导入栏目失败；失败原因:" + error.Error(err)})
+			}
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "打开文件失败；失败原因:" + error.Error(err)})
+		}
 	}
-
 	c.Data["model"] = model
 }
 

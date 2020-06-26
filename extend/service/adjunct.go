@@ -82,7 +82,7 @@ func (service *DefaultAdjunctService) IsAllowExt(ext, extString string) (bool, e
 		AllowExtMap[v] = true
 	}
 	if _, ok := AllowExtMap[ext]; !ok {
-		return false, errors.New("不允许上传该类型的图片！")
+		return false, errors.New("不允许上传该类型的文件！")
 	} else {
 		return true, nil
 	}

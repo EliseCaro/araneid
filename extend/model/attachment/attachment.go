@@ -7,7 +7,7 @@ type Attachment struct {
 	Name       string    `orm:"column(name);size(50);type(char);default();description(附件名称)" json:"name" form:"name"`
 	Path       string    `orm:"column(path);size(150);type(char);default();description(附件路径)" json:"path" form:"path"`
 	Thumb      string    `orm:"column(thumb);size(150);type(char);default();description(附件缩略)" json:"thumb" form:"thumb"`
-	Mime       string    `orm:"column(mime);size(64);type(char);default();description(附件类型)" json:"mime" form:"mime"`
+	Mime       string    `orm:"column(mime);size(200);type(char);default();description(附件类型)" json:"mime" form:"mime"`
 	Ext        string    `orm:"column(ext);size(4);type(char);default();description(附件后缀名)" json:"ext" form:"ext"`
 	Size       int64     `orm:"column(size);type(int);default(0);description(附件大小)" json:"size" form:"size"`
 	Usage      int       `orm:"column(usage);type(int);default(0);description(使用数量)" json:"usage" form:"usage"`
