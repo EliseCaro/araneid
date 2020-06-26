@@ -190,7 +190,7 @@ func (c *Class) dataTableButtons(id int) []*_func.TableButtons {
 			ClassName: "btn btn-sm btn-alt-primary mt-1 open_iframe",
 			Attribute: map[string]string{
 				"href":      beego.URLFor("Class.Import", ":model", id, ":popup", 1),
-				"data-area": "320px,277px",
+				"data-area": "320px,227px",
 			},
 		})
 	}
