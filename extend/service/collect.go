@@ -111,7 +111,7 @@ func (service *DefaultCollectService) DeleteArray(array []int) (e error) {
 /** 根据采集源跟匹配规则提取全部URL **/
 func (service *DefaultCollectService) ExtractUrls(role string, source []string) []map[string]string {
 	var result []map[string]string
-	collector := service.collectInstance(5, 2, "")
+	collector := service.collectInstance(5, 2, "", false)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		matchText := service.eliminateTrim(e.Text, []string{" ", "\n"})
 		if service.checkSourceRule(role, e.Attr("href")) && matchText != "" && service.inMapHref(e.Attr("href"), result) == false {
@@ -121,13 +121,12 @@ func (service *DefaultCollectService) ExtractUrls(role string, source []string) 
 	for _, v := range source {
 		_ = collector.Visit(v)
 	}
-	collector.Wait()
 	return result
 }
 
 /** 根据地址跟字段规则解析一条详情 **/
 func (service *DefaultCollectService) ExtractDocumentMatching(url string, matching []*collect.Matching) (map[string]string, error) {
-	collector := service.collectInstance(5, 1, "")
+	collector := service.collectInstance(5, 1, "", false)
 	result := make(map[string]string)
 	var message error
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
@@ -137,11 +136,11 @@ func (service *DefaultCollectService) ExtractDocumentMatching(url string, matchi
 				result[v.Field] = value
 			} else {
 				message = errors.New("字段匹配不齐全；已被强制过滤！")
+				break
 			}
 		}
 	})
 	_ = collector.Visit(url)
-	collector.Wait()
 	return result, message
 }
 
@@ -181,10 +180,10 @@ func (service *DefaultCollectService) checkSourceRule(rule, url string) bool {
 }
 
 /** 实例化采集器容器 todo 开启代理跟Redis储存 **/
-func (service *DefaultCollectService) collectInstance(interval, depth int, domain string) *colly.Collector {
+func (service *DefaultCollectService) collectInstance(interval, depth int, domain string, async bool) *colly.Collector {
 	collector := colly.NewCollector(
 		colly.Debugger(&debug.LogDebugger{Output: logs.GetLogger().Writer()}),
-		colly.Async(true),
+		colly.Async(async),
 		colly.UserAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"),
 		colly.MaxDepth(depth),
 	)
@@ -419,19 +418,38 @@ func (service *DefaultCollectService) download(url string) string {
 	return url
 }
 
-/** 处理一条url进入库 todo 因为采集数据过多，停用采集成功通知  **/
+/** 处理一条url进入库  **/
 func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, detail collect.DetailCollect) {
-	if result, message := service.ExtractDocumentMatching(url, detail.MatchingJson); message != nil {
-		service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
-	} else {
-		resultField := service.fieldHandle(result, detail)
-		message = service.createOneResult(result["meta_title"], url, detail.Id, resultField)
-		if message != nil {
-			service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
-		} else {
-			//service.createLogsInform(1, uid, detail.Id, detail.Name, result["meta_title"], url)
+	matching := detail.MatchingJson
+	matching = append(matching, &collect.Matching{
+		Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0,
+	})
+	collector := service.collectInstance(5, 1, "", false)
+	collector.OnHTML("html", func(e *colly.HTMLElement) {
+		result := make(map[string]string)
+		var message error
+		for _, v := range matching {
+			if value := service.extractMatchingField(v, e); value != "" {
+				result[v.Field] = value
+			} else {
+				message = errors.New("字段匹配不齐全；已被强制过滤！")
+				break
+			}
 		}
-	}
+		if message == nil {
+			resultField := service.fieldHandle(result, detail)
+			message = service.createOneResult(result["meta_title"], url, detail.Id, resultField)
+			if message != nil {
+				service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
+			} else {
+				// todo 因为采集数据过多，停用采集成功通知
+				//service.createLogsInform(1, uid, detail.Id, detail.Name, result["meta_title"], url)
+			}
+		} else {
+			service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
+		}
+	})
+	_ = collector.Visit(url)
 }
 
 /** 获取采集器状态 todo 是否需要改为redis **/
@@ -454,7 +472,7 @@ func (service *DefaultCollectService) collectStatus(id int, status int8, uid int
 func (service *DefaultCollectService) collectStart(id, uid int) {
 	detail := service.FindOneDetail(id)
 	source := table.ParseAttrConfigArray(detail.Source)
-	collector := service.collectInstance(int(detail.Interval), 2, service.queueUrlDomain(source[0]))
+	collector := service.collectInstance(int(detail.Interval), 2, service.queueUrlDomain(source[0]), true)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		if service.checkSourceRule(detail.SourceRule, e.Attr("href")) {
 			_ = e.Request.Visit(e.Attr("href"))

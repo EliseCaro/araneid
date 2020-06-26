@@ -119,7 +119,7 @@ func (service *DefaultDictionariesService) Start(uid int) {
 		config      = service.ConfigMaps()
 		interval, _ = strconv.Atoi(config["interval"].(string))
 	)
-	collector := object.collectInstance(interval, 3, "www.chazidian.com")
+	collector := object.collectInstance(interval, 3, "www.chazidian.com", true)
 	collector.OnRequest(func(r *colly.Request) {
 		if status, _ := strconv.Atoi(service.ConfigMaps()["status"].(string)); status == 0 {
 			r.Abort()
