@@ -185,6 +185,27 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                         <div class="col-lg-3 mt-3">
+                                             <div class="row font-size-sm">
+                                                 <label class="col-sm-4 col-form-label font-weight-normal text-right pr-0" for="matching[{{$index}}][eliminate]">剔除词汇</label>
+                                                 <div class="col-sm-8">
+                                                     <input type="text" class="form-control form-control-alt font-size-sm" value="{{$item.Eliminate}}" id="matching[{{$index}}][eliminate]" data-name="eliminate" placeholder="请输入剔除词汇">
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-lg-3 mt-3">
+                                             <div class="row font-size-sm">
+                                                 <label class="col-sm-4 col-form-label font-weight-normal text-right pr-0" for="matching[{{$index}}][image]">剔除图片</label>
+                                                 <div class="col-sm-8">
+                                                     <select class="form-control form-control-alt font-size-sm" data-name="image" id="matching[{{$index}}][image]">
+                                                         <option {{if eq 0 $item.Image}} selected {{end}} value="0">不作处理</option>
+                                                         <option {{if eq 1 $item.Image}} selected {{end}} value="1">剔除标签</option>
+                                                     </select>
+                                                 </div>
+                                             </div>
+                                         </div>
+
                                         <div class="field_delete"><i class="si si-close"></i></div>
                                      </div>
                                  {{end}}

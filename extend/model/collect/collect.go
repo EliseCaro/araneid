@@ -37,6 +37,8 @@ type Matching struct {
 	AttrName   string `json:"attr_name" form:"attr_name"`
 	Selector   string `json:"selector" form:"selector" validate:"required" label:"选择对象"`
 	Filtration int    `json:"filtration" form:"filtration"`
+	Eliminate  string `json:"eliminate" form:"eliminate"`
+	Image      int    `json:"image" form:"image"`
 }
 
 /** 爬虫详细 **/

@@ -228,6 +228,24 @@ func (service *DefaultCollectService) eliminateTrim(str string, symbol []string)
 	return str
 }
 
+/** 过滤SCRIPT **/
+func (service *DefaultCollectService) deleteScriptSpace(src string) string {
+	re, _ := regexp.Compile("\\<script[\\S\\s]+?\\</script\\>")
+	return re.ReplaceAllString(src, "")
+}
+
+/** 过滤A标签 **/
+func (service *DefaultCollectService) deleteHrefSpace(src string) string {
+	re, _ := regexp.Compile("\\<a[\\S\\s]+?\\</a\\>")
+	return re.ReplaceAllString(src, "")
+}
+
+/** 过滤Image标签 **/
+func (service *DefaultCollectService) deleteImageSpace(src string) string {
+	re, _ := regexp.Compile("\\<img [\\S\\s]+?/\\>")
+	return re.ReplaceAllString(src, "")
+}
+
 /** 根据链接获取一条结果数据 **/
 func (service *DefaultCollectService) oneResultLink(url string) collect.Result {
 	var item collect.Result
@@ -249,6 +267,14 @@ func (service *DefaultCollectService) extractMatchingField(m *collect.Matching, 
 		stringHtml = service.eliminateTrim(stringHtml, []string{"\n"})
 		stringHtml = service.deleteExtraSpace(stringHtml)
 		stringHtml = strings.Trim(stringHtml, " ")
+		stringHtml = service.deleteScriptSpace(stringHtml)
+		stringHtml = service.deleteHrefSpace(stringHtml)
+		if m.Image == 1 { //  剔除Image
+			stringHtml = service.deleteImageSpace(stringHtml)
+		}
+	}
+	if m.Eliminate != "" { // 剔除规定字符
+		stringHtml = service.eliminateTrim(stringHtml, []string{m.Eliminate})
 	}
 	return stringHtml
 }
