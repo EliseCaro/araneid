@@ -42,7 +42,7 @@ func (service *DefaultTemplateService) DeleteArray(array []int) (message error) 
 	return message
 }
 
-/** 获取一条用户数据 **/
+/** 获取所有分组 **/
 func (service *DefaultTemplateService) Groups() []*spider.Template {
 	var items []*spider.Template
 	_, _ = orm.NewOrm().QueryTable(new(spider.Template)).All(&items)

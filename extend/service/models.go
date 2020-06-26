@@ -10,11 +10,37 @@ import (
 
 type DefaultModelsService struct{}
 
-/** 获取爬虫列表 **/
+/** 获取列表 **/
+func (service *DefaultModelsService) One(id int) spider.Models {
+	var item spider.Models
+	_ = orm.NewOrm().QueryTable(new(spider.Models)).Filter("id", id).One(&item)
+	return item
+}
+
+/** 获取列表 **/
 func (service *DefaultModelsService) CollectMapColumn() []*collect.Collect {
 	var item []*collect.Collect
 	_, _ = orm.NewOrm().QueryTable(new(collect.Collect)).All(&item)
 	return item
+}
+
+/** 批量删除结果 **/
+func (service *DefaultModelsService) DeleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		find := service.One(v)
+		if _, message = orm.NewOrm().Delete(&find); message != nil {
+			_ = orm.NewOrm().Rollback()
+			break
+		} else {
+			s := DefaultDisguiseService{}
+			_ = s.Dec(find.Disguise)
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
 }
 
 /************************************************表格渲染机制 ************************************************************/
@@ -62,10 +88,14 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 	if search != "" {
 		qs = qs.Filter("name__icontains", search)
 	}
-	_, _ = qs.Limit(length, length*(page-1)).OrderBy("status", "-id").ValuesList(&lists, "id", "name", "collect", "template", "masking", "update_time")
-	for _, v := range lists {
-		v[6] = 0
-		v[7] = 1
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "collect", "template", "disguise", "update_time")
+	for k, v := range lists {
+		v[2] = service.collectName(v[2].(int64))
+		v[3] = service.templateName(v[3].(int64))
+		v[4] = service.disguiseName(v[4].(int64))
+		v = append(v, "分类")
+		v = append(v, "内容")
+		lists[k] = v
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -76,11 +106,30 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 	return data
 }
 
+/** 获取爬虫名称 **/
+func (service *DefaultModelsService) collectName(id int64) string {
+	s := DefaultCollectService{}
+	return s.One(int(id)).Name
+}
+
+/** 获取模板分组名称 **/
+func (service *DefaultModelsService) templateName(id int64) string {
+	s := DefaultTemplateService{}
+	return s.One(int(id)).Name
+}
+
+/** 获取自然语言名称 **/
+func (service *DefaultModelsService) disguiseName(id int64) string {
+	s := DefaultDisguiseService{}
+	res, _ := s.Find(int(id))
+	return res.Name
+}
+
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
 		"columns":   {"string", "string", "string", "string", "string", "date", "string", "string"},
-		"fieldName": {"id", "name", "collect", "template", "masking", "update_time", "category", "document"},
+		"fieldName": {"id", "name", "collect", "template", "disguise", "update_time", "category", "document"},
 		"action":    {"", "", "", "", "", "", "", ""},
 	}
 	return result
@@ -90,7 +139,15 @@ func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 func (service *DefaultModelsService) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
 		{
-			Text:      "删除模型",
+			Text:      "编辑",
+			ClassName: "btn btn-sm btn-alt-primary open_iframe",
+			Attribute: map[string]string{
+				"href":      beego.URLFor("Models.Edit", ":id", "__ID__", ":popup", 1),
+				"data-area": "600px,400px",
+			},
+		},
+		{
+			Text:      "删除",
 			ClassName: "btn btn-sm btn-alt-danger ids_delete",
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Models.Delete"),

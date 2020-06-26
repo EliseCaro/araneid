@@ -1,13 +1,13 @@
 <div class="block block-themed">
     <div class="block-header">
-        <h3 class="block-title">创建模型</h3>
+        <h3 class="block-title">编辑模型</h3>
     </div>
     <div class="block-content">
-        <form action="{{urlfor "Models.Create"}}" class="ajax_from" method="post">
+        <form action="{{urlfor "Models.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
             <div class="form-group font-size-sm row">
                 <label class="col-form-label font-weight-normal" for="name">模型名称</label>
                 <div class="col-sm-10">
-                    <input class="form-control form-control-alt font-size-sm" id="name" type="text" name="name" placeholder="模型名称">
+                    <input class="form-control form-control-alt font-size-sm" id="name" type="text" value="{{$.info.Name}}" name="name" placeholder="模型名称">
                     <div class="help-block pt-1 pb-1 font-size-minimum">用于模型标识,中英文；<code>必填；</code></div>
                 </div>
             </div>
@@ -16,7 +16,7 @@
                 <div class="col-sm-10">
                     <select class="form-control form-control-alt font-size-sm" name="collect" id="collect">
                         {{range $i, $item := .collect}}
-                            <option value="{{$item.Id}}">{{$item.Name}}</option>
+                            <option {{if eq $item.Id $.info.Collect}} selected {{end}} value="{{$item.Id}}">{{$item.Name}}</option>
                         {{end}}
                     </select>
                     <div class="help-block pt-2 pb-2 font-size-minimum">数据模型的内容爬虫；<code>必选；</code></div>
@@ -27,7 +27,7 @@
                 <div class="col-sm-4 mr-1">
                     <select class="form-control form-control-alt font-size-sm" name="disguise" id="disguise">
                         {{range $i, $item := .disguise}}
-                            <option value="{{$item.Id}}">{{$item.Name}}</option>
+                            <option {{if eq $item.Id $.info.Disguise}} selected {{end}} value="{{$item.Id}}">{{$item.Name}}</option>
                         {{end}}
                     </select>
                     <div class="help-block pt-2 pb-2 font-size-minimum">自然语言处理模型；<code>必选；</code></div>
@@ -36,7 +36,7 @@
                 <div class="col-sm-5">
                     <select class="form-control form-control-alt font-size-sm" name="template" id="template">
                         {{range $i, $item := .theme}}
-                            <option value="{{$item.Id}}">{{$item.Name}}</option>
+                            <option {{if eq $item.Id $.info.Template}} selected {{end}} value="{{$item.Id}}">{{$item.Name}}</option>
                         {{end}}
                     </select>
                     <div class="help-block pt-2 pb-2 font-size-minimum">轮询模板分组；<code>必选；</code></div>

@@ -10,12 +10,19 @@ import (
 
 type DefaultDisguiseService struct{}
 
-/** 获取一条用户数据 **/
+/** 获取一条数据 **/
 func (service *DefaultDisguiseService) Find(id int) (spider.Disguise, error) {
 	item := spider.Disguise{
 		Id: id,
 	}
 	return item, orm.NewOrm().Read(&item)
+}
+
+/** 获取所有分组 **/
+func (service *DefaultDisguiseService) Groups() []*spider.Disguise {
+	var items []*spider.Disguise
+	_, _ = orm.NewOrm().QueryTable(new(spider.Disguise)).All(&items)
+	return items
 }
 
 /** 批量删除结果 **/
@@ -45,6 +52,25 @@ func (service *DefaultDisguiseService) UpdateStatus(id int, status int8, field s
 		_, e = orm.NewOrm().Update(&spider.Disguise{Id: id, Context: status}, "Context")
 	}
 	return e
+}
+
+/** 计数器++ **/
+func (service *DefaultDisguiseService) Inc(id, old int) (errorMsg error) {
+	if old != 0 {
+		errorMsg = service.Dec(old)
+	}
+	_, errorMsg = orm.NewOrm().QueryTable(new(spider.Disguise)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColAdd, 1),
+	})
+	return errorMsg
+}
+
+/** 计数器-- **/
+func (service *DefaultDisguiseService) Dec(id int) error {
+	_, errorMessage := orm.NewOrm().QueryTable(new(spider.Disguise)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColMinus, 1),
+	})
+	return errorMessage
 }
 
 /************************************************表格渲染机制 ************************************************************/
