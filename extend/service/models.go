@@ -54,9 +54,8 @@ func (service *DefaultModelsService) DataTableColumns() []map[string]interface{}
 	maps = append(maps, map[string]interface{}{"title": "挂载爬虫", "name": "collect", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "模版分组", "name": "template", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "伪原创", "name": "masking", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "分类数", "name": "category", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "内容数", "name": "document", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "栏目数", "name": "category", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "文档数", "name": "document", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
 	return maps
 }
@@ -88,12 +87,12 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 	if search != "" {
 		qs = qs.Filter("name__icontains", search)
 	}
-	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "collect", "template", "disguise", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "collect", "template", "disguise")
 	for k, v := range lists {
 		v[2] = service.collectName(v[2].(int64))
 		v[3] = service.templateName(v[3].(int64))
 		v[4] = service.disguiseName(v[4].(int64))
-		v = append(v, "分类")
+		v = append(v, service.classCount(v[0].(int64)))
 		v = append(v, "内容")
 		lists[k] = v
 	}
@@ -104,6 +103,12 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 		"data":            lists,        // 筛选结果
 	}
 	return data
+}
+
+/** 获取爬虫名称 **/
+func (service *DefaultModelsService) classCount(id int64) int64 {
+	count, _ := orm.NewOrm().QueryTable(new(spider.Class)).Filter("model", id).Count()
+	return count
 }
 
 /** 获取爬虫名称 **/
@@ -128,9 +133,9 @@ func (service *DefaultModelsService) disguiseName(id int64) string {
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
-		"columns":   {"string", "string", "string", "string", "string", "date", "string", "string"},
-		"fieldName": {"id", "name", "collect", "template", "disguise", "update_time", "category", "document"},
-		"action":    {"", "", "", "", "", "", "", ""},
+		"columns":   {"string", "string", "string", "string", "string", "string", "string"},
+		"fieldName": {"id", "name", "collect", "template", "disguise", "category", "document"},
+		"action":    {"", "", "", "", "", "", ""},
 	}
 	return result
 }
@@ -139,8 +144,22 @@ func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 func (service *DefaultModelsService) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
 		{
+			Text:      "栏目库",
+			ClassName: "btn btn-sm btn-alt-primary jump_urls",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Class.Index", ":model", "__ID__"),
+			},
+		},
+		{
+			Text:      "内容库",
+			ClassName: "btn btn-sm btn-alt-success jump_urls",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Collector.Index", ":id", "__ID__"),
+			},
+		},
+		{
 			Text:      "编辑",
-			ClassName: "btn btn-sm btn-alt-primary open_iframe",
+			ClassName: "btn btn-sm btn-alt-warning open_iframe",
 			Attribute: map[string]string{
 				"href":      beego.URLFor("Models.Edit", ":id", "__ID__", ":popup", 1),
 				"data-area": "600px,400px",

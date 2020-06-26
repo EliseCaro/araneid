@@ -1,0 +1,21 @@
+<script src="/static/admin/plugins/jquery_file_upload/jquery.uploadfile.min.js?v={{$.versions}}"></script>
+<style>
+    .ajax-file-upload-container{display: none}
+    .ajax-upload-dragdrop{width: 100% !important;}
+</style>
+<script>
+    $(document).ready(function() {
+        $('.upload_custom').uploadFile({
+            url:application.cms.uploadFileSingle,
+            uploadStr:'<div class="text-center py-4"><p><i class="fa fa-4x fa-cloud-upload-alt text-gray"></i></p><h4 class="mb-0 text-gray">选择本地文件</h4></div>',
+            dragDropStr:true, maxFileCount:1, showCancel:false,
+            showAbort:false, showDone:false, showDelete:true,
+            showStatusAfterSuccess:false, showError:false,
+            showFileSize:false, showPreview:false, fileName:"file",
+            onSuccess:function(files,data,xhr,pd){
+               console.log(files)
+               console.log(data)
+            },
+        });
+    })
+</script>

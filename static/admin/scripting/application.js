@@ -4,6 +4,7 @@ const application = {
         socketHost          :     'ws://' + window.location.host + '/admin/admin/socket',
         uploadImageMultiple :     "/admin/attachment/upload_images",
         uploadImageSingle   :     "/admin/attachment/upload_image",
+        uploadFileSingle    :     "/admin/attachment/upload_file",
         requestStatus:{
              errorTitle    : "失败提示",
              successTitle  : "成功提示",

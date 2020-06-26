@@ -100,6 +100,17 @@ func (c *Attachment) UploadImage() {
 	}
 }
 
+// @router /attachment/upload_file [post]
+func (c *Attachment) UploadFile() {
+	uploadDriver := beego.AppConfig.String("upload_driver")
+	uploadMimeType := beego.AppConfig.String("upload_files_mime")
+	if uploadDriver == "local" {
+		c.Succeed(&controllers.ResultJson{Data: c.localUpload(c.filesName, uploadMimeType)})
+	} else {
+		c.Succeed(&controllers.ResultJson{Data: c.cloudUpload(c.filesName, uploadMimeType)})
+	}
+}
+
 // todo 云端上传驱动未完成
 func (c *Attachment) cloudUpload(fileKey, uploadMimeType string) attachment.Attachment {
 	return attachment.Attachment{}

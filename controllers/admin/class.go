@@ -1,11 +1,13 @@
 package admin
 
 import (
+	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
+	"github.com/go-playground/validator"
 )
 
 /** 蜘蛛池资源栏目库管理 **/
@@ -33,8 +35,107 @@ func (c *Class) Index() {
 	c.Data["action"] = beego.URLFor("Class.Index", ":model", model)
 }
 
-/******************表格渲染  ***********************/
+// @router /class/import [get,post]
+func (c *Class) Import() {
+	model, _ := c.GetInt(":model", 0)
+	if c.IsAjax() {
 
+	}
+
+	c.Data["model"] = model
+}
+
+// @router /class/create [get,post]
+func (c *Class) Create() {
+	model, _ := c.GetInt(":model", 0)
+	if c.IsAjax() {
+		item := spider.Class{}
+		item.Model = model
+		if err := c.ParseForm(&item); err != nil {
+			c.Fail(&controllers.ResultJson{Message: "解析错误: " + error.Error(err)})
+		}
+		if message := c.verifyBase.Begin().Struct(item); message != nil {
+			c.Fail(&controllers.ResultJson{
+				Message: c.verifyBase.Translate(message.(validator.ValidationErrors)),
+			})
+		}
+		if _, err := orm.NewOrm().Insert(&item); err == nil {
+			c.Succeed(&controllers.ResultJson{Message: "创建栏目成功", Url: beego.URLFor("Class.Index", ":model", model)})
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "创建栏目失败，请稍后再试！"})
+		}
+	}
+	c.Data["model"] = model
+}
+
+// @router /class/edit [get,post]
+func (c *Class) Edit() {
+	id := c.GetMustInt(":id", "非法请求！")
+	if c.IsAjax() {
+		item := c.one(id)
+		if err := c.ParseForm(&item); err != nil {
+			c.Fail(&controllers.ResultJson{Message: "解析错误: " + error.Error(err)})
+		}
+		if message := c.verifyBase.Begin().Struct(item); message != nil {
+			c.Fail(&controllers.ResultJson{
+				Message: c.verifyBase.Translate(message.(validator.ValidationErrors)),
+			})
+		}
+		if _, err := orm.NewOrm().Update(&item); err == nil {
+			c.Succeed(&controllers.ResultJson{Message: "更新栏目成功", Url: beego.URLFor("Class.Index", ":model", item.Model)})
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "更新栏目失败，请稍后再试！"})
+		}
+	}
+	c.Data["info"] = c.one(id)
+}
+
+// @router /class/delete [post]
+func (c *Class) Delete() {
+	model, _ := c.GetInt(":model", 0)
+	array := c.checkBoxIds(":ids[]", ":ids")
+	if errorMessage := c.deleteArray(array); errorMessage != nil {
+		c.Fail(&controllers.ResultJson{
+			Message: error.Error(errorMessage),
+		})
+	} else {
+		c.Succeed(&controllers.ResultJson{
+			Message: "删除成功！马上返回中。。。",
+			Url:     beego.URLFor("Class.Index", ":model", model),
+		})
+	}
+}
+
+/**************以下为service层内容***********/
+
+/** 获取一条数据 **/
+func (c *Class) one(id int) spider.Class {
+	var item spider.Class
+	_ = orm.NewOrm().QueryTable(new(spider.Class)).Filter("id", id).One(&item)
+	return item
+}
+
+/** 批量删除结果 **/
+func (c *Class) deleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if c.one(v).Usage == 0 {
+			if _, message = orm.NewOrm().Delete(&spider.Class{Id: v}); message != nil {
+				_ = orm.NewOrm().Rollback()
+				break
+			}
+		} else {
+			message = errors.New("该栏目已被挂载，不允许删除使用中的栏目！")
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
+}
+
+/****************** 以下为表格渲染  ***********************/
 /** 获取需要渲染的Column **/
 func (c *Class) dataTableColumns() []map[string]interface{} {
 	var maps []map[string]interface{}
@@ -57,6 +158,22 @@ func (c *Class) dataTableButtons(id int) []*_func.TableButtons {
 			ClassName: "btn btn-sm btn-alt-success mt-1 jump_urls",
 			Attribute: map[string]string{"data-action": beego.URLFor("Models.Index")},
 		})
+		array = append(array, &_func.TableButtons{
+			Text:      "添加栏目",
+			ClassName: "btn btn-sm btn-alt- mt-1 btn-alt-warning open_iframe",
+			Attribute: map[string]string{
+				"href":      beego.URLFor("Class.Create", ":model", id, ":popup", 1),
+				"data-area": "580px,380px",
+			},
+		})
+		array = append(array, &_func.TableButtons{
+			Text:      "批量导入",
+			ClassName: "btn btn-sm btn-alt-primary mt-1 open_iframe",
+			Attribute: map[string]string{
+				"href":      beego.URLFor("Class.Import", ":model", id, ":popup", 1),
+				"data-area": "320px,277px",
+			},
+		})
 	}
 	array = append(array, &_func.TableButtons{
 		Text:      "删除选中",
@@ -78,6 +195,9 @@ func (c *Class) pageListItems(length, draw, page int, search string, id int) map
 	}
 	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "model", "usage", "title", "update_time")
+	for _, v := range lists {
+		v[1] = c.modelsService.One(int(v[1].(int64))).Name
+	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
 		"recordsFiltered": recordsTotal, // 从多少条里面筛选
@@ -100,6 +220,14 @@ func (c *Class) tableColumnsType() map[string][]string {
 /** 返回右侧按钮数据结构 **/
 func (c *Class) tableButtonsType(id int) []*_func.TableButtons {
 	buttons := []*_func.TableButtons{
+		{
+			Text:      "编辑栏目",
+			ClassName: "btn btn-sm btn-alt-warning open_iframe",
+			Attribute: map[string]string{
+				"href":      beego.URLFor("Class.Edit", ":id", "__ID__", ":popup", 1),
+				"data-area": "580px,380px",
+			},
+		},
 		{
 			Text:      "删除栏目",
 			ClassName: "btn btn-sm btn-alt-danger ids_delete",
