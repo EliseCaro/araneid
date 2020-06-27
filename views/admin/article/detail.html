@@ -1,0 +1,39 @@
+<main id="main-container">
+    <!-- Hero Content -->
+    <div class="bg-image" style="background-image: url('/static/admin/favicon/promo-code.png');">
+        <div class="bg-primary-dark-op">
+            <div class="content content-full overflow-hidden">
+                <div class="mt-2 text-center">
+                    <h3 class="text-white mb-2 invisible" data-toggle="appear" data-class="animated fadeInDown">{{$.info.Title}}</h3>
+                    <span class="font-w400 text-white-75 invisible" data-toggle="appear" data-class="animated fadeInDown">{{$.info.Description}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Hero Content -->
+    <!-- Page Content -->
+    <div class="bg-white">
+        <div class="content content-boxed">
+            <div class="text-center font-size-sm push">
+                <span class="d-inline-block py-2 px-4 bg-body-light rounded"><i class="far fa-calendar-check"></i> &nbsp;&nbsp;<em>{{date $.info.UpdateTime "Y-m-d H:i:s"}}</em></span>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-8">
+                    <!-- Story -->
+                    <article class="story">{{str2html $.info.Context}}</article>
+                    <!-- END Story -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Page Content -->
+    <!-- Get Started -->
+    <div class="bg-body-dark">
+        <div class="content content-full">
+            <div class="my-5 text-center p-0">
+                <a href="javascript:history.back()" class="btn btn-rounded btn-primary px-4 py-2 invisible" data-toggle="appear" data-class="animated bounceIn">返回文档库列表</a>
+            </div>
+        </div>
+    </div>
+    <!-- END Get Started -->
+</main>

@@ -31,3 +31,9 @@ func (c *Article) Index() {
 	c.TableColumnsRender(dataTableCore.ColumnsItemsMaps, dataTableCore.OrderItemsMaps, dataTableCore.ButtonsItemsMaps, _func.WebPageSize())
 	c.Data["action"] = beego.URLFor("Article.Index", ":model", model)
 }
+
+// @router /article/detail [get,post]
+func (c *Article) Detail() {
+	id := c.GetMustInt(":id", "非法请求！")
+	c.Data["info"] = c.articleService.One(id)
+}

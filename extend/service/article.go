@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_func "github.com/beatrice950201/araneid/extend/func"
@@ -16,6 +17,13 @@ func (service *DefaultArticleService) OneByObject(object int) spider.Article {
 	return maps
 }
 
+/** 获取一条数 **/
+func (service *DefaultArticleService) One(id int) spider.Article {
+	var maps spider.Article
+	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", id).One(&maps)
+	return maps
+}
+
 /****************** 以下为表格渲染  ***********************/
 
 /** 获取需要渲染的Column **/
@@ -24,6 +32,7 @@ func (service *DefaultArticleService) DataTableColumns() []map[string]interface{
 	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "结果标识", "name": "id", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "所属模型", "name": "model", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "所属分类", "name": "class", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "挂载次数", "name": "usage", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "栏目标题", "name": "title", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
@@ -60,10 +69,13 @@ func (service *DefaultArticleService) PageListItems(length, draw, page int, sear
 		qs = qs.Filter("title__icontains", search)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "model", "usage", "title", "update_time")
-	object := DefaultModelsService{}
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "model", "class", "usage", "title", "update_time")
+	module := DefaultModelsService{}
+	class := DefaultClassService{}
 	for _, v := range lists {
-		v[1] = object.One(int(v[1].(int64))).Name
+		v[1] = module.One(int(v[1].(int64))).Name
+		v[2] = class.One(int(v[2].(int64))).Title
+		v[4] = service.substr2HtmlHref(v[4].(string), 0, 25, int(v[0].(int64)))
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -77,9 +89,9 @@ func (service *DefaultArticleService) PageListItems(length, draw, page int, sear
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultArticleService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
-		"columns":   {"string", "string", "string", "string", "date"},
-		"fieldName": {"id", "model", "usage", "title", "update_time"},
-		"action":    {"", "", "", "", ""},
+		"columns":   {"string", "string", "string", "string", "string", "date"},
+		"fieldName": {"id", "model", "class", "usage", "title", "update_time"},
+		"action":    {"", "", "", "", "", ""},
 	}
 	return result
 }
@@ -89,10 +101,9 @@ func (service *DefaultArticleService) TableButtonsType(id int) []*_func.TableBut
 	buttons := []*_func.TableButtons{
 		{
 			Text:      "查看详情",
-			ClassName: "btn btn-sm btn-alt-warning open_iframe",
+			ClassName: "btn btn-sm btn-alt-primary jump_urls",
 			Attribute: map[string]string{
-				"href":      beego.URLFor("Article.Edit", ":id", "__ID__", ":popup", 1),
-				"data-area": "580px,380px",
+				"data-action": beego.URLFor("Article.Detail", ":id", "__ID__"),
 			},
 		},
 		{
@@ -105,4 +116,10 @@ func (service *DefaultArticleService) TableButtonsType(id int) []*_func.TableBut
 		},
 	}
 	return buttons
+}
+
+/**  转为pop提示 **/
+func (service *DefaultArticleService) substr2HtmlHref(s string, start, end, id int) string {
+	html := fmt.Sprintf(`<a href="javascript:void(0);" data-action="%s" class="badge badge-primary jump_urls js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, beego.URLFor("Article.Detail", ":id", id), s, beego.Substr(s, start, end))
+	return html
 }
