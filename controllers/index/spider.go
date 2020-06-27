@@ -44,6 +44,17 @@ func (c *Spider) ResultMaps() spider.Article {
 	}
 	mapsResult.Object = c.GetMustInt("object", "文档ID是空的！")
 	mapsResult.Model = c.GetMustInt(":module", "蜘蛛池模型ID是空的！")
+	model := c.modelsService.One(mapsResult.Model)
+	res, err := c.disguiseService.DisguiseHandleManage(model.Disguise, &spider.HandleModule{
+		Title: mapsResult.Title, Context: mapsResult.Context,
+		Keywords: mapsResult.Keywords, Description: mapsResult.Description,
+	})
+	if err == nil {
+		mapsResult.Title = res.Title
+		mapsResult.Keywords = res.Keywords
+		mapsResult.Description = res.Description
+		mapsResult.Context = res.Context
+	}
 	return mapsResult
 }
 
@@ -51,8 +62,11 @@ func (c *Spider) ResultMaps() spider.Article {
 func (c *Spider) ResultInsert(res spider.Article) (err error) {
 	ext := c.articleService.OneByObject(res.Object)
 	if ext.Id > 0 {
-		res.Id = ext.Id
-		_, err = orm.NewOrm().Update(&res)
+		ext.Title = res.Title
+		ext.Keywords = res.Keywords
+		ext.Description = res.Description
+		ext.Context = res.Context
+		_, err = orm.NewOrm().Update(&ext)
 	} else {
 		res.Class = c.randomClass(res.Model).Id
 		_, err = orm.NewOrm().Insert(&res)

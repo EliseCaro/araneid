@@ -7,8 +7,10 @@ import (
 
 type Main struct {
 	controllers.Base
-	articleService service.DefaultArticleService
-	classService   service.DefaultClassService
+	articleService  service.DefaultArticleService
+	classService    service.DefaultClassService
+	disguiseService service.DefaultDisguiseService
+	modelsService   service.DefaultModelsService
 }
 
 /** 准备下一级构造函数 **/

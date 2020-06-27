@@ -93,7 +93,7 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 		v[3] = service.templateName(v[3].(int64))
 		v[4] = service.disguiseName(v[4].(int64))
 		v = append(v, service.classCount(v[0].(int64)))
-		v = append(v, "内容")
+		v = append(v, service.articleCount(v[0].(int64)))
 		lists[k] = v
 	}
 	data := map[string]interface{}{
@@ -108,6 +108,12 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 /** 获取爬虫名称 **/
 func (service *DefaultModelsService) classCount(id int64) int64 {
 	count, _ := orm.NewOrm().QueryTable(new(spider.Class)).Filter("model", id).Count()
+	return count
+}
+
+/** 获取爬虫名称 **/
+func (service *DefaultModelsService) articleCount(id int64) int64 {
+	count, _ := orm.NewOrm().QueryTable(new(spider.Article)).Filter("model", id).Count()
 	return count
 }
 

@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
+	"github.com/beatrice950201/araneid/extend/model/spider"
 	service2 "github.com/beatrice950201/araneid/extend/service"
 	"regexp"
 )
@@ -56,14 +57,19 @@ func (c *Index) Index() {
 	c.Data["Title"] = "home"
 }
 
-// @router /index/test [post]
+// @router /index/test [get]
 func (c *Index) Test() {
-	maps := make(map[string]interface{})
-	if e := c.ParseForm(&maps); e != nil {
-		beego.Warn(e)
+	item := c.articleService.One(5)
+	model := c.modelsService.One(item.Model)
+	res, err := c.disguiseService.DisguiseHandleManage(model.Disguise, &spider.HandleModule{
+		Title:       item.Title,
+		Context:     item.Context,
+		Keywords:    item.Keywords,
+		Description: item.Description,
+	})
+	if err != nil {
+		c.Fail(&controllers.ResultJson{Message: err.Error()})
 	} else {
-		beego.Info(maps)
+		c.Succeed(&controllers.ResultJson{Message: "success", Data: res})
 	}
-	//c.Succeed(&controllers.ResultJson{Message: " 发布数据成功拉！"})
-	c.Fail(&controllers.ResultJson{Message: " 发布数据失败拉！"})
 }
