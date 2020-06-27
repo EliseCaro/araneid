@@ -40,7 +40,7 @@ func (service *DefaultCollectService) PushDetailAPI(item collect.Result) {
 			service.pushDetailAPIResult(item.Id, -1, err)
 		} else {
 			result := make(map[string]interface{})
-			if err := json.Unmarshal(body, &result); err != nil && len(result) > 0 {
+			if err := json.Unmarshal(body, &result); err == nil && len(result) > 0 {
 				if result["status"].(bool) == true {
 					service.pushDetailAPIResult(item.Id, 1, errors.New(result["message"].(string)))
 				} else {

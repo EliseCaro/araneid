@@ -5,6 +5,7 @@ import "time"
 type Article struct {
 	Id          int       `orm:"pk;auto;column(id);type(int);default(0);description(主键,自增)" json:"id" form:"id"`
 	Model       int       `orm:"column(model);type(int);default(0);description(所属模型)" json:"model" form:"model" validate:"required" label:"所属模型"`
+	Object      int       `orm:"column(object);type(int);default(0);description(采集结果ID)" json:"object" form:"object" validate:"required" label:"采集结果ID"`
 	Usage       int       `orm:"column(usage);type(int);default(0);description(挂载次数)" json:"usage" form:"usage"`
 	Title       string    `orm:"column(title);size(32);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"标题"`
 	Cover       string    `orm:"column(cover);size(200);type(char);default();description(封面图)" json:"cover" form:"cover"`

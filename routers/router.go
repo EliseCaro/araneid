@@ -16,6 +16,7 @@ func init() {
 	beego.AddNamespace(
 		beego.NewNamespace("/index", beego.NSInclude(
 			&index.Index{},
+			&index.Spider{},
 		)),
 	)
 
@@ -27,11 +28,8 @@ func init() {
 			&admin.Config{}, &admin.Inform{},
 			&admin.Collect{}, &admin.Collector{},
 			&admin.Dictionaries{}, &admin.Lexicon{},
-			&admin.Models{},
-			&admin.Disguise{},
-			&admin.Template{},
-			&admin.Class{},
-			&admin.Article{},
+			&admin.Models{}, &admin.Disguise{}, &admin.Template{},
+			&admin.Class{}, &admin.Article{},
 		)),
 	)
 }

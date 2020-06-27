@@ -9,6 +9,13 @@ import (
 
 type DefaultArticleService struct{}
 
+/** 根据爬虫文档Id获取一条数据 **/
+func (service *DefaultArticleService) OneByObject(object int) spider.Article {
+	var maps spider.Article
+	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("object", object).One(&maps)
+	return maps
+}
+
 /****************** 以下为表格渲染  ***********************/
 
 /** 获取需要渲染的Column **/
