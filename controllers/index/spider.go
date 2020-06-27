@@ -44,7 +44,6 @@ func (c *Spider) ResultMaps() spider.Article {
 	}
 	mapsResult.Object = c.GetMustInt("object", "文档ID是空的！")
 	mapsResult.Model = c.GetMustInt(":module", "蜘蛛池模型ID是空的！")
-	mapsResult.Class = c.randomClass(mapsResult.Model).Id
 	return mapsResult
 }
 
@@ -55,6 +54,7 @@ func (c *Spider) ResultInsert(res spider.Article) (err error) {
 		res.Id = ext.Id
 		_, err = orm.NewOrm().Update(&res)
 	} else {
+		res.Class = c.randomClass(res.Model).Id
 		_, err = orm.NewOrm().Insert(&res)
 	}
 	return err
@@ -65,5 +65,8 @@ func (c *Spider) randomClass(module int) spider.Class {
 	var item spider.Class
 	sql := `SELECT * FROM ` + c.DbPrefix + `spider_class AS t1 JOIN (SELECT ROUND(RAND()*(SELECT MAX(id) FROM ` + c.DbPrefix + `spider_class)) AS id) AS t2 WHERE t1.id>=t2.id AND t1.model=? ORDER BY t1.id LIMIT 1`
 	_ = orm.NewOrm().Raw(sql, module).QueryRow(&item)
+	if c.classService.One(item.Id).Id <= 0 {
+		item = c.randomClass(module)
+	}
 	return item
 }

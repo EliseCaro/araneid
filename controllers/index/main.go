@@ -8,6 +8,7 @@ import (
 type Main struct {
 	controllers.Base
 	articleService service.DefaultArticleService
+	classService   service.DefaultClassService
 }
 
 /** 准备下一级构造函数 **/

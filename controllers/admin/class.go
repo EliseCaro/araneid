@@ -134,17 +134,24 @@ func (c *Class) one(id int) spider.Class {
 	return item
 }
 
+/** 检测分类是否存在文章 **/
+func (c *Class) extArticle(id int) spider.Article {
+	var item spider.Article
+	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("class", id).One(&item)
+	return item
+}
+
 /** 批量删除结果 **/
 func (c *Class) deleteArray(array []int) (message error) {
 	_ = orm.NewOrm().Begin()
 	for _, v := range array {
-		if c.one(v).Usage == 0 {
+		if c.one(v).Usage == 0 && c.extArticle(v).Id == 0 {
 			if _, message = orm.NewOrm().Delete(&spider.Class{Id: v}); message != nil {
 				_ = orm.NewOrm().Rollback()
 				break
 			}
 		} else {
-			message = errors.New("该栏目已被挂载，不允许删除使用中的栏目！")
+			message = errors.New("被挂载或者存在文档数据，不允许删除使用中的栏目！")
 			break
 		}
 	}

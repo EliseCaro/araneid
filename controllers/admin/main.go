@@ -30,6 +30,7 @@ type Main struct {
 	modelsService       service.DefaultModelsService
 	disguiseService     service.DefaultDisguiseService
 	templateService     service.DefaultTemplateService
+	classService        service.DefaultClassService
 	articleService      service.DefaultArticleService
 }
 
