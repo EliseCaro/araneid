@@ -245,6 +245,12 @@ func (service *DefaultCollectService) deleteImageSpace(src string) string {
 	return re.ReplaceAllString(src, "")
 }
 
+/** 过滤换行标签 **/
+func (service *DefaultCollectService) deleteBrSpace(src string) string {
+	re, _ := regexp.Compile("\\<br [\\S\\s]+?\\>")
+	return re.ReplaceAllString(src, "")
+}
+
 /** 根据链接获取一条结果数据 **/
 func (service *DefaultCollectService) oneResultLink(url string) collect.Result {
 	var item collect.Result
@@ -268,6 +274,7 @@ func (service *DefaultCollectService) extractMatchingField(m *collect.Matching, 
 		stringHtml = strings.Trim(stringHtml, " ")
 		stringHtml = service.deleteScriptSpace(stringHtml)
 		stringHtml = service.deleteHrefSpace(stringHtml)
+		stringHtml = service.deleteBrSpace(stringHtml)
 		if m.Image == 1 { //  剔除Image
 			stringHtml = service.deleteImageSpace(stringHtml)
 		}

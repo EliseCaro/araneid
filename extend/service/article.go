@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -22,6 +23,26 @@ func (service *DefaultArticleService) One(id int) spider.Article {
 	var maps spider.Article
 	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", id).One(&maps)
 	return maps
+}
+
+/** 批量删除结果 **/
+func (service *DefaultArticleService) DeleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if service.One(v).Usage == 0 {
+			if _, message = orm.NewOrm().Delete(&spider.Article{Id: v}); message != nil {
+				_ = orm.NewOrm().Rollback()
+				break
+			}
+		} else {
+			message = errors.New("文档已被挂载，不允许删除使用中的文档！")
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
 }
 
 /****************** 以下为表格渲染  ***********************/

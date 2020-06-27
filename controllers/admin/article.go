@@ -37,3 +37,19 @@ func (c *Article) Detail() {
 	id := c.GetMustInt(":id", "非法请求！")
 	c.Data["info"] = c.articleService.One(id)
 }
+
+// @router /article/delete [post]
+func (c *Article) Delete() {
+	model, _ := c.GetInt(":model", 0)
+	array := c.checkBoxIds(":ids[]", ":ids")
+	if errorMessage := c.articleService.DeleteArray(array); errorMessage != nil {
+		c.Fail(&controllers.ResultJson{
+			Message: error.Error(errorMessage),
+		})
+	} else {
+		c.Succeed(&controllers.ResultJson{
+			Message: "删除成功！马上返回中。。。",
+			Url:     beego.URLFor("Article.Index", ":model", model),
+		})
+	}
+}
