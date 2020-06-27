@@ -247,7 +247,7 @@ func (service *DefaultCollectService) deleteImageSpace(src string) string {
 
 /** 过滤换行标签 **/
 func (service *DefaultCollectService) deleteBrSpace(src string) string {
-	re, _ := regexp.Compile("\\<br [\\S\\s]+?\\>")
+	re, _ := regexp.Compile("\\<br[\\S\\s]+?\\>")
 	return re.ReplaceAllString(src, "")
 }
 
