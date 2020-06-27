@@ -2,6 +2,7 @@ package index
 
 import (
 	"encoding/json"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	"github.com/beatrice950201/araneid/extend/model/spider"
@@ -10,11 +11,13 @@ import (
 type Spider struct {
 	Main
 	Password string
+	DbPrefix string
 }
 
 /** 构造函数  **/
 func (c *Spider) NextPrepare() {
 	c.Password = "$2a$04$fA.06wUF6PbGZFY/lrQWeuOEqdvIkfsbPp5jmXjSIMzrkllhNbPkK"
+	c.DbPrefix = beego.AppConfig.String("db_prefix")
 }
 
 // @router /spider/api [get,post]
@@ -41,6 +44,7 @@ func (c *Spider) ResultMaps() spider.Article {
 	}
 	mapsResult.Object = c.GetMustInt("object", "文档ID是空的！")
 	mapsResult.Model = c.GetMustInt(":module", "蜘蛛池模型ID是空的！")
+	mapsResult.Class = c.randomClass(mapsResult.Model).Id
 	return mapsResult
 }
 
@@ -54,4 +58,12 @@ func (c *Spider) ResultInsert(res spider.Article) (err error) {
 		_, err = orm.NewOrm().Insert(&res)
 	}
 	return err
+}
+
+/** 获取一条随机ID**/
+func (c *Spider) randomClass(module int) spider.Class {
+	var item spider.Class
+	sql := `SELECT * FROM ` + c.DbPrefix + `spider_class AS t1 JOIN (SELECT ROUND(RAND()*(SELECT MAX(id) FROM ` + c.DbPrefix + `spider_class)) AS id) AS t2 WHERE t1.id>=t2.id AND t1.model=? ORDER BY t1.id LIMIT 1`
+	_ = orm.NewOrm().Raw(sql, module).QueryRow(&item)
+	return item
 }

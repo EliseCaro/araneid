@@ -80,12 +80,13 @@ func (service *DefaultInformService) CreateInformAndContext(receiver []int, obje
 
 /** 获取一条消息结构的数据 **/
 func (service *DefaultInformService) ItemSocketInformMassage(id int) (item inform.Message) {
+	prefix := beego.AppConfig.String("db_prefix")
 	qb, _ := orm.NewQueryBuilder("mysql")
-	qb.Select("araneid_admin_inform.id", "araneid_admin_inform.receiver", "araneid_admin_inform.statue", "araneid_admin_inform_context.context", "araneid_admin_inform_context.create_time").
-		From("araneid_admin_inform").
-		InnerJoin("araneid_admin_inform_context").
-		On("araneid_admin_inform.context_id = araneid_admin_inform_context.id").
-		Where("araneid_admin_inform.id = ?")
+	qb.Select(prefix+"admin_inform.id", prefix+"admin_inform.receiver", prefix+"admin_inform.statue", prefix+"admin_inform_context.context", prefix+"admin_inform_context.create_time").
+		From(prefix + "admin_inform").
+		InnerJoin(prefix + "admin_inform_context").
+		On(prefix + "admin_inform.context_id = " + prefix + "admin_inform_context.id").
+		Where(prefix + "admin_inform.id = ?")
 	_ = orm.NewOrm().Raw(qb.String(), id).QueryRow(&item)
 	item.Context = beego.Substr(beego.HTML2str(item.Context), 0, 37)
 	item.StringTime = beego.Date(item.CreateTime, "Y-m-d H:i:s")
@@ -144,11 +145,12 @@ func (service *DefaultInformService) DeleteArray(array []int) (e error) {
 /** 获取头部消息中心 **/
 func (service *DefaultInformService) HeaderItems() map[string]interface{} {
 	var items []*inform.Message
+	prefix := beego.AppConfig.String("db_prefix")
 	qb, _ := orm.NewQueryBuilder("mysql")
-	qb.Select("araneid_admin_inform.id", "araneid_admin_inform.statue", "araneid_admin_inform_context.context", "araneid_admin_inform_context.create_time").
-		From("araneid_admin_inform").
-		InnerJoin("araneid_admin_inform_context").
-		On("araneid_admin_inform.context_id = araneid_admin_inform_context.id").Where("araneid_admin_inform.statue = ?").OrderBy("araneid_admin_inform.id DESC").Limit(5)
+	qb.Select(prefix+"admin_inform.id", prefix+"admin_inform.statue", prefix+"admin_inform_context.context", prefix+"admin_inform_context.create_time").
+		From(prefix + "admin_inform").
+		InnerJoin(prefix + "admin_inform_context").
+		On(prefix + "admin_inform.context_id = " + prefix + "admin_inform_context.id").Where(prefix + "admin_inform.statue = ?").OrderBy(prefix + "admin_inform.id DESC").Limit(5)
 	_, _ = orm.NewOrm().Raw(qb.String(), 0).QueryRows(&items)
 	count, _ := orm.NewOrm().QueryTable(new(inform.Inform)).Filter("statue", 0).Count()
 	for _, v := range items {
