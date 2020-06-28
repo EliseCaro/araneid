@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"strings"
@@ -13,7 +14,8 @@ type DefaultRobotService struct{}
 func (service *DefaultRobotService) OneString(name *string) spider.Robot {
 	var item spider.Robot
 	var resemblance []string
-	_ = orm.NewOrm().QueryTable(new(spider.Robot)).Filter("name", name).One(&item)
+	cond := orm.NewCondition().And("name", name).Or("resemblance__icontains", fmt.Sprintf(`"%s"`, *name))
+	_ = orm.NewOrm().QueryTable(new(spider.Robot)).SetCond(cond).One(&item)
 	_ = json.Unmarshal([]byte(item.Resemblance), &resemblance)
 	item.Resemblance = strings.Join(resemblance, ",")
 	return item

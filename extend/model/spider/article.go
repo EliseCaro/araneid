@@ -11,7 +11,7 @@ type Article struct {
 	Title       string    `orm:"column(title);size(32);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"标题"`
 	Cover       string    `orm:"column(cover);size(200);type(char);default();description(封面图)" json:"cover" form:"cover"`
 	Keywords    string    `orm:"column(keywords);size(80);type(char);default();description(关键字)" json:"keywords" form:"keywords" validate:"required" label:"关键字"`
-	Description string    `orm:"column(description);size(200);type(char);default();description(描述)" json:"description" form:"description" validate:"required" label:"描述"`
+	Description string    `orm:"column(description);type(text);default();description(描述)" json:"description" form:"description" validate:"required" label:"描述"`
 	Context     string    `orm:"column(context);type(text);default();description(内容详情)" json:"context" form:"context" validate:"required" label:"内容详情"`
 	CreateTime  time.Time `orm:"auto_now_add;type(datetime);description(创建时间)" json:"create_time"`
 	UpdateTime  time.Time `orm:"auto_now;type(datetime);description(更新时间)" json:"update_time"`

@@ -259,7 +259,7 @@ func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *s
 		module.Description = service.robotDescriptionManage(module, disguise)
 	}
 	if config.Context == 1 {
-		module.Description = service.robotContextManage(module.Context, disguise)
+		module.Context = service.robotContextManage(module.Context, disguise)
 	}
 	return module, message
 }
