@@ -9,6 +9,8 @@ type Disguise struct {
 	Keyword     int8      `orm:"column(keyword);type(tinyint);default(0);description(自然单词)" json:"keyword" form:"keyword"`
 	Description int8      `orm:"column(description);type(tinyint);default(0);description(自然描述)" json:"description" form:"description"`
 	Context     int8      `orm:"column(context);type(tinyint);default(0);description(自然内容)" json:"context" form:"context"`
+	Modifier    int8      `orm:"column(modifier);type(tinyint);default(1);description(等价交换)" json:"modifier" form:"modifier"`
+	Length      int8      `orm:"column(length);type(tinyint);default(3);description(关键词提取长度)" json:"length" form:"length"`
 	ApiKey      string    `orm:"column(api_key);size(150);type(char);default();description(处理KEY)" json:"api_key" form:"api_key" validate:"required" label:"机器KEY"`
 	ApiSecret   string    `orm:"column(api_secret);size(150);type(char);default();description(处理SECRET)" json:"api_secret" form:"api_secret" validate:"required" label:"机器密钥"`
 	CreateTime  time.Time `orm:"auto_now_add;type(datetime);description(创建时间)" json:"create_time"`

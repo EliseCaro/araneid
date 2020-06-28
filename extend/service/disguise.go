@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
@@ -89,8 +88,9 @@ func (service *DefaultDisguiseService) Dec(id int) error {
 	return errorMessage
 }
 
+/***************************自然语言算法处理中心 *****************************************8/
 /** 获取百度翻译结果 **/
-func (service *DefaultDisguiseService) baiduTranslation(s string) []interface{} {
+func (service *DefaultDisguiseService) baiduTranslation(s string) ([]interface{}, string, string) {
 	salt := strconv.FormatInt(time.Now().Unix(), 10)
 	appId := beego.AppConfig.String("baidu_translation_id")
 	secret := beego.AppConfig.String("baidu_translation_sign")
@@ -102,7 +102,33 @@ func (service *DefaultDisguiseService) baiduTranslation(s string) []interface{} 
 	if result["error_code"] != nil && result["error_code"].(string) == "54003" {
 		return service.baiduTranslation(s)
 	}
-	return result["trans_result"].([]interface{})
+	return result["trans_result"].([]interface{}), result["from"].(string), result["to"].(string)
+}
+
+/** 作为等价交换手段 **/
+func (service *DefaultDisguiseService) modifierContext(s string) string {
+	translation, _, to := service.baiduTranslation(s)
+	var result string
+	for _, v := range translation {
+		result = v.(map[string]interface{})["dst"].(string)
+	}
+	if result != "" && to != "zh" {
+		return service.modifierContext(result)
+	}
+	return result
+}
+
+/** 公用请求函数 **/
+func (service *DefaultDisguiseService) requestPostForm(domain string, v url.Values) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
+	var message error
+	if resp, message := http.PostForm(domain, v); message == nil {
+		if body, message := ioutil.ReadAll(resp.Body); message == nil {
+			message = json.Unmarshal(body, &result)
+		}
+		defer resp.Body.Close()
+	}
+	return result, message
 }
 
 /** 字符串生成md5**/
@@ -116,11 +142,7 @@ func (service *DefaultDisguiseService) md5Value(str string) string {
 func (service *DefaultDisguiseService) DisguiseHandleManage(disguise int, module *spider.HandleModule) (*spider.HandleModule, error) {
 	var verify = DefaultBaseVerify{}
 	if message := verify.Begin().Struct(module); message == nil {
-		if keyword, message := service.handleManageBeginKeyword(disguise, module); message == nil {
-			return service.handleManageBegin(disguise, module, keyword), nil
-		} else {
-			return module, message
-		}
+		return service.handleManageBegin(disguise, module)
 	} else {
 		return module, errors.New(verify.Translate(message.(validator.ValidationErrors)))
 	}
@@ -158,100 +180,54 @@ func (service *DefaultDisguiseService) handleManageBeginKeyword(disguise int, mo
 	if client, message := service.nlpInstance(disguise); message == nil {
 		var response *nlp.KeywordsExtractionResponse
 		request := nlp.NewKeywordsExtractionRequest()
-		module.Title = service.contextFiltration(module.Title)
-		module.Keywords = service.contextFiltration(module.Keywords)
-		module.Description = service.contextFiltration(module.Description)
-		module.Context = service.contextFiltration(module.Context)
 		_ = request.FromJsonString(service.jsonFormString(map[string]string{
-			"Text": module.Title + module.Keywords + module.Description + module.Context,
+			"Text": service.contextFiltration(module.Context),
 		}))
 		response, message = client.KeywordsExtraction(request)
-		if _, ok := message.(*tencent.TencentCloudSDKError); ok {
+		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
+			return response.Response.Keywords, message
+		} else {
 			return nil, errors.New(fmt.Sprintf("An API error has returned: %s", message))
 		}
-		if message != nil {
-			return nil, message
-		}
-		return response.Response.Keywords, nil
 	} else {
 		return nil, message
 	}
 }
 
-/** 开始处理 **/
-func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *spider.HandleModule, keyword []*nlp.Keyword) *spider.HandleModule {
-	module.Keywords = service.robotKeywordManage(keyword, disguise)
-	module.Description = service.robotDescriptionManage(disguise, module)
-	module.Context = service.robotContextManage(module.Context)
-	module.Title = service.robotContextManage(module.Title)
-	return module
-}
-
-/** 获取真是关键字 **/
-// 1: 从训练模型提取关键词随机近义词；如果没有进入流程2
+/** 获取真是关键字 todo 随机近义词为实现 **/
 func (service *DefaultDisguiseService) robotKeywordManage(keyword []*nlp.Keyword, disguise int) string {
 	var result string
 	for _, v := range keyword {
-		result += service.getRobotKeywordManage(v.Word, disguise) + ","
-	}
-	return result
-}
-
-/** 提取文档描述 **/
-func (service *DefaultDisguiseService) robotDescriptionManage(disguise int, module *spider.HandleModule) string {
-	if client, message := service.nlpInstance(disguise); message == nil {
-		var response *nlp.AutoSummarizationResponse
-		request := nlp.NewAutoSummarizationRequest()
-		_ = request.FromJsonString(service.jsonFormString(map[string]string{
-			"Text": service.contextFiltration(module.Context),
-		}))
-		response, message = client.AutoSummarization(request)
-		if _, ok := message.(*tencent.TencentCloudSDKError); ok {
-			logs.Error(fmt.Sprintf("An API error has returned: %s", message))
-		}
-		if message != nil {
-			logs.Error(message.Error())
+		object := DefaultRobotService{}
+		if one := object.OneString(v.Word); one.Id <= 0 {
+			result += service.setRobotKeywordManage(v.Word, disguise) + ","
 		} else {
-			module.Description = *response.Response.Summary
+			result += one.Resemblance + ","
 		}
-	} else {
-		logs.Error(message.Error())
 	}
-	translate := service.baiduTranslation(module.Description)[0].(map[string]interface{})
-	translate = service.baiduTranslation(translate["dst"].(string))[0].(map[string]interface{})
-	return translate["dst"].(string)
-}
-
-/** 提取内容 **/
-func (service *DefaultDisguiseService) robotContextManage(s string) string {
-	translate := service.baiduTranslation(s)[0].(map[string]interface{})
-	translate = service.baiduTranslation(translate["dst"].(string))[0].(map[string]interface{})
-	return strings.Replace(translate["dst"].(string), "。", "。<br/>", -1)
-}
-
-/** 从训练模型提取近义词；提取不到则写入；返回用逗号隔开的近义词 **/
-func (service *DefaultDisguiseService) getRobotKeywordManage(keyword *string, disguise int) string {
-	object := DefaultRobotService{}
-	if one := object.One(keyword); one.Id <= 0 {
-		return service.setRobotKeywordManage(keyword, disguise)
-	} else {
-		return one.Resemblance
+	var resultReturn string
+	object, _ := service.Find(disguise)
+	for index, v := range strings.Split(result, ",") {
+		if object.Length >= int8(index) {
+			resultReturn += v + ","
+		} else {
+			break
+		}
 	}
+	return strings.Trim(resultReturn, ",")
 }
 
 /*** 从训练模型提取不到关键词；需要写入; **/
-func (service *DefaultDisguiseService) setRobotKeywordManage(keyword *string, disguise int) (res string) {
-	if maps, message := service.resemblanceTags(keyword, disguise); message == nil && len(maps) > 0 {
-		var result []string
-		var object = DefaultRobotService{}
-		for k, v := range maps {
-			if k <= 2 {
-				result = append(result, *v)
-			}
-		}
-		return object.Insert(*keyword, result)
+func (service *DefaultDisguiseService) setRobotKeywordManage(keyword *string, disguise int) string {
+	maps, message := service.resemblanceTags(keyword, disguise)
+	if message == nil || len(maps) > 0 {
+		maps = new(DefaultRobotService).Insert(*keyword, maps)
 	}
-	return res
+	var result []string
+	for _, value := range maps {
+		result = append(result, *value)
+	}
+	return strings.Join(result, ",")
 }
 
 /*** 获得同义词; **/
@@ -261,46 +237,82 @@ func (service *DefaultDisguiseService) resemblanceTags(s *string, disguise int) 
 		request := nlp.NewSimilarWordsRequest()
 		_ = request.FromJsonString(service.jsonFormString(map[string]string{"Text": *s}))
 		response, message = client.SimilarWords(request)
-		if _, ok := message.(*tencent.TencentCloudSDKError); ok {
+		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
+			return response.Response.SimilarWords, message
+		} else {
 			return nil, errors.New(fmt.Sprintf("An API error has returned: %s", message))
 		}
-		if message != nil {
-			return nil, message
-		}
-		return response.Response.SimilarWords, nil
 	} else {
 		return nil, message
 	}
 }
 
-/** 公用请求函数 **/
-func (service *DefaultDisguiseService) requestPostForm(domain string, v url.Values) (map[string]interface{}, error) {
-	result := make(map[string]interface{})
-	var message error
-	if resp, message := http.PostForm(domain, v); message == nil {
-		if body, message := ioutil.ReadAll(resp.Body); message == nil {
-			message = json.Unmarshal(body, &result)
-		}
-		defer resp.Body.Close()
+/** 开始处理 **/
+func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *spider.HandleModule) (*spider.HandleModule, error) {
+	keyword, message := service.handleManageBeginKeyword(disguise, module)
+	config, _ := service.Find(disguise)
+	module.Title = service.robotTitleManage(module.Title, disguise)
+	if config.Keyword == 1 {
+		module.Keywords = service.robotKeywordManage(keyword, disguise)
 	}
-	return result, message
+	if config.Description == 1 {
+		module.Description = service.robotDescriptionManage(module, disguise)
+	}
+	if config.Context == 1 {
+		module.Description = service.robotContextManage(module.Context, disguise)
+	}
+	return module, message
 }
 
-/** 公用请求函数 **/
-func (service *DefaultDisguiseService) requestGetForm(domain string, maps map[string]string) (map[string]interface{}, error) {
-	request, message := http.NewRequest("POST", domain, strings.NewReader(service.jsonFormString(maps)))
-	result := make(map[string]interface{})
-	if message == nil {
-		request.Header.Set("Content-Type", "application/json")
-		var resp *http.Response
-		if resp, message = http.DefaultClient.Do(request); message == nil {
-			if body, message := ioutil.ReadAll(resp.Body); message == nil {
-				message = json.Unmarshal(body, &result)
-			}
-			defer resp.Body.Close()
+/** 提取文档描述 todo 同义词替换未做 **/
+func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.HandleModule, disguise int) string {
+	if client, message := service.nlpInstance(disguise); message == nil {
+		var response *nlp.AutoSummarizationResponse
+		request := nlp.NewAutoSummarizationRequest()
+		text := fmt.Sprintf(`%s。%s`,
+			service.contextFiltration(module.Description),
+			service.contextFiltration(module.Context),
+		)
+		_ = request.FromJsonString(service.jsonFormString(map[string]string{"Text": text}))
+		response, message = client.AutoSummarization(request)
+		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
+			module.Description = *response.Response.Summary
 		}
 	}
-	return result, message
+	object, _ := service.Find(disguise)
+	if object.Modifier == 1 { //  等价交换手段
+		module.Description = service.modifierContext(module.Description)
+	}
+	return module.Description
+}
+
+/** 提取内容；重建结构 todo 同义词替换未做 ***/
+func (service *DefaultDisguiseService) robotContextManage(s string, d int) string {
+	object, _ := service.Find(d)
+	s = service.contextFiltration(s)
+	if object.Modifier == 1 {
+		s = service.modifierContext(s)
+	}
+	justify := strings.Split(s, "。")
+	news := "<p class='justify'>"
+	for k, value := range justify {
+		if k%2 == 0 {
+			news += value + "。</p>"
+		} else {
+			news += "<p>" + value
+		}
+	}
+	return news
+}
+
+/** 文档标题处理 todo 同义词替换未做 ***/
+func (service *DefaultDisguiseService) robotTitleManage(s string, d int) string {
+	object, _ := service.Find(d)
+	s = service.contextFiltration(s)
+	if object.Modifier == 1 {
+		s = service.modifierContext(s)
+	}
+	return s
 }
 
 /************************************************表格渲染机制 ************************************************************/
@@ -329,7 +341,7 @@ func (service *DefaultDisguiseService) DataTableButtons() []*table.TableButtons 
 		ClassName: "btn btn-sm btn-alt-success mt-1 open_iframe",
 		Attribute: map[string]string{
 			"href":      beego.URLFor("Disguise.Create", ":popup", 1),
-			"data-area": "580px,400px",
+			"data-area": "600px,400px",
 		},
 	})
 	array = append(array, &table.TableButtons{

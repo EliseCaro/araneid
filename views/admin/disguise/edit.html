@@ -49,18 +49,36 @@
                     <div class="help-block pt-1 pb-1 font-size-minimum">开启文本自然语言处理；</div>
                 </div>
             </div>
+
             <div class="form-group row font-size-sm mb-2">
-                <label class="col-form-label font-weight-normal" for="api_key">机器KEY</label>
-                <div class="col-sm-10">
-                    <input class="form-control font-size-sm" id="api_key" type="text" value="{{$.info.ApiKey}}" name="api_key" placeholder="机器KEY"/>
-                    <div class="help-block pt-1 pb-1 font-size-minimum">请正确填写KEY；<code>不正确的KEY将无法处理；</code></div>
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="modifier">等价交换</label>
+                <div class="col-sm-4 mr-5">
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="modifier_0" name="modifier" value="0" {{if eq 0 $.info.Modifier}} checked {{end}}>
+                        <label class="custom-control-label" for="modifier_0">禁用</label>
+                    </div>
+                    <div class="custom-control-inline custom-control custom-radio custom-control-primary" style="padding-top: 6px">
+                        <input type="radio" class="custom-control-input" id="modifier_1" name="modifier" value="1" {{if eq 1 $.info.Modifier}} checked {{end}}>
+                        <label class="custom-control-label" for="modifier_1">启用</label>
+                    </div>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">是否启用文本等价交换处理；</div>
+                </div>
+                <label class="col-form-label font-weight-normal" for="length">取词长度</label>
+                <div class="col-sm-4">
+                    <input class="form-control font-size-sm" id="length" type="number" value="{{$.info.Length}}" name="length" placeholder="取词长度"/>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">随机提取几个同义词作为关键词</div>
                 </div>
             </div>
-            <div class="form-group row font-size-sm ">
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="api_key">机器KEY</label>
+                <div class="col-sm-4 mr-5">
+                    <input class="form-control font-size-sm" id="api_key" type="text" value="{{$.info.ApiKey}}" name="api_key" placeholder="机器KEY"/>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">填写机器凭证作为验证器处理接口</div>
+                </div>
                 <label class="col-form-label font-weight-normal" for="api_secret">机器密钥</label>
-                <div class="col-sm-10">
-                    <input class="form-control font-size-sm" id="api_secret" type="text" value="{{$.info.ApiSecret}}"  name="api_secret" placeholder="机器SECRET"/>
-                    <div class="help-block pt-1 pb-1 font-size-minimum">请正确填写机器密钥；<code>不正确的机器密钥将无法处理；</code></div>
+                <div class="col-sm-4">
+                    <input class="form-control font-size-sm" id="api_secret" type="text" value="{{$.info.ApiSecret}}"  name="api_secret" placeholder="机器密钥"/>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">填写机器密钥作为验证器处理接口</div>
                 </div>
             </div>
             <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
