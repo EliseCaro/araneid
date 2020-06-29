@@ -56,6 +56,7 @@ func (service *DefaultModelsService) DataTableColumns() []map[string]interface{}
 	maps = append(maps, map[string]interface{}{"title": "伪原创", "name": "masking", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "栏目数", "name": "category", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "文档数", "name": "document", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "前缀数", "name": "prefix", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
 	return maps
 }
@@ -94,6 +95,7 @@ func (service *DefaultModelsService) PageListItems(length, draw, page int, searc
 		v[4] = service.disguiseName(v[4].(int64))
 		v = append(v, service.classCount(v[0].(int64)))
 		v = append(v, service.articleCount(v[0].(int64)))
+		v = append(v, service.prefixCount(v[0].(int64)))
 		lists[k] = v
 	}
 	data := map[string]interface{}{
@@ -114,6 +116,12 @@ func (service *DefaultModelsService) classCount(id int64) int64 {
 /** 获取爬虫名称 **/
 func (service *DefaultModelsService) articleCount(id int64) int64 {
 	count, _ := orm.NewOrm().QueryTable(new(spider.Article)).Filter("model", id).Count()
+	return count
+}
+
+/** 获取域名前缀数量 **/
+func (service *DefaultModelsService) prefixCount(id int64) int64 {
+	count, _ := orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", id).Count()
 	return count
 }
 
@@ -139,9 +147,9 @@ func (service *DefaultModelsService) disguiseName(id int64) string {
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
-		"columns":   {"string", "string", "string", "string", "string", "string", "string"},
-		"fieldName": {"id", "name", "collect", "template", "disguise", "category", "document"},
-		"action":    {"", "", "", "", "", "", ""},
+		"columns":   {"string", "string", "string", "string", "string", "string", "string", "string"},
+		"fieldName": {"id", "name", "collect", "template", "disguise", "category", "document", "prefix"},
+		"action":    {"", "", "", "", "", "", "", ""},
 	}
 	return result
 }
@@ -149,6 +157,16 @@ func (service *DefaultModelsService) TableColumnsType() map[string][]string {
 /** 返回右侧按钮数据结构 **/
 func (service *DefaultModelsService) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
+		{
+			Text:      "前缀库",
+			ClassName: "btn btn-sm btn-alt-success open_iframe js-tooltip",
+			Attribute: map[string]string{
+				"href":                beego.URLFor("Prefix.Index", ":model", "__ID__", ":popup", 1),
+				"data-area":           "600px,400px",
+				"data-toggle":         "tooltip",
+				"data-original-title": "域名前缀库",
+			},
+		},
 		{
 			Text:      "栏目库",
 			ClassName: "btn btn-sm btn-alt-primary jump_urls",
