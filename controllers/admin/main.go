@@ -33,6 +33,7 @@ type Main struct {
 	classService        service.DefaultClassService
 	articleService      service.DefaultArticleService
 	prefixService       service.DefaultPrefixService
+	matchService        service.DefaultMatchService
 }
 
 /** 准备下一级构造函数 **/

@@ -29,7 +29,7 @@ func init() {
 			&admin.Collect{}, &admin.Collector{},
 			&admin.Dictionaries{}, &admin.Lexicon{},
 			&admin.Models{}, &admin.Disguise{}, &admin.Template{},
-			&admin.Class{}, &admin.Article{}, &admin.Prefix{},
+			&admin.Class{}, &admin.Article{}, &admin.Prefix{}, &admin.Match{},
 		)),
 	)
 }

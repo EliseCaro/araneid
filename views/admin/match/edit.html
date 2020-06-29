@@ -1,0 +1,105 @@
+<div class="js-wizard-simple block block overflow-hidden">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#index" data-toggle="tab">首页</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#cate" data-toggle="tab">列表</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#detail" data-toggle="tab">详情</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Match.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="fade fade-left tab-pane active show" id="index" role="tabpanel">
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">模板名称</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="模板名称"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>用于快速选择已经展示；必填</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="index_title">首页标题</label>
+                    <div class="col-sm-4">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.IndexTitle}}" id="index_title" type="text" name="index_title" placeholder="首页标题"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>可选标签：#关键词# #站点名#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="index_keyword">词语组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="index_keyword" name="index_keyword" rows="3" placeholder="请输入首页关键字组合方式">{{$.info.IndexKeyword}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">首页关键字组合方式：<code>可选标签：#关键词# #站点名#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="index_description">描述组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="index_description" name="index_description" rows="3" placeholder="请输入首页描述组合方式">{{$.info.IndexDescription}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">首页描述组合方式：<code>可选标签：#关键词# #站点名#</code></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade fade-left tab-pane" id="cate" role="tabpanel">
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="cate_title">列表标题</label>
+                    <div class="col-sm-10">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.CateTitle}}" id="cate_title" type="text" name="cate_title" placeholder="列表标题"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">列表页标题组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="cate_keyword">词语组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="cate_keyword" name="cate_keyword" rows="3" placeholder="请输入列表页关键字组合方式">{{$.info.CateKeyword}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">列表页关键字组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="cate_description">描述组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="cate_description" name="cate_description" rows="3" placeholder="请输入列表页描述组合方式">{{$.info.CateDescription}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">列表页描述组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade fade-left tab-pane" id="detail" role="tabpanel">
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="detail_title">详情标题</label>
+                    <div class="col-sm-10">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.DetailTitle}}" id="detail_title" type="text" name="detail_title" placeholder="详情标题"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">详情页标题组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="detail_keyword">词语组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="detail_keyword" name="detail_keyword" rows="3" placeholder="请输入详情页关键字组合方式">{{$.info.DetailKeyword}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">详情页关键字组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="detail_description">描述组合</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="detail_description" name="detail_description" rows="3" placeholder="请输入详情页描述组合方式">{{$.info.DetailDescription}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">详情页描述组合方式：<code>可选标签：#关键词# #站点名# #原文#</code></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
