@@ -32,6 +32,7 @@ type Main struct {
 	templateService     service.DefaultTemplateService
 	classService        service.DefaultClassService
 	articleService      service.DefaultArticleService
+	prefixService       service.DefaultPrefixService
 }
 
 /** 准备下一级构造函数 **/

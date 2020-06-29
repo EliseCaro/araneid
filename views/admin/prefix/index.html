@@ -1,0 +1,53 @@
+<style>
+    .form-group{
+        border: 1px dashed #ddd;
+        position: relative
+    }
+    @media (min-width: 576px){
+        .item_prefix{
+            -ms-flex: 0 0 48.4%;
+            flex: 0 0 48.4%;
+            max-width: 48.4%;
+        }
+        .item_prefix:nth-child(2n){
+            margin-left: 17px;
+        }
+    }
+    .prefix_delete {
+        position: absolute;
+        border-radius: 50%;
+        cursor: pointer;
+        top: -7px;
+        left: -7px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        font-size: 19px;
+        z-index: 999;
+    }
+</style>
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">域名前缀库管理</h3>
+        <div class="block-options">
+            <input type="hidden" name="model" value="{{$.model}}">
+            <button type="button" data-action="{{urlfor "Prefix.Create"}}" class="item_create btn btn-sm btn-alt-primary js-tooltip" data-placement="left" data-toggle="tooltip" data-original-title="添加"><i class="si si-plus"></i></button>
+        </div>
+    </div>
+    <div class="block-content row mr-0 ml-0 items_prefix" data-edit="{{urlfor "Prefix.Edit"}}" data-delete="{{urlfor "Prefix.Delete"}}">
+        {{range $i, $item := .select}}
+            <div class="item_prefix form-group col-sm-5 p-1 badge-primary mb-3" data-key="{{$item.Id}}">
+                <div class="input-daterange input-group">
+                    <input type="text" class="form-control form-control-sm" name="title" value="{{$item.Title}}" placeholder="名字">
+                    <div class="input-group-prepend input-group-append">
+                        <span class="input-group-text font-w600"><i class="fa fa-fw fa-link"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm col-sm-3" value="{{$item.Tags}}" name="tags" placeholder="前缀">
+                </div>
+                <div class="prefix_delete badge-primary"><i class="si si-close"></i></div>
+            </div>
+        {{end}}
+    </div>
+</div>
