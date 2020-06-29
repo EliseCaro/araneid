@@ -17,6 +17,6 @@ func (service *DefaultPrefixService) One(id int) spider.Prefix {
 /** 获取模型所有域名前缀 **/
 func (service *DefaultPrefixService) Select(model int) []*spider.Prefix {
 	var maps []*spider.Prefix
-	_, _ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", model).All(&maps)
+	_, _ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", model).OrderBy("-id").All(&maps)
 	return maps
 }

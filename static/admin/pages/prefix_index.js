@@ -12,7 +12,7 @@ const prefix_index = {
                      </div>
                      <input type="text" class="form-control form-control-sm col-sm-3" name="tags" placeholder="前缀">
                  </div>
-                 <div class="prefix_delete"><i class="si si-close"></i></div>
+                 <div class="prefix_delete badge-primary"><i class="si si-close"></i></div>
            </div>`,
      },
      begin:{
