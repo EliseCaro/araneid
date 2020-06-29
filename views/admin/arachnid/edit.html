@@ -1,0 +1,106 @@
+<div class="js-wizard-simple block block overflow-hidden">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">基础配置</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#extend" data-toggle="tab">扩展配置</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Arachnid.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="fade fade-left tab-pane active show" id="base" role="tabpanel">
+                <div class="form-group row font-size-sm btn-warning">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">项目名称</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="项目名称"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"><code>项目名称；必填</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="link">友链数量</label>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <input class="form-control" type="number" id="link" value="{{$.info.Link}}" name="link" placeholder="底部友情链接最大数量">
+                            <div class="input-group-append"><span class="input-group-text font-size-sm">个</span></div>
+                        </div>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">
+                            <code data-original-title="底部友情链接最大数量；太多不利于站群生态发展；" class="js-tooltip" data-toggle="tooltip">* 对友链数量选项有疑问？</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm ">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="zoology">轮链数量</label>
+                    <div class="col-sm-4 mr-4">
+                        <div class="input-group">
+                            <input class="form-control" type="number" id="zoology" value="{{$.info.Zoology}}" name="zoology" placeholder="内容轮链最大数量">
+                            <div class="input-group-append"><span class="input-group-text font-size-sm">个</span></div>
+                        </div>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">
+                            <code data-original-title="内容最多会匹配几个生态链来发展生态；内容垂直度跟内容数量将会决定质量；" class="js-tooltip" data-toggle="tooltip">* 对轮链数量选项有疑问？</code>
+                        </div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="indexes">索引数量</label>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <input class="form-control" type="number" id="indexes" value="{{$.info.Indexes}}" name="indexes" placeholder="内容索引最大数量">
+                            <div class="input-group-append"><span class="input-group-text font-size-sm">个</span></div>
+                        </div>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">
+                            <code data-original-title="内容最多匹配几个索引链来强引蜘蛛；内容垂直度将是决定质量的关键；过多的索引链是榨干蜘蛛池的结果；" class="js-tooltip" data-toggle="tooltip">* 对索引数量选项有疑问？</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="models">挂载模型</label>
+                    <div class="col-sm-4 mr-4">
+                        <select class="form-control font-size-sm" name="models" id="models">
+                            {{range $i, $item := .model}}
+                                <option {{if eq $item.Id $.info.Models}} selected {{end}} value="{{$item.Id}}">{{$item.Name}}</option>
+                            {{end}}
+                        </select>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">挂载的内容模型；注意内容垂直度</div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="matching">匹配模板</label>
+                    <div class="col-sm-4">
+                        <select class="form-control font-size-sm" name="matching" id="matching">
+                            {{range $i, $item := .match}}
+                                <option {{if eq $item.Id $.info.Matching}} selected {{end}} value="{{$item.Id}}">{{$item.Name}}</option>
+                            {{end}}
+                        </select>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">选择一个挂载的内容匹配模板；</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade fade-left tab-pane" id="extend" role="tabpanel">
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="statistics">统计代码</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="statistics" name="statistics" rows="3" placeholder="统计代码">{{$.info.Statistics}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">用于站点流量数据等统计...</div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 98px;" for="domain">项目域名</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="domain" name="domain" rows="4" placeholder="项目域名">{{$.info.Domain}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">项目域名将自动将每个域名匹配模型的所有前缀;<code>每行一个顶级域名；不加前缀</code></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

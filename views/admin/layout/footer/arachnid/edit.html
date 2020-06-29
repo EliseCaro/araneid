@@ -1,0 +1,17 @@
+<script src="/static/admin/plugins/wizard/bs4/jquery.bootstrap.wizard.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-wizard-simple').bootstrapWizard({
+            nextSelector: '[data-wizard="next"]',
+            previousSelector: '[data-wizard="prev"]',
+            finishSelector: '[data-wizard="finish"]',
+            onTabShow: (tab, nav, index) => {
+                let percent = ((index + 1) / nav.find('li').length) * 100;
+                let progress = nav.parents('.block').find('[data-wizard="progress"] > .progress-bar');
+                if (progress.length) {
+                    progress.css({width: percent + 1 + '%'});
+                }
+            }
+        });
+    })
+</script>

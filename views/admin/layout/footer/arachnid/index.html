@@ -1,0 +1,10 @@
+<script src="/static/admin/pages/table_begin.js?v={{$.versions}}"></script>
+<style>.odd .data_table_btn_style{padding: 0!important;}</style>
+<script TYPE="text/javascript">
+    const builder_table = {
+        columnsTable  : JSON.parse({{htmlunquote $.table_builder_columns}}),
+        orderTable    : JSON.parse({{$.table_builder_check}}),
+        buttonsTable  : JSON.parse({{$.table_builder_buttons}}),
+        pageSize      : {{$.table_page_size_length}},
+    };
+</script>
