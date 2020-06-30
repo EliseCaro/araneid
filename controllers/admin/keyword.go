@@ -69,7 +69,9 @@ func (c *Keyword) Import() {
 			rows, _ := f.GetRows("Sheet1")
 			var items []*spider.Keyword
 			for _, row := range rows {
-				items = append(items, &spider.Keyword{Arachnid: arachnid, Title: row[0]})
+				if len(row) == 1 {
+					items = append(items, &spider.Keyword{Arachnid: arachnid, Title: row[0]})
+				}
 			}
 			if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
 				c.Succeed(&controllers.ResultJson{Message: "批量导入关键词共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Keyword.Index", ":id", arachnid)})
