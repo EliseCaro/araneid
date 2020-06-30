@@ -30,7 +30,7 @@ func init() {
 			&admin.Dictionaries{}, &admin.Lexicon{},
 			&admin.Models{}, &admin.Disguise{}, &admin.Template{},
 			&admin.Class{}, &admin.Article{}, &admin.Prefix{}, &admin.Match{},
-			&admin.Arachnid{}, &admin.Keyword{},
+			&admin.Arachnid{}, &admin.Keyword{}, &admin.Indexes{},
 		)),
 	)
 }
