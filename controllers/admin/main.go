@@ -35,6 +35,7 @@ type Main struct {
 	prefixService       service.DefaultPrefixService
 	matchService        service.DefaultMatchService
 	arachnidService     service.DefaultArachnidService
+	keywordService      service.DefaultKeywordService
 }
 
 /** 准备下一级构造函数 **/
