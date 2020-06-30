@@ -1,0 +1,9 @@
+<style>.form-inline .form-control {display: inline-block;vertical-align: middle;width: 73%;margin-right: 3%;}</style>
+<div class="block block-themed mb-0 overflow-hidden" style="height: 72px">
+    <div class="block-content m-0 p-3">
+        <form action="{{urlfor "Keyword.Edit" ":id" $.info.Id}}" class="form-inline ajax_from" method="post">
+            <input class="form-control mr-sm-6 form-control-alt font-size-sm" id="title" type="text" value="{{$.info.Title}}" name="title" placeholder="输入您的关键字进行提交保存～">
+            <button type="submit" class="btn btn-sm btn-primary"> 提交保存</button>
+        </form>
+    </div>
+</div>
