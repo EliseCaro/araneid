@@ -44,10 +44,10 @@ func (c *Base) DomainCheck(callback func(string, string) bool) {
 	domain := strings.Split(c.Ctx.Input.Domain(), ".")
 	if len(domain) == 3 {
 		if callback(domain[0], fmt.Sprintf("%s.%s", domain[1], domain[2])) == false {
-			c.Abort500("域名解析错误", "②:域名不合法！请检查您的域名解析配置流程以及域名格式;")
+			c.Abort500("域名解析错误", "②域名不合法！请检查您的域名解析配置流程以及域名格式;")
 		}
 	} else {
-		c.Abort500("域名解析错误", "①:域名不合法！请检查您的域名解析配置流程以及域名格式;")
+		c.Abort500("域名解析错误", "①域名不合法！请检查您的域名解析配置流程以及域名格式;")
 	}
 }
 
