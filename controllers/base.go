@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/astaxie/beego"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"strconv"
@@ -11,6 +12,8 @@ import (
 
 type Base struct {
 	beego.Controller
+	DomainMain   string
+	DomainPrefix string
 }
 
 /*  子级构造函数  */
@@ -34,6 +37,18 @@ func (c *Base) Prepare() {
 	}
 	c.setTemplate()
 	c.setStaticVersions()
+}
+
+/** 域名鉴权 **/
+func (c *Base) DomainCheck(callback func(string, string) bool) {
+	domain := strings.Split(c.Ctx.Input.Domain(), ".")
+	if len(domain) == 3 {
+		if callback(domain[0], fmt.Sprintf("%s.%s", domain[1], domain[2])) == false {
+			c.Abort500("域名解析错误", "②:域名不合法！请检查您的域名解析配置流程以及域名格式;")
+		}
+	} else {
+		c.Abort500("域名解析错误", "①:域名不合法！请检查您的域名解析配置流程以及域名格式;")
+	}
 }
 
 /** 自动设置模板路径 **/

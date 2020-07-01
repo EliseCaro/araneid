@@ -2,6 +2,7 @@ package admin
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
@@ -51,6 +52,13 @@ func (c *Main) NestPrepare() {
 	}
 	c.controllerName, c.actionName = c.GetControllerAndAction()
 	thisMenuRole := c.menusService.ControllerAndActionMenu(c.controllerName, c.actionName)
+	c.DomainCheck(func(prefix, main string) bool {
+		if beego.AppConfig.String("system_admin_domain") == fmt.Sprintf("%s.%s", prefix, main) {
+			return true
+		} else {
+			return false
+		}
+	})
 	c.isLogin()
 	c.checkRoleMenu()
 	c.themeBegin()
