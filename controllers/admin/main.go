@@ -7,6 +7,7 @@ import (
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	table "github.com/beatrice950201/araneid/extend/func"
+	"github.com/beatrice950201/araneid/extend/model/menus"
 	"github.com/beatrice950201/araneid/extend/model/users"
 	"github.com/beatrice950201/araneid/extend/service"
 	"strconv"
@@ -17,6 +18,7 @@ type Main struct {
 	UserInfo            users.Users
 	controllerName      string
 	actionName          string
+	menuRole            menus.Menus
 	tableBuilder        table.BuilderTable
 	verifyBase          service.DefaultBaseVerify
 	menusService        service.DefaultMenusService
@@ -47,30 +49,44 @@ type NextPreparer interface {
 
 /** 实现上一级构造 **/
 func (c *Main) NestPrepare() {
-	if app, ok := c.AppController.(NextPreparer); ok {
-		app.NextPrepare()
-	}
-	c.controllerName, c.actionName = c.GetControllerAndAction()
-	thisMenuRole := c.menusService.ControllerAndActionMenu(c.controllerName, c.actionName)
-	c.DomainCheck(func(prefix, main string) bool {
-		if beego.AppConfig.String("system_admin_domain") == fmt.Sprintf("%s.%s", prefix, main) {
-			return true
-		} else {
-			return false
-		}
-	})
+	c.DomainCheck(c.AdminCheck)
 	c.isLogin()
+	c.setController()
 	c.checkRoleMenu()
 	c.themeBegin()
 	c.setLayout()
+	c.popupInfo()
+	if app, ok := c.AppController.(NextPreparer); ok {
+		app.NextPrepare()
+	}
+}
+
+/** 设置控制器信息 **/
+func (c *Main) setController() {
+	c.controllerName, c.actionName = c.GetControllerAndAction()
+	c.menuRole = c.menusService.ControllerAndActionMenu(c.controllerName, c.actionName)
+}
+
+/** 设置pop信息 **/
+func (c *Main) popupInfo() {
 	c.Data["popup"], _ = c.GetInt(":popup", 0)
 	if c.Data["popup"] == 0 && c.IsAjax() != true {
 		c.Data["users"] = c.UserInfo
-		c.Data["breadcrumb_menus"] = c.menusService.Breadcrumb(thisMenuRole)
+		c.Data["breadcrumb_menus"] = c.menusService.Breadcrumb(c.menuRole)
 		c.Data["header_menus"] = c.menusService.HeaderMenus(c.UserInfo)
-		c.Data["side_bar_menus"] = c.menusService.SideBarMenus(c.UserInfo, thisMenuRole.Id)
-		c.Data["breadcrumb_map"] = c.menusService.BreadcrumbMenu(thisMenuRole.Id)
+		c.Data["side_bar_menus"] = c.menusService.SideBarMenus(c.UserInfo, c.menuRole.Id)
+		c.Data["breadcrumb_map"] = c.menusService.BreadcrumbMenu(c.menuRole.Id)
 		c.Data["inform_items"] = c.informService.HeaderItems()
+	}
+}
+
+/** 检测后台域名 **/
+func (c *Main) AdminCheck(prefix, main string) bool {
+	adminDomain := beego.AppConfig.String("system_admin_domain")
+	if adminDomain == fmt.Sprintf("%s.%s", prefix, main) {
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -97,7 +113,7 @@ func (c *Main) themeBegin() {
 func (c *Main) setLayout() {
 	c.Layout = beego.AppConfig.String("admin_base_html")
 	cn, an := c.GetControllerAndAction()
-	r := _func.LayoutSections(cn, an, c.Ctx.Request)
+	r := _func.LayoutSections(cn, an, beego.AppConfig.String("admin_name"))
 	c.LayoutSections = make(map[string]string)
 	c.LayoutSections["header"] = r["header"]
 	c.LayoutSections["footer"] = r["footer"]

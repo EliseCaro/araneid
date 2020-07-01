@@ -17,13 +17,17 @@ type Sign struct {
 
 /** 实现上一级构造 **/
 func (c *Sign) NestPrepare() {
-	c.DomainCheck(func(prefix, main string) bool {
-		if beego.AppConfig.String("system_admin_domain") == fmt.Sprintf("%s.%s", prefix, main) {
-			return true
-		} else {
-			return false
-		}
-	})
+	c.DomainCheck(c.AdminCheck)
+}
+
+/** 检测后台域名 **/
+func (c *Sign) AdminCheck(prefix, main string) bool {
+	adminDomain := beego.AppConfig.String("system_admin_domain")
+	if adminDomain == fmt.Sprintf("%s.%s", prefix, main) {
+		return true
+	} else {
+		return false
+	}
 }
 
 // @router /sign/login [get,post]

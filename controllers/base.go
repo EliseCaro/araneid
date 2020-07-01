@@ -14,6 +14,7 @@ type Base struct {
 	beego.Controller
 	DomainMain   string
 	DomainPrefix string
+	Module       string
 }
 
 /*  子级构造函数  */
@@ -32,11 +33,11 @@ type ResultJson struct {
 
 /** 构造行数 **/
 func (c *Base) Prepare() {
+	c.setStaticVersions()
+	c.SetTemplate(c.extractModuleName())
 	if app, ok := c.AppController.(NestPreparer); ok {
 		app.NestPrepare()
 	}
-	c.setTemplate()
-	c.setStaticVersions()
 }
 
 /** 域名鉴权 **/
@@ -52,10 +53,19 @@ func (c *Base) DomainCheck(callback func(string, string) bool) {
 }
 
 /** 自动设置模板路径 **/
-func (c *Base) setTemplate() {
-	module := _func.ExtractModuleName(c.Ctx.Request)
+func (c *Base) SetTemplate(module string) {
 	controller, action := c.GetControllerAndAction()
 	c.TplName = module + "/" + strings.ToLower(controller) + "/" + strings.ToLower(action) + ".html"
+}
+
+/** 提取模块名称 **/
+func (c *Base) extractModuleName() string {
+	URI := c.Ctx.Request.RequestURI
+	URIS := strings.Split(URI, "/")
+	if URIS[1] != beego.AppConfig.String("admin_name") {
+		return "index"
+	}
+	return beego.AppConfig.String("admin_name")
 }
 
 /** 设置资源版本号码 **/

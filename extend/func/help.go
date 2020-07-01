@@ -9,23 +9,11 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/config"
 	"math/rand"
 	"net"
-	"net/http"
 	"os"
 	"regexp"
 	"strings"
 	"time"
 )
-
-/** 提取模块名称 **/
-func ExtractModuleName(r *http.Request) string {
-	name := beego.AppConfig.String("admin_name")
-	URI := r.RequestURI
-	URIS := strings.Split(URI, "/")
-	if URIS[1] != name {
-		name = "index"
-	}
-	return name
-}
 
 /** Ip2long 将 IPv4 字符串形式转为 uint32 **/
 func Ip2long(ipString string) uint32 {
@@ -70,11 +58,10 @@ func PathExists(path string) (bool, error) {
 }
 
 /** 获取加载的扩展模板 **/
-func LayoutSections(cname, aname string, r *http.Request) map[string]string {
+func LayoutSections(cname, aname, module string) map[string]string {
 	root := beego.AppConfig.String("admin_root")
 	cname = strings.Replace(snakeString(cname), "_", "/", -1)
 	aname = strings.ToLower(aname)
-	module := ExtractModuleName(r)
 	res := map[string]string{
 		"header": module + "/layout/header/" + cname + root + aname + ".html",
 		"footer": module + "/layout/footer/" + cname + root + aname + ".html",
