@@ -16,6 +16,30 @@ func (service *DefaultIndexesService) Find(id int) (spider.Indexes, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 挂载一条索引 **/
+func (service *DefaultIndexesService) UsageOneIndexes(arachnid int) spider.Indexes {
+	var maps spider.Indexes
+	_ = orm.NewOrm().QueryTable(new(spider.Indexes)).Filter("arachnid", arachnid).OrderBy("usage").One(&maps)
+	_ = service.Inc(maps.Id)
+	return maps
+}
+
+/** 计数器++ **/
+func (service *DefaultIndexesService) Inc(id int) (errorMsg error) {
+	_, errorMsg = orm.NewOrm().QueryTable(new(spider.Indexes)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColAdd, 1),
+	})
+	return errorMsg
+}
+
+/** 计数器-- **/
+func (service *DefaultIndexesService) Dec(id int) error {
+	_, errorMessage := orm.NewOrm().QueryTable(new(spider.Indexes)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColMinus, 1),
+	})
+	return errorMessage
+}
+
 /** 批量删除 **/
 func (service *DefaultIndexesService) DeleteArray(array []int) (message error) {
 	_ = orm.NewOrm().Begin()

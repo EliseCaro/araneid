@@ -17,5 +17,5 @@ func (m *Keyword) TableEngine() string {
 
 /** 设置表名 **/
 func (m *Keyword) TableName() string {
-	return "spider_Keyword"
+	return "spider_keyword"
 }

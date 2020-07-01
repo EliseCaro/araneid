@@ -13,3 +13,19 @@ func (service *DefaultClassService) One(id int) spider.Class {
 	_ = orm.NewOrm().QueryTable(new(spider.Class)).Filter("id", id).One(&maps)
 	return maps
 }
+
+/** 计数器++ **/
+func (service *DefaultClassService) Inc(id int) (errorMsg error) {
+	_, errorMsg = orm.NewOrm().QueryTable(new(spider.Class)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColAdd, 1),
+	})
+	return errorMsg
+}
+
+/** 计数器-- **/
+func (service *DefaultClassService) Dec(id int) error {
+	_, errorMessage := orm.NewOrm().QueryTable(new(spider.Class)).Filter("id", id).Update(orm.Params{
+		"usage": orm.ColValue(orm.ColMinus, 1),
+	})
+	return errorMessage
+}

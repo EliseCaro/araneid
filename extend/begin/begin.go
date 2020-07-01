@@ -51,6 +51,7 @@ func databasesBegin() {
 		new(spider.Prefix),
 		new(spider.Models),
 		new(inform.Inform),
+		new(spider.Domain),
 		new(config.Config),
 		new(spider.Keyword),
 		new(spider.Article),
