@@ -21,12 +21,12 @@ func (c *Sign) NestPrepare() {
 }
 
 /** 检测后台域名 **/
-func (c *Sign) AdminCheck(prefix, main string) bool {
+func (c *Sign) AdminCheck(prefix, main string) (bool, string, string) {
 	adminDomain := beego.AppConfig.String("system_admin_domain")
 	if adminDomain == fmt.Sprintf("%s.%s", prefix, main) {
-		return true
+		return true, "success!!", "success!!"
 	} else {
-		return false
+		return false, "域名检测失败", "该域名不是有效合法的访问域名；请检查是否授权该域名访问主系统！"
 	}
 }
 

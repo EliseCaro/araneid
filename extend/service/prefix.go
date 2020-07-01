@@ -20,3 +20,10 @@ func (service *DefaultPrefixService) Select(model int) []*spider.Prefix {
 	_, _ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", model).OrderBy("-id").All(&maps)
 	return maps
 }
+
+/** 根据模型跟前缀或一条数 **/
+func (service *DefaultPrefixService) OnePrefix(model int, prefix string) spider.Prefix {
+	var item spider.Prefix
+	_ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("tags", prefix).Filter("model", model).One(&item)
+	return item
+}

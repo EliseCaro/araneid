@@ -29,6 +29,12 @@ func (service *DefaultArachnidService) Find(id int) (spider.Arachnid, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 根据域名获取蜘蛛池 **/
+func (service *DefaultArachnidService) FindDomain(domain string) (maps spider.Arachnid) {
+	_ = orm.NewOrm().QueryTable(new(spider.Arachnid)).Filter("domain__icontains", domain).One(&maps)
+	return maps
+}
+
 /** 更新状态 **/
 func (service *DefaultArachnidService) StatusArray(array []int, status int8) (e error) {
 	_ = orm.NewOrm().Begin()
