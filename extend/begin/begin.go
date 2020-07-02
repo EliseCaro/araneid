@@ -17,6 +17,8 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/users"
 	"github.com/beatrice950201/araneid/extend/service"
 	_ "github.com/go-sql-driver/mysql"
+	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -87,6 +89,7 @@ func viewBegin() {
 	_ = beego.AddFuncMap("fileBuyName", fileBuyName)
 	_ = beego.AddFuncMap("fileBuySize", fileBuySize)
 	_ = beego.AddFuncMap("fileBuyPath", fileBuyPath)
+	_ = beego.AddFuncMap("spiderArticleLimit", spiderArticleLimit)
 }
 
 /** 注册日志 **/
@@ -125,4 +128,20 @@ func fileBuyPath(id int) string {
 	item.Id = id
 	_ = orm.NewOrm().Read(&item)
 	return _func.DomainStatic(item.Driver) + item.Path
+}
+
+/**
+	根据条件获取文章 todo 考虑关联文章表获得最新的标题组合
+    sort [RAND(),FIELD [ASC|DESC]]
+**/
+func spiderArticleLimit(cid interface{}, limit int, where, sort string) []spider.Article {
+	var prefix = beego.AppConfig.String("db_prefix")
+	var maps []spider.Article
+	var value = cid
+	if reflect.TypeOf(cid).String() == "int" {
+		value = strconv.Itoa(cid.(int))
+	}
+	sql := fmt.Sprintf(`SELECT id,title,description FROM %sspider_article WHERE %s%s ORDER BY %s LIMIT %d`, prefix, where, value, sort, limit)
+	_, _ = orm.NewOrm().Raw(sql).QueryRows(&maps)
+	return maps
 }

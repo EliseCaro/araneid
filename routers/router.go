@@ -17,6 +17,7 @@ func init() {
 		beego.NewNamespace("/index", beego.NSInclude(
 			&index.Index{},
 			&index.Spider{},
+			&index.Lists{},
 		)),
 	)
 

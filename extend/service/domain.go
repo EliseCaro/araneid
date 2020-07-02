@@ -12,10 +12,20 @@ import (
 	"math"
 	"math/rand"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
 type DefaultDomainService struct{}
+
+/** 将分类数据转为字符串id组 **/
+func (service *DefaultDomainService) CateForIds(cate []*spider.Class) string {
+	var id []string
+	for _, i := range cate {
+		id = append(id, strconv.Itoa(i.Id))
+	}
+	return fmt.Sprintf(`(%s)`, strings.Join(id, ","))
+}
 
 /** 重制一个域名数据 **/
 func (service *DefaultDomainService) InitializedDomain(model, arachnid int, prefix, domain string) *spider.Domain {

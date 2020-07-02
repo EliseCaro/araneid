@@ -1,0 +1,135 @@
+/* css */
+* { margin: 0; padding: 0 }
+body { font: 15px "Microsoft YaHei", Arial, Helvetica, sans-serif; color: #555; background: #efefef; line-height: 1.5; }
+img { border: 0; display: block }
+ul, li { list-style: none; }
+a { text-decoration: none; color: #555 }
+a:hover { text-decoration: none; color: #000; }
+.clear { clear: both; }
+.blank { height: 20px; overflow: hidden; width: 100%; margin: auto; clear: both }
+.f_l { float: left }
+.f_r { float: right }
+.box { width: 1000px; margin: auto; overflow: hidden; clear: both; }
+.nobox { width: 100% }
+.c_white { background: #fff }
+article { width: 1000px; margin: auto; overflow: hidden; padding: 20px 0 }
+.container { width: 1000px; margin: auto }
+/*header*/
+header { width: 100%; background: #fff; overflow: hidden; box-shadow: 0 1px 1px rgba(0,0,0,.04); }
+.logo { text-align: center; font-size: 22px; padding: 20px 0 }
+nav { width: 1000px; margin: 0 auto 20px; text-align: center; border-bottom: #000 1px solid; border-top: #000 1px solid; overflow: hidden }
+nav li { display: inline; line-height: 40px; padding: 0 20px }
+.newsbox { width: 50%; background: #fff; margin-top: 20px }
+.newsbox ul { margin: 20px; }
+.newstitle { margin: 20px; line-height: 30px; border-bottom: #000 1px solid; }
+.newstitle span { float: right; font-size: 18px }
+.newstitle span a { color: #000; }
+.newstitle b { background: #333; width: 118px; display: block; font-size: 14px; font-weight: normal; color: #FFF; text-align: center }
+.newsli li { padding-left: 10px; line-height: 30px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.sbox { width: 32%; background: #FFF; padding-bottom: 20px; position: relative; z-index: 2; }
+.sbox h2 { font-size: 16px; padding: 50px 0 20px; border-bottom: #CCC 1px solid; margin: 0 20px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.sbox p { overflow: hidden; text-overflow: ellipsis; -webkit-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 3; line-height: 24px; height: 72px; padding: 20px 20px 0 20px }
+.sbox.ml { margin-left: 20px }
+.sbox span { width: 80px; height: 30px; line-height: 30px; text-align: center; margin: auto; display: block; background: #333; color: #FFF; position: absolute }
+.read { display: block; text-align: center; margin: 20px auto 0; width: 100px; border: #333 1px solid; line-height: 26px; position: relative; }
+.read:before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 26px; background: #333; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; -webkit-transition: 0.5s; transition: 0.5s; z-index: -1; }
+.read:hover { color: #fff; }
+.read:hover:before { width: 100px; }
+.blogs { width: 66%; float: left }
+.bloglist { background: #FFF; overflow: hidden; padding: 20px; margin-bottom: 20px; }
+.bloglist h2 { font-size: 18px; position: relative }
+.bloglist h2:before { content: ""; width: 3px; height: 26px; position: absolute; left: -20px; top: 0; background: #333 }
+.bloglist p { overflow: hidden; text-overflow: ellipsis; -webkit-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 3; line-height: 24px; height: 72px; margin: 10px 0 0 }
+aside { width: 32%; float: right }
+.ztbox { border: #000 1px solid; background: #fff; overflow: hidden; }
+.ztbox li { border-bottom: #888 1px solid; line-height: 40px; height: 40px; padding-left: 70px; position: relative; }
+.ztbox li:last-child { border-bottom: 0 }
+.ztbox li:after { content: "》"; position: absolute; right: 10px; color: #000; -moz-transition: all .5s ease; -webkit-transition: all .5s ease; transition: all .5s ease; }
+.ztbox li:hover:after { right: 0px }
+.ztbox li:before { background: #000; position: absolute; left: 0; width: 50px; text-align: center; color: #FFF }
+.ztbox li:nth-child(1):before { content: "1"; }
+.ztbox li:nth-child(2):before { content: "2"; }
+.ztbox li:nth-child(3):before { content: "3"; }
+.ztbox li:nth-child(4):before { content: "4"; }
+.ztbox li:nth-child(5):before { content: "5"; }
+.paihang { background: #FFF; overflow: hidden; margin-top: 20px }
+.paihang h2 { font-size: 16px; padding: 8px 20px; position: relative }
+.paihang h2:after { content: ""; background-color: #282828; left: 20px; width: 60px; height: 2px; bottom: 0; position: absolute; -webkit-transition: 0.5s; -moz-transition: 0.5s; -ms-transition: 0.5s; -o-transition: 0.5s; transition: 0.5s; }
+.paihang ul { padding: 10px 20px }
+.paihang:hover ::after { width: 90px; }
+.paihang ul li { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 26px }
+footer { width: 100%; text-align: center; background: #FFF; padding: 10px 0; line-height: 26px; border-top: #333 1px solid; }
+/*list*/
+.place { margin: 10px 0; width: 100%; overflow: hidden; background: #fff; }
+.place a { display: block; float: left; padding: 5px 0; background: #fff; margin: 0 10px; width: 100px; text-align: center }
+.pagelist { text-align: center; color: #666; width: 100%; clear: both; margin: 25px 0 10px 0; padding-top: 20px }
+.pagelist a { color: #666; margin: 0 2px 10px; border: 1px solid #fff; padding: 5px 10px; background: #FFF; display: inline-block; }
+.pagelist a:hover { color: #333; }
+.pagelist > b { border: 1px solid #333; padding: 5px 10px; background: #333; color: #FFF }
+a.curPage { color: #333; font-weight: bold; }
+/*about*/
+.newsview { padding: 20px; overflow: hidden; background: rgba(255,255,255,1); margin: 20px 0 }
+.newsview h2 { font-size: 16px; width: 120px; height: 30px; line-height: 30px; text-align: center; background: #333; color: #fff; margin: 10px 0; font-weight: normal; }
+.news_infos { padding-bottom: 20px }
+/*infosbox*/
+.infosbox { float: left; width: 66%; overflow: hidden; background: #FFF; }
+.newsview { padding: 0 30px }
+.news_title { font-size: 24px; font-weight: normal; }
+.news_author { width: 100%; color: #999; line-height: 18px; }
+.news_author span { margin-right: 10px; padding-left: 20px }
+.news_about { color: #888888; border: 1px solid #F3F3F3; padding: 10px; margin: 20px auto 15px auto; line-height: 23px; background: none repeat 0 0 #F6F6F6; }
+.news_about strong { color: #38485A; font-weight: 400 !important; font-size: 13px; padding-right: 8px; }
+.news_content { line-height: 24px; font-size: 14px; }
+.news_content p { overflow: hidden; padding-bottom: 4px; padding-top: 6px; word-wrap: break-word; }
+.tags a { background: #333; padding: 3px 8px; margin: 0 5px 0 0; color: #fff; }
+.tags { margin: 30px 0; }
+.infosbox .news_con { line-height: 1.8; font-size: 16px; text-align: justify; }
+.infosbox .news_con p { margin-bottom: 25px }
+.infosbox .news_con img { max-width: 650px; height: auto; }
+.infosbox .share { padding: 20px; }
+.nextinfo { line-height: 24px; width: 100%; background: #FFF; border-radius: 10px; overflow: hidden; margin: 20px 0 }
+.nextinfo p { padding: 4px 10px; border-radius: 5px; }
+.nextinfo a:hover { color: #000; text-decoration: underline }
+.diggit { width: 140px; margin: auto; background: #E2523A; color: #fff; box-shadow: 1px 2px 6px 0px rgba(0,0,0,.2); border-radius: 3px; line-height: 40px; text-align: center; }
+.diggit a { color: #fff; }
+#diggnum { margin: 5px; }
+.otherlink, .xzsm, .ffsm { width: 100%; background: #FFF; overflow: hidden; margin: 20px 0 }
+.otherlink h2 { border-bottom: #000 2px solid; line-height: 40px; font-size: 14px; padding-left: 40px; color: #000 }
+.otherlink ul { margin: 10px 0 }
+.otherlink li { line-height: 24px; height: 24px; display: block; width: 290px; float: left; overflow: hidden; margin-right: 30px; padding-left: 10px; }
+.otherlink li a:hover { text-decoration: underline; color: #000 }
+.news_pl { margin: 10px 0; width: 100%; background: #FFF; overflow: hidden; margin: 20px 0 }
+.news_pl h2 { border-bottom: #000 2px solid; line-height: 40px; font-size: 14px; padding-left: 30px; color: #000 }
+.xzsm ul, .ffsm ul { padding: 20px; line-height: 24px; border-top: 6px solid #a6b5c5; }
+.bloginfo { overflow: hidden; margin-top: 20px }
+.bloginfo ul li { float: left; font-size: 12px; margin: 0 15px 0 0; color: #748594; line-height: 1.5; display: inline-block; }
+.bloginfo ul li a { color: #748594; }
+.bloginfo ul li a:hover { color: #000 }
+/*time*/
+.timebox { background: #FFF; padding: 30px }
+.timebox span { position: relative; line-height: 32px; padding-right: 40px; color: #999 }
+.timebox span:after { position: absolute; content: ""; width: 2px; height: 40px; background: #e0dfdf; right: 18px }
+.timebox li { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.timebox li i { position: relative; font-style: normal }
+.timebox li i:before { content: " "; height: 10px; width: 10px; border: 2px solid #cccaca; background: #fff; position: absolute; top: 4px; left: -26px; border-radius: 50%; -webkit-transition: all .5s ease; -moz-transition: all .5s ease; -ms-transition: all .5s ease; -o-transition: all .5s ease; transition: all .5s ease; }
+.timebox li:hover i:before { background: #333 }
+/*phone*/
+ @media screen and (min-width: 768px) and (max-width: 1023px) {
+nav, article { width: 100% }
+.box { width: 100% }
+}
+ @media only screen and (max-width: 767px) {
+nav, article { width: 100% }
+.box { width: 94% }
+aside { display: none }
+.sbox { width: 100%; margin: 0 auto 10px }
+.sbox.ml { margin-left: 0; }
+.blogs { width: 100% }
+.newsbox { width: 100% }
+nav { border: none }
+#starlist { width: 90%; margin: auto; }
+nav li { width: 33%; padding: 0; display: block; float: left; border-top: 1px solid #333; border-bottom: 1px solid #333; }
+nav li:nth-child(n+4) { border-top: none }
+nav li:nth-child(2), nav li:nth-child(5) { border-left: 1px solid #333; border-right: 1px solid #333; }
+.infosbox { width: 100% }
+}
