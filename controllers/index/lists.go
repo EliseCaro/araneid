@@ -6,9 +6,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/spider"
 )
 
-type Lists struct {
-	Main
-}
+type Lists struct{ Main }
 
 // @router /column-:id([0-9]+)-:page([0-9]+).html [get]
 func (c *Lists) Index() {

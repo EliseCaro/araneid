@@ -45,6 +45,22 @@ func (service *DefaultArticleService) DeleteArray(array []int) (message error) {
 	return message
 }
 
+/** 计数器++ **/
+func (service *DefaultArticleService) Inc(id int, field string) (errorMsg error) {
+	_, errorMsg = orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", id).Update(orm.Params{
+		field: orm.ColValue(orm.ColAdd, 1),
+	})
+	return errorMsg
+}
+
+/** 计数器-- **/
+func (service *DefaultArticleService) Dec(id int, field string) error {
+	_, errorMessage := orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", id).Update(orm.Params{
+		field: orm.ColValue(orm.ColMinus, 1),
+	})
+	return errorMessage
+}
+
 /****************** 以下为表格渲染  ***********************/
 
 /** 获取需要渲染的Column **/

@@ -26,6 +26,7 @@ type Main struct {
 	templateService service.DefaultTemplateService
 	domainService   service.DefaultDomainService
 	categoryService service.DefaultCategoryService
+	detailService   service.DefaultDetailService
 }
 
 /** 准备下一级构造函数 **/

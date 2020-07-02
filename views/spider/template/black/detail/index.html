@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{{$.detail.Title}}</title>
+    <meta name="keywords" content="{{$.detail.Keywords}}" />
+    <meta name="description" content="{{$.detail.Description}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/spider/template/black/common.css?v={{$.versions}}" rel="stylesheet">
+  </head>
+  <body>
+    {{template "spider/template/black/base/header.html" .}}
+    <div class="box">
+     <div class="blank"></div>
+     <div class="infosbox">
+        <div class="newsview">
+          <h3 class="news_title">{{$.detail.Title}}</h3>
+          <div class="bloginfo">
+            <ul>
+              <li class="lmname"><a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Title}}">{{$.cateInfo.Title}}</a></li>
+              <li class="timer">{{date $.detail.UpdateTime "Y-m-d H:i:s"}}</li>
+              <li class="view">{{spiderArticleView $.detail.Oid}} 人已阅读</li>
+            </ul>
+          </div>
+          <div class="news_about"><strong>简介</strong>{{$.detail.Description}}</div>
+          <div class="news_con">{{str2html $.detail.Context}}</div>
+        </div>
+        <div class="nextinfo">
+            {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+                <p>上一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+            {{end}}
+            {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+                <p>下一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+            {{end}}
+        </div>
+        <div class="otherlink">
+          <h2>相关文章</h2>
+          <ul>
+              {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "RAND()" }}
+                  <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+              {{end}}
+           </ul>
+        </div>
+      </div>
+      <aside>
+        {{template "spider/template/black/base/category.html" .}}
+        {{template "spider/template/black/base/ranking.html" .}}
+        {{template "spider/template/black/base/recom.html" .}}
+        {{template "spider/template/black/base/links.html" .}}
+      </aside>
+    </div>
+    <div class="blank"></div>
+    {{template "spider/template/black/base/footer.html" .}}
+  </body>
+</html>

@@ -194,16 +194,12 @@ func (service *DefaultDisguiseService) handleManageBeginKeyword(disguise int, mo
 	}
 }
 
-/** 获取真是关键字 todo 随机近义词为实现 **/
+/** 获取真是关键字 todo 以下算法宣告失败；**/
 func (service *DefaultDisguiseService) robotKeywordManage(keyword []*nlp.Keyword, disguise int) string {
 	var result string
 	for _, v := range keyword {
-		object := DefaultRobotService{}
-		if one := object.OneString(v.Word); one.Id <= 0 {
-			result += service.setRobotKeywordManage(v.Word, disguise) + ","
-		} else {
-			result += one.Resemblance + ","
-		}
+		result += *v.Word + ","
+		//object := DefaultRobotService{};if one := object.OneString(v.Word); one.Id <= 0 {result += service.setRobotKeywordManage(v.Word, disguise) + ","} else {result += one.Resemblance + ","}
 	}
 	var resultReturn string
 	object, _ := service.Find(disguise)

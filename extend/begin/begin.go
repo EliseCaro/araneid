@@ -53,6 +53,7 @@ func databasesBegin() {
 		new(spider.Prefix),
 		new(spider.Models),
 		new(inform.Inform),
+		new(spider.Detail),
 		new(spider.Domain),
 		new(config.Config),
 		new(spider.Keyword),
@@ -91,6 +92,7 @@ func viewBegin() {
 	_ = beego.AddFuncMap("fileBuySize", fileBuySize)
 	_ = beego.AddFuncMap("fileBuyPath", fileBuyPath)
 	_ = beego.AddFuncMap("spiderArticleLimit", spiderArticleLimit)
+	_ = beego.AddFuncMap("spiderArticleView", spiderArticleView)
 }
 
 /** 注册日志 **/
@@ -145,4 +147,11 @@ func spiderArticleLimit(cid interface{}, limit int, where, sort string) []spider
 	sql := fmt.Sprintf(`SELECT id,title,description FROM %sspider_article WHERE %s%s ORDER BY %s LIMIT %d`, prefix, where, value, sort, limit)
 	_, _ = orm.NewOrm().Raw(sql).QueryRows(&maps)
 	return maps
+}
+
+/** 获取文章阅读量 **/
+func spiderArticleView(oid int) int {
+	var maps spider.Article
+	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", oid).One(&maps)
+	return maps.View
 }

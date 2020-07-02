@@ -8,6 +8,7 @@ type Category struct {
 	Cid         int       `orm:"column(cid);type(int);default(0);description(原始ID)" json:"cid" form:"cid" validate:"required" label:"原始ID"`
 	Model       int       `orm:"column(model);type(int);default(0);description(所属模型)" json:"model" form:"model" validate:"required" label:"所属模型"`
 	Title       string    `orm:"column(title);size(32);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"标题"`
+	Domain      int       `orm:"column(domain);type(int);default(0);description(挂载域名)" json:"domain" form:"domain" validate:"required" label:"挂载域名"`
 	Arachnid    int       `orm:"column(arachnid);type(int);default(0);description(所属项目)" json:"arachnid" form:"arachnid" validate:"required" label:"所属项目"`
 	Keywords    string    `orm:"column(keywords);size(80);type(char);default();description(关键字)" json:"keywords" form:"keywords" validate:"required" label:"关键字"`
 	Description string    `orm:"column(description);size(200);type(char);default();description(描述)" json:"description" form:"description" validate:"required" label:"描述"`
