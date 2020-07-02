@@ -194,23 +194,16 @@ func (service *DefaultDisguiseService) handleManageBeginKeyword(disguise int, mo
 	}
 }
 
-/** 获取真是关键字 todo 以下算法宣告失败；**/
+/** 获取真是关键字**/
 func (service *DefaultDisguiseService) robotKeywordManage(keyword []*nlp.Keyword, disguise int) string {
 	var result string
-	for _, v := range keyword {
-		result += *v.Word + ","
-		//object := DefaultRobotService{};if one := object.OneString(v.Word); one.Id <= 0 {result += service.setRobotKeywordManage(v.Word, disguise) + ","} else {result += one.Resemblance + ","}
-	}
-	var resultReturn string
-	object, _ := service.Find(disguise)
-	for index, v := range strings.Split(result, ",") {
-		if object.Length >= int8(index) {
-			resultReturn += v + ","
-		} else {
-			break
+	var object, _ = service.Find(disguise)
+	for i, v := range keyword {
+		if object.Length >= int8(i) {
+			result += *v.Word + ","
 		}
 	}
-	return strings.Trim(resultReturn, ",")
+	return strings.Trim(result, ",")
 }
 
 /*** 从训练模型提取不到关键词；需要写入; **/

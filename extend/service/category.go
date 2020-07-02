@@ -109,7 +109,7 @@ func (service *DefaultCategoryService) TagsRandom(aid int, title, result, match 
 	return result
 }
 
-/** 替换标签 #关键词# todo 此sql效率极低**/
+/** 替换标签 #关键词#**/
 func (service *DefaultCategoryService) replaceRandomKeyword(aid int, str string) string {
 	var dbPrefix = beego.AppConfig.String("db_prefix")
 	var items []*spider.Keyword
