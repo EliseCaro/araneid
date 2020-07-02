@@ -27,6 +27,12 @@ func (service *DefaultDomainService) CateForIds(cate []*spider.Class) string {
 	return fmt.Sprintf(`(%s)`, strings.Join(id, ","))
 }
 
+/** 获取一条数据 **/
+func (service *DefaultDomainService) Find(id int) (spider.Domain, error) {
+	item := spider.Domain{Id: id}
+	return item, orm.NewOrm().Read(&item)
+}
+
 /** 重制一个域名数据 **/
 func (service *DefaultDomainService) InitializedDomain(model, arachnid int, prefix, domain string) *spider.Domain {
 	arachnidInfo, _ := new(DefaultArachnidService).Find(arachnid)

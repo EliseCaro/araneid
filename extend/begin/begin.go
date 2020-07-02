@@ -64,6 +64,7 @@ func databasesBegin() {
 		new(spider.Disguise),
 		new(spider.Template),
 		new(spider.Arachnid),
+		new(spider.Category),
 		new(attachment.Attachment),
 		new(dictionaries.DictConfig),
 		new(dictionaries.Dictionaries),

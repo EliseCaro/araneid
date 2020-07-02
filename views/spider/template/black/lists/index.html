@@ -2,46 +2,31 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>列表页_杨青个人博客 - 一个站在web前端设计之路的女技术员个人博客网站</title>
-    <meta name="keywords" content="个人博客,杨青个人博客,个人博客模板,杨青" />
-    <meta name="description" content="杨青个人博客，是一个站在web前端设计之路的女程序员个人网站，提供个人博客模板免费资源下载的个人原创网站。" />
+    <title>{{$.cateInfo.Title}}</title>
+    <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+    <meta name="description" content="{{$.cateInfo.Description}}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/spider/template/black/style.css?v={{$.versions}}" rel="stylesheet">
+    <link href="/static/spider/template/black/common.css?v={{$.versions}}" rel="stylesheet">
+    <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
   </head>
   <body>
     {{template "spider/template/black/base/header.html" .}}
     <div class="box">
       <div class="place" id="pageContents">
         {{range $i, $e := .cate}}
-          <a href="{{urlfor "Lists.Index" ":id" $e.Id}}" title="{{$e.Title}}">{{$e.Title}}</a>
+          <a href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}" title="{{$e.Title}}">{{$e.Title}}</a>
         {{end}}
       </div>
       <div class="blogs">
-        <div class="bloglist">
-          <h2><a href="#" title="程序员请放下你的技术情节，与你的同伴一起进步">程序员请放下你的技术情节，与你的同伴一起进步</a></h2>
-          <p>如果说掌握一门赖以生计的技术是技术人员要学会的第一课的话， 那么我觉得技术人员要真正学会的第二课，不是技术，而是业务、交流与协作</p>
-        </div>
-        <div class="bloglist">
-          <h2><a href="#" title="个人博客，我为什么要用帝国cms？">个人博客，我为什么要用帝国cms？</a></h2>
-          <p>选择帝国cms，做一个博客系统，很多人都说是大材小用。确实是有那种感觉，因为cms有很多功能表用不上。但是帝国cms的安装包也就才6M，如果你放一张高清的1920的图，都比这安装包大！我就来说一说我为什么要用帝国cms。</p>
-        </div>
-        <div class="bloglist">
-          <h2><a href="#" title="个人博客，属于我的小世界！">个人博客，属于我的小世界！</a></h2>
-          <p>个人博客，用来做什么？我刚开始就把它当做一个我吐槽心情的地方，也就相当于一个网络记事本，写上一些关于自己生活工作中的小情小事，也会放上一些照片，音乐。每天工作回家后就能访问自己的网站，一边听着音乐，一边写写文章。</p>
-        </div>
-        <div class="bloglist">
-          <h2><a href="#" title="程序员请放下你的技术情节，与你的同伴一起进步">程序员请放下你的技术情节，与你的同伴一起进步</a></h2>
-          <p>如果说掌握一门赖以生计的技术是技术人员要学会的第一课的话， 那么我觉得技术人员要真正学会的第二课，不是技术，而是业务、交流与协作</p>
-        </div>
-        <div class="bloglist">
-          <h2><a href="#" title="个人博客，我为什么要用帝国cms？">个人博客，我为什么要用帝国cms？</a></h2>
-          <p>选择帝国cms，做一个博客系统，很多人都说是大材小用。确实是有那种感觉，因为cms有很多功能表用不上。但是帝国cms的安装包也就才6M，如果你放一张高清的1920的图，都比这安装包大！我就来说一说我为什么要用帝国cms。</p>
-        </div>
-        <div class="bloglist">
-          <h2><a href="#" title="个人博客，属于我的小世界！">个人博客，属于我的小世界！</a></h2>
-          <p>个人博客，用来做什么？我刚开始就把它当做一个我吐槽心情的地方，也就相当于一个网络记事本，写上一些关于自己生活工作中的小情小事，也会放上一些照片，音乐。每天工作回家后就能访问自己的网站，一边听着音乐，一边写写文章。</p>
-        </div>
-        <div class="pagelist"><a title="Total record">&nbsp;<b>162</b> </a>&nbsp;&nbsp;&nbsp;<b>1</b>&nbsp;<a href="/jstt/index_2.html">2</a>&nbsp;<a href="/jstt/index_3.html">3</a>&nbsp;<a href="/jstt/index_4.html">4</a>&nbsp;<a href="/jstt/index_5.html">5</a>&nbsp;<a href="/jstt/index_6.html">6</a>&nbsp;<a href="/jstt/index_2.html">下一页</a>&nbsp;<a href="/jstt/index_14.html">尾页</a></div>
+        {{range $index, $elem := .pageList.List}}
+          <div class="bloglist">
+            <h2><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h2>
+            <p>{{$elem.Description}}</p>
+          </div>
+        {{end}}
+        <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
       </div>
       <aside>
         {{template "spider/template/black/base/category.html" .}}

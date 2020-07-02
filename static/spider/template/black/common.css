@@ -62,11 +62,13 @@ footer { width: 100%; text-align: center; background: #FFF; padding: 10px 0; lin
 /*list*/
 .place { margin: 10px 0; width: 100%; overflow: hidden; background: #fff; padding: 15px 0;}
 .place a { display: block; float: left; padding:0 8px; background: #fff; margin: 0 10px; width: auto; text-align: center }
-.pagelist { text-align: center; color: #666; width: 100%; clear: both; margin: 25px 0 10px 0; padding-top: 20px }
-.pagelist a { color: #666; margin: 0 2px 10px; border: 1px solid #fff; padding: 5px 10px; background: #FFF; display: inline-block; }
-.pagelist a:hover { color: #333; }
-.pagelist > b { border: 1px solid #333; padding: 5px 10px; background: #333; color: #FFF }
-a.curPage { color: #333; font-weight: bold; }
+.pagination { text-align: center; color: #666; width: 100%; clear: both; margin: 0 0 0; }
+.pagination li{display: inline;border-bottom:0;display:inline;min-height: auto;border-bottom: 0;padding-bottom:0;margin: 0 5px}
+.pagination a { color: #666; padding: 5px 10px; background: #F7F7F7; display: inline-block; }
+.pagination a:hover, .pagination > b {color:#3690cf;color: #FFF;background: #1C2327; }
+.pagination > b { padding: 5px 10px; }
+.pagination .active a{color: #FFF;background: #1C2327;}
+a.curPage { color: #19585d; font-weight: bold; }
 /*about*/
 .newsview { padding: 20px; overflow: hidden; background: rgba(255,255,255,1); margin: 20px 0 }
 .newsview h2 { font-size: 16px; width: 120px; height: 30px; line-height: 30px; text-align: center; background: #333; color: #fff; margin: 10px 0; font-weight: normal; }
