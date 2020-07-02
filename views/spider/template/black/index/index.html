@@ -1,88 +1,54 @@
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>{{$.info.title}}</title>
-  <meta name="keywords" content="{{$.info.keywords}}" />
-  <meta name="description" content="{{$.info.description}}" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/static/spider/template/black/style.css" rel="stylesheet">
-</head>
-<body>
-<header>
-  <div class="logo"><a href="/" title="{{$.info.name}}">{{$.info.name}}</a></div>
-  <nav>
-    <ul id="starlist">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{$.domain.title}}</title>
+    <meta name="keywords" content="{{$.domain.keywords}}" />
+    <meta name="description" content="{{$.domain.description}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/spider/template/black/style.css" rel="stylesheet">
+  </head>
+  <body>
+  {{template "spider/template/black/base/header.html" .}}
+    <div class="box">
       {{range $i, $e := .cate}}
-        {{if lt $i 5 }}<li><a title="{{$e.Title}}" href="{{urlfor "Lists.Index" ":id" $e.Id}}">{{$e.Title}}</a></li>{{end}}
-      {{end}}
-    </ul>
-  </nav>
-</header>
-<div class="box">
-  {{range $i, $e := .cate}}
-    <div class="newsbox f_l ">
-      <div class="newstitle"><span><a title="{{$e.Title}}" href="{{urlfor "Lists.Index" ":id" $e.Id}}">+</a></span><b>{{$e.Title}}</b></div>
-      <ul class="newsli">
-        {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
-          <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
-        {{end}}
-      </ul>
-    </div>
-  {{end}}
-  <div class="blank"></div>
-  {{range $i, $e := .cate}}
-    {{if lt $i 3 }}
-      {{range $index, $item := spiderArticleLimit $.idsCate 1 "class IN " "RAND()" }}
-        <div class="sbox {{if  eq $i 0 }}f_l{{end}} {{if  eq $i 1 }}f_l ml{{end}} {{if  eq $i 2 }}f_r{{end}}"> <span>{{$e.Title}}</span>
-          <h2>{{$item.Title}}</h2>
-          <p>{{$item.Description}}</p>
-          <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="read">详情</a>
+        <div class="newsbox f_l ">
+          <div class="newstitle"><span><a title="{{$e.Title}}" href="{{urlfor "Lists.Index" ":id" $e.Id}}">+</a></span><b>{{$e.Title}}</b></div>
+          <ul class="newsli">
+            {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
+              <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+            {{end}}
+          </ul>
         </div>
       {{end}}
-    {{end}}
-  {{end}}
-  <div class="blank"></div>
-  <div class="blogs">
-    {{range $index, $item := spiderArticleLimit $.idsCate 20 "class IN " "id DESC" }}
-      <div class="bloglist">
-        <h2><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h2>
-        <p>{{$item.Description}}</p>
-      </div>
-    {{end}}
-  </div>
-  <aside>
-    <div class="ztbox">
-      <ul>
-        {{range $i, $e := .cate}}
-          {{if lt $i 5 }}
-             <li> <a title="{{$e.Title}}" href="{{urlfor "Lists.Index" ":id" $e.Id}}">{{$e.Title}}</a></li>
+      <div class="blank"></div>
+      {{range $i, $e := .cate}}
+        {{if lt $i 3 }}
+          {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+            <div class="sbox {{if  eq $i 0 }}f_l{{end}} {{if  eq $i 1 }}f_l ml{{end}} {{if  eq $i 2 }}f_r{{end}}"> <span>{{$e.Title}}</span>
+              <h2>{{$item.Title}}</h2>
+              <p>{{$item.Description}}</p>
+              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="read">详情</a>
+            </div>
           {{end}}
         {{end}}
-      </ul>
-    </div>
-    <div class="paihang">
-      <h2>点击排行</h2>
-      <ul>
-        {{range $index, $item := spiderArticleLimit $.idsCate 20 "class IN " "view DESC" }}
-           <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+      {{end}}
+      <div class="blank"></div>
+      <div class="blogs">
+        {{range $index, $item := spiderArticleLimit $.cids 20 "class IN " "id DESC" }}
+          <div class="bloglist">
+            <h2><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h2>
+            <p>{{$item.Description}}</p>
+          </div>
         {{end}}
-      </ul>
+      </div>
+      <aside>
+        {{template "spider/template/black/base/category.html" .}}
+        {{template "spider/template/black/base/ranking.html" .}}
+        {{template "spider/template/black/base/recom.html" .}}
+        {{template "spider/template/black/base/links.html" .}}
+      </aside>
     </div>
-    <div class="paihang">
-      <h2>站长推荐</h2>
-      <ul>
-        {{range $index, $item := spiderArticleLimit $.idsCate 20 "class IN " "RAND()" }}
-          <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
-        {{end}}
-      </ul>
-    </div>
-    <div class="paihang">
-      <h2>友情链接</h2>
-      <ul>{{range $i, $e := .links}}<li><a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a></li>{{end}}</ul>
-    </div>
-  </aside>
-</div>
-<footer>{{str2html $.arachnid.Statistics}}</footer>
-</body>
+    {{template "spider/template/black/base/footer.html" .}}
+  </body>
 </html>

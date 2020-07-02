@@ -1,0 +1,9 @@
+<div class="ztbox">
+    <ul>
+        {{range $i, $e := .cate}}
+            {{if lt $i 5 }}
+                <li> <a title="{{$e.Title}}" href="{{urlfor "Lists.Index" ":id" $e.Id}}">{{$e.Title}}</a></li>
+            {{end}}
+        {{end}}
+    </ul>
+</div>

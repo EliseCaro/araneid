@@ -1,6 +1,7 @@
 package index
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/beatrice950201/araneid/controllers"
@@ -41,9 +42,28 @@ type checkInitialize struct {
 /** 实现上一级构造 **/
 func (c *Main) NestPrepare() {
 	c.DomainCheck(c.mainCheckDomain)
+	if c.spiderExtend {
+		c.assignVolt()
+	}
 	if app, ok := c.AppController.(NextPreparer); ok {
 		app.NextPrepare()
 	}
+}
+
+/** 提交蜘蛛池默认数据 **/
+func (c *Main) assignVolt() {
+	var (
+		cate  []*spider.Class
+		links []*spider.Indexes
+	)
+	json.Unmarshal([]byte(c.DomainCache.Cate), &cate)
+	json.Unmarshal([]byte(c.DomainCache.Links), &links)
+	c.Data["cate"] = cate
+	c.Data["cids"] = new(service.DefaultDomainService).CateForIds(cate)
+	c.Data["links"] = links
+	c.Data["model"] = c.Model
+	c.Data["domain"] = map[string]string{"name": c.DomainCache.Name, "title": c.DomainCache.Title, "keywords": c.DomainCache.Keywords, "description": c.DomainCache.Description}
+	c.Data["arachnid"], _ = new(service.DefaultArachnidService).Find(c.DomainCache.Arachnid)
 }
 
 /** 区分蜘蛛池跟主站 **/
