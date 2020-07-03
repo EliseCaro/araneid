@@ -1,0 +1,26 @@
+<script src="/static/admin/plugins/jquery_file_upload/jquery.uploadfile.min.js?v={{$.versions}}"></script>
+<script src="/static/admin/plugins/jquery_file_upload/module_upload.js?v={{$.versions}}"></script>
+<style>
+    .ajax-file-upload-container{display: none}
+    .ajax-upload-dragdrop{width: 100% !important;}
+</style>
+<script>
+    $(document).ready(function() {
+        $('.upload_custom').uploadFile({
+            url:application.cms.uploadFileSingle,
+            uploadStr:'<div class="text-center py-4"><p><i class="fa fa-4x fa-cloud-upload-alt text-gray"></i></p><h4 class="mb-0 text-gray success_title">选择读取文件对象</h4></div>',
+            dragDropStr:false, maxFileCount:1, showCancel:false,
+            showAbort:false, showDone:false, showDelete:true,
+            showStatusAfterSuccess:false, showError:false,
+            showFileSize:false, showPreview:false, fileName:"files",
+            onSuccess:function(files,data,xhr,pd){
+                if(data && data.status === true){
+                    $('.upload_custom').parent().children("input[type='hidden']").val(data.data.id);
+                    $(".success_title").html(data.data.name)
+                }else {
+                    module_upload.option.upload_success(data,pd,"single");
+                }
+            },
+        });
+    })
+</script>

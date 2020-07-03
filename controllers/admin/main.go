@@ -40,6 +40,7 @@ type Main struct {
 	arachnidService     service.DefaultArachnidService
 	keywordService      service.DefaultKeywordService
 	indexesService      service.DefaultIndexesService
+	adapterService      service.DefaultAdapterService
 }
 
 /** 准备下一级构造函数 **/
