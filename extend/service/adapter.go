@@ -30,16 +30,8 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, fil
 			rows, _ := f.GetRows(sheet)
 			for _, row := range rows {
 				if len(row) == 9 && row[0] != "" && row[7] != "" && row[8] != "" {
-					if service.form == 1 {
-						service.ExtractUrlsContext(row[8], func(t, k, d string) {
-							if item, message := service.ruleHandle(row[0], service.emptyCheck(k, row[0]), service.emptyCheck(d, row[7])); message == nil {
-								result = append(result, item)
-							}
-						})
-					} else {
-						if item, message := service.ruleHandle(row[0], row[0], row[7]); message == nil {
-							result = append(result, item)
-						}
+					if item, message := service.extractUrlsContextRuleHandle(row[0], row[0], row[7], row[8]); message == nil {
+						result = append(result, item)
 					}
 				} else {
 					err = errors.New("解析文件格式失败！该文件不是站长工具的格式～")
@@ -50,6 +42,20 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, fil
 		err = errors.New("解析文件失败！未监测到合法的导入文件～")
 	}
 	return result, err
+}
+
+/** 匹配规则并远程提取 **/
+func (service *DefaultAdapterService) extractUrlsContextRuleHandle(t, k, d, u string) (*spider.Class, error) {
+	var message error
+	var result *spider.Class
+	if result, message = service.ruleHandle(t, k, d); message == nil {
+		if service.form == 1 {
+			service.ExtractUrlsContext(u, k, d, func(title, keyword, description string) {
+				result, message = service.ruleHandle(t, service.emptyCheck(keyword, d), service.emptyCheck(description, d))
+			})
+		}
+	}
+	return result, message
 }
 
 /** 检测交换值 **/
@@ -90,7 +96,7 @@ func (service *DefaultAdapterService) createInitialized(length, form int, filtra
 }
 
 /** 使用爬虫提取标题关键词跟描述 **/
-func (service *DefaultAdapterService) ExtractUrlsContext(urls string, f func(t, k, d string)) {
+func (service *DefaultAdapterService) ExtractUrlsContext(urls string, k string, d string, f func(t string, k string, d string)) {
 	var (
 		title    string
 		keyword  string
