@@ -6,7 +6,10 @@ const adapter_index = {
                 application.ajax.post($(this).attr("action"), $(this).serialize(),function (result) {
                     application.ajax.requestBack(result.message,result.status,result.url);
                     if(result && result.data){
-                        $(".download").attr("data-href",result.data).attr("disabled",false);
+                        $(".download").attr("data-href",result.data).show();
+                    }
+                    if(result && result.status === true && !result.data){
+                        $(".download").remove();
                     }
                 });
                 return false;

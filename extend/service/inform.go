@@ -273,7 +273,7 @@ func (service *DefaultInformService) PageListItemStatus(statue int64) string {
 
 /** 解析通知类型 **/
 func (service *DefaultInformService) PageListItemForm(form int64) string {
-	maps := []string{"未知类型", "爬虫日志", "查字词典"}
+	maps := []string{"未知类型", "爬虫日志", "查字词典", "栏目转换"}
 	return maps[form]
 }
 
@@ -288,6 +288,8 @@ func (service *DefaultInformService) PageListItemObject(form, object int64) stri
 		}
 	case 2:
 		nameValue = "查字词典"
+	case 3:
+		nameValue = "栏目转换"
 	}
 	return nameValue
 }

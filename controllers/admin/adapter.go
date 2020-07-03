@@ -21,13 +21,18 @@ func (c *Adapter) Zhanzhang() {
 	form, _ := c.GetInt("form", 0)
 	filtration := c.GetString("filtration", "")
 	extract := c.GetString("extract", "")
-	if res, err := c.adapterService.ZhanzhangExtract(file, length, form, filtration, extract); err == nil {
-		if path, err := c.adapterService.CreateXLSXFile(res); err == nil {
-			c.Succeed(&controllers.ResultJson{Message: "请及时下载您的文件；刷新页面后将无法还原！！", Data: path})
+	if form == 1 {
+		go c.adapterService.SocketContextRuleHandle(file, length, form, c.UserInfo.Id, filtration, extract)
+		c.Succeed(&controllers.ResultJson{Message: "已转为后台处理；结果将以站内信的形式通知！请注意查收！"})
+	} else {
+		if res, err := c.adapterService.ZhanzhangExtract(file, length, form, filtration, extract); err == nil {
+			if path, err := c.adapterService.CreateXLSXFile(res); err == nil {
+				c.Succeed(&controllers.ResultJson{Message: "请及时下载您的文件；刷新页面后将无法还原！！", Data: path})
+			} else {
+				c.Fail(&controllers.ResultJson{Message: fmt.Sprintf(`处理错误：%s`, err.Error())})
+			}
 		} else {
 			c.Fail(&controllers.ResultJson{Message: fmt.Sprintf(`处理错误：%s`, err.Error())})
 		}
-	} else {
-		c.Fail(&controllers.ResultJson{Message: fmt.Sprintf(`处理错误：%s`, err.Error())})
 	}
 }

@@ -44,6 +44,32 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, fil
 	return result, err
 }
 
+/** 发送处理通知 **/
+func (service *DefaultAdapterService) createLogsInformStatus(name, status, urls, message string, receiver int) {
+	var htmlInfo string
+	nowTime := beego.Date(time.Now(), "m月d日 H:i")
+	htmlInfo = fmt.Sprintf(`
+		名为<a href="javascript:void(0);">%s</a>的栏目转换文件;在%s的时候%s；
+		您可以<a href="%s">%s</a>;`,
+		name, nowTime, status, urls, message,
+	)
+	new(DefaultInformService).SendSocketInform([]int{receiver}, 0, 0, 3, htmlInfo)
+}
+
+/**  携程处理方式 **/
+func (service *DefaultAdapterService) SocketContextRuleHandle(id, length, form, uid int, filtration, extract string) {
+	name := new(DefaultAdjunctService).FindId(id).Name
+	if items, err := service.ZhanzhangExtract(id, length, form, filtration, extract); err == nil {
+		if path, err := service.CreateXLSXFile(items); err == nil {
+			service.createLogsInformStatus(name, "已经全部转换完成；请及时下载；系统将不会保留太长时间；", "/"+path, "点击下载", uid)
+		} else {
+			service.createLogsInformStatus(name, "创建文件发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查系统目录权限,重新导入", uid)
+		}
+	} else {
+		service.createLogsInformStatus(name, "初始化发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查源文件,重新导入", uid)
+	}
+}
+
 /** 匹配规则并远程提取 **/
 func (service *DefaultAdapterService) extractUrlsContextRuleHandle(t, k, d, u string) (*spider.Class, error) {
 	var message error
