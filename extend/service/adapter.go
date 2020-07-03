@@ -2,11 +2,15 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/gocolly/colly"
+	"strconv"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -14,28 +18,29 @@ type DefaultAdapterService struct {
 	filtration []string // 过滤规则
 	extract    []string // 提取规则
 	length     int      // 提取长度
+	form       int      // 提取类型
 }
 
 /** 提取站长工具文件 **/
-func (service *DefaultAdapterService) ZhanzhangExtract(id, length int, filtration, extract string) (result []*spider.Class, err error) {
+func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, filtration, extract string) (result []*spider.Class, err error) {
 	path := new(DefaultAdjunctService).FindId(id).Path
-	service.createInitialized(length, filtration, extract)
+	service.createInitialized(length, form, filtration, extract)
 	if f, message := excelize.OpenFile("." + path); message == nil {
 		for _, sheet := range f.GetSheetList() {
 			rows, _ := f.GetRows(sheet)
 			for _, row := range rows {
 				if len(row) == 9 && row[0] != "" && row[7] != "" && row[8] != "" {
-					service.ExtractUrlsContext(row[8], func(t, k, d string) {
-						if k == "" {
-							k = row[0]
-						}
-						if d == "" {
-							d = row[7]
-						}
-						if item, message := service.ruleHandle(row[0], k, d); message == nil {
+					if service.form == 1 {
+						service.ExtractUrlsContext(row[8], func(t, k, d string) {
+							if item, message := service.ruleHandle(row[0], service.emptyCheck(k, row[0]), service.emptyCheck(d, row[7])); message == nil {
+								result = append(result, item)
+							}
+						})
+					} else {
+						if item, message := service.ruleHandle(row[0], row[0], row[7]); message == nil {
 							result = append(result, item)
 						}
-					})
+					}
 				} else {
 					err = errors.New("解析文件格式失败！该文件不是站长工具的格式～")
 				}
@@ -47,11 +52,41 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length int, filtratio
 	return result, err
 }
 
+/** 检测交换值 **/
+func (service *DefaultAdapterService) emptyCheck(n, o string) string {
+	if n == "" {
+		return o
+	} else {
+		return n
+	}
+}
+
+/** 创建一个文件写入栏目数据 **/
+func (service *DefaultAdapterService) CreateXLSXFile(result []*spider.Class) (string, error) {
+	f := excelize.NewFile()
+	index := f.NewSheet("Sheet1")
+	for k, v := range result {
+		indexes := k + 1
+		_ = f.SetCellValue("Sheet1", "A"+strconv.Itoa(indexes), v.Title)
+		_ = f.SetCellValue("Sheet1", "B"+strconv.Itoa(indexes), v.Keywords)
+		_ = f.SetCellValue("Sheet1", "C"+strconv.Itoa(indexes), v.Description)
+	}
+	f.SetActiveSheet(index)
+	path, _ := new(DefaultAdjunctService).DateFolder(beego.AppConfig.String("upload_folder") + "/sandbox/")
+	name := fmt.Sprintf("%s/%d.xlsx", path, time.Now().Unix())
+	if err := f.SaveAs(name); err != nil {
+		return "", errors.New("创建导出文件失败；失败原因：" + err.Error())
+	} else {
+		return name, nil
+	}
+}
+
 /** 初始化规则 **/
-func (service *DefaultAdapterService) createInitialized(length int, filtration, extract string) {
+func (service *DefaultAdapterService) createInitialized(length, form int, filtration, extract string) {
 	service.extract = strings.Split(extract, "|")
 	service.filtration = strings.Split(filtration, "|")
 	service.length = length
+	service.form = form
 }
 
 /** 使用爬虫提取标题关键词跟描述 **/

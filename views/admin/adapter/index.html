@@ -16,24 +16,32 @@
                     <div class="block-header">
                         <h3 class="block-title">站长工具 -> 系统栏目</h3>
                     </div>
-                    <form action="{{urlfor "Adapter.Zhanzhang"}}" class="ajax_from" method="post">
+                    <form action="{{urlfor "Adapter.Zhanzhang"}}" class="handleForm" method="post">
                         <div class="block-content">
                             <div class="form-group font-size-sm row mb-3 ml-0">
                                 <label class="col-form-label font-weight-normal" for="length"></label>
-                                <div class="col-sm-4 pl-0 input-group">
+                                <div class="col-sm-3 pl-0 input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i data-original-title="取词字数；根据行业决定;默认不限制" data-toggle="tooltip" class="js-tooltip fa fa-exclamation-circle"></i></span></div>
-                                    <input class="form-control font-size-sm" id="length" type="number" name="length" value="0" style="height: 100%" placeholder="取词字数">
+                                    <input class="form-control font-size-sm" id="length" type="text" name="length" value="0" style="height: 100%" placeholder="字数">
                                     <div class="input-group-prepend"><span class="input-group-text">个</span></div>
                                 </div>
                                 <label class="col-form-label font-weight-normal" for="extract"></label>
-                                <div class="col-sm-4 pl-0 input-group">
+                                <div class="col-sm-3 pl-0 input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i data-original-title="包含提取可以提取包含某个字符的词组作为分类；多个 ｜ 分割" data-toggle="tooltip" class="js-tooltip fa fa-exclamation-circle"></i></span></div>
-                                    <input class="form-control font-size-sm" id="extract" type="text" name="extract"  style="height: 100%" placeholder="包含提取">
+                                    <input class="form-control font-size-sm" id="extract" type="text" name="extract"  style="height: 100%" placeholder="包含">
                                 </div>
                                 <label class="col-form-label font-weight-normal" for="filtration"></label>
-                                <div class="col-sm-4 pl-0 input-group">
+                                <div class="col-sm-3 pl-0 input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"><i data-original-title="过滤多个关键词请用 ｜ 分割" data-toggle="tooltip" class="js-tooltip fa fa-exclamation-circle"></i></span></div>
-                                    <input class="form-control font-size-sm" id="filtration" type="text" name="filtration"  style="height: 100%" placeholder="过滤关键字">
+                                    <input class="form-control font-size-sm" id="filtration" type="text" name="filtration"  style="height: 100%" placeholder="过滤">
+                                </div>
+                                <label class="col-form-label font-weight-normal" for="form"></label>
+                                <div class="col-sm-3 pl-0 input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text"><i data-original-title="网速性能将影响[ 重组 ]的提取时长；可能达到30分钟左右；" data-toggle="tooltip" class="js-tooltip fa fa-exclamation-circle"></i></span></div>
+                                    <select class="form-control font-size-sm" id="form" name="form" style="height: 100%">
+                                        <option value="0">普通</option>
+                                        <option value="1">重组</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="block" style="border: 4px dashed #ddd;">
@@ -43,11 +51,11 @@
                         </div>
                         <div class="form-group text-center badge-light mb-0 p-3">
                             <button type="submit" class="btn btn-alt-primary font-size-sm" data-toggle="click-ripple">确定转换</button>
+                            <button type="button" class="btn btn-alt-success font-size-sm download" data-toggle="click-ripple" disabled><i class="fa fa-cloud-download-alt"></i> 下载结果</button>
                         </div>
                     </form>
                 </div>
             </div>
-
             <div class="col-sm-6 animated bounceInRight">
                 <div class="block mb-0 block-themed" style="height: 100%">
                     <div class="block-header">
