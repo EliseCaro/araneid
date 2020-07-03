@@ -44,12 +44,13 @@ func (c *Class) Import() {
 		file := c.GetMustInt("files", "请上传正确格式的xlsx文件！")
 		path := c.adjunctService.FindId(file).Path
 		if f, err := excelize.OpenFile("." + path); err == nil {
-			rows, _ := f.GetRows("Sheet1")
 			var items []*spider.Class
-			for _, row := range rows {
-				if len(row) >= 4 {
-					model, _ := strconv.Atoi(row[0])
-					items = append(items, &spider.Class{Model: model, Title: row[1], Keywords: row[2], Description: row[3]})
+			for _, sheet := range f.GetSheetList() {
+				rows, _ := f.GetRows(sheet)
+				for _, row := range rows {
+					if len(row) >= 3 && c.classService.OneExtends(row[0]).Id == 0 {
+						items = append(items, &spider.Class{Model: model, Title: row[0], Keywords: row[1], Description: row[2]})
+					}
 				}
 			}
 			if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {

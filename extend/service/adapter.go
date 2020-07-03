@@ -45,7 +45,7 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, fil
 }
 
 /** 发送处理通知 **/
-func (service *DefaultAdapterService) createLogsInformStatus(name, status, urls, message string, receiver int) {
+func (service *DefaultAdapterService) CreateLogsInformStatus(name, status, urls, message string, receiver int) {
 	var htmlInfo string
 	nowTime := beego.Date(time.Now(), "m月d日 H:i")
 	htmlInfo = fmt.Sprintf(`
@@ -61,12 +61,12 @@ func (service *DefaultAdapterService) SocketContextRuleHandle(id, length, form, 
 	name := new(DefaultAdjunctService).FindId(id).Name
 	if items, err := service.ZhanzhangExtract(id, length, form, filtration, extract); err == nil {
 		if path, err := service.CreateXLSXFile(items); err == nil {
-			service.createLogsInformStatus(name, "已经全部转换完成；请及时下载；系统将不会保留太长时间", "/"+path, "立即下载", uid)
+			service.CreateLogsInformStatus(name, "已经全部转换完成；请及时下载；系统将不会保留太长时间", "/"+path, "立即下载", uid)
 		} else {
-			service.createLogsInformStatus(name, "创建文件发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查系统目录权限,重新导入", uid)
+			service.CreateLogsInformStatus(name, "创建文件发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查系统目录权限,重新导入", uid)
 		}
 	} else {
-		service.createLogsInformStatus(name, "初始化发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查源文件,重新导入", uid)
+		service.CreateLogsInformStatus(name, "初始化发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查源文件,重新导入", uid)
 	}
 }
 
