@@ -61,7 +61,7 @@ func (service *DefaultAdapterService) SocketContextRuleHandle(id, length, form, 
 	name := new(DefaultAdjunctService).FindId(id).Name
 	if items, err := service.ZhanzhangExtract(id, length, form, filtration, extract); err == nil {
 		if path, err := service.CreateXLSXFile(items); err == nil {
-			service.createLogsInformStatus(name, "已经全部转换完成；请及时下载；系统将不会保留太长时间；", "/"+path, "点击下载", uid)
+			service.createLogsInformStatus(name, "已经全部转换完成；请及时下载；系统将不会保留太长时间", "/"+path, "立即下载", uid)
 		} else {
 			service.createLogsInformStatus(name, "创建文件发生错误；错误原因为："+err.Error(), beego.URLFor("Adapter.Index"), "检查系统目录权限,重新导入", uid)
 		}
