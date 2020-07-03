@@ -9,6 +9,13 @@ import (
 
 type DefaultKeywordService struct{}
 
+/** 检测取重 **/
+func (service *DefaultKeywordService) OneExtends(title string) spider.Keyword {
+	var maps spider.Keyword
+	_ = orm.NewOrm().QueryTable(new(spider.Keyword)).Filter("title", title).One(&maps)
+	return maps
+}
+
 /** 获取一条数据 **/
 func (service *DefaultKeywordService) One(id int) spider.Keyword {
 	var item spider.Keyword

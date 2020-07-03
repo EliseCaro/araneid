@@ -66,17 +66,23 @@ func (c *Keyword) Import() {
 		file := c.GetMustInt("files", "请上传正确格式的xlsx文件！")
 		path := c.adjunctService.FindId(file).Path
 		if f, err := excelize.OpenFile("." + path); err == nil {
-			rows, _ := f.GetRows("Sheet1")
 			var items []*spider.Keyword
-			for _, row := range rows {
-				if len(row) == 1 {
-					items = append(items, &spider.Keyword{Arachnid: arachnid, Title: row[0]})
+			for _, sheet := range f.GetSheetList() {
+				rows, _ := f.GetRows(sheet)
+				for _, row := range rows {
+					if len(row) >= 1 && c.keywordService.OneExtends(row[0]).Id == 0 {
+						items = append(items, &spider.Keyword{Arachnid: arachnid, Title: row[0]})
+					}
 				}
 			}
-			if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
-				c.Succeed(&controllers.ResultJson{Message: "批量导入关键词共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Keyword.Index", ":id", arachnid)})
+			if len(items) > 0 {
+				if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
+					c.Succeed(&controllers.ResultJson{Message: "批量导入关键词共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Keyword.Index", ":id", arachnid)})
+				} else {
+					c.Fail(&controllers.ResultJson{Message: "批量导入关键词失败；失败原因:" + error.Error(err)})
+				}
 			} else {
-				c.Fail(&controllers.ResultJson{Message: "批量导入关键词失败；失败原因:" + error.Error(err)})
+				c.Fail(&controllers.ResultJson{Message: "导入完成；未添加任何数据；已被去重过滤或者格式非法！"})
 			}
 		} else {
 			c.Fail(&controllers.ResultJson{Message: "打开文件失败；失败原因:" + error.Error(err)})
