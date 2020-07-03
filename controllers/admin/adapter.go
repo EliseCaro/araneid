@@ -23,7 +23,7 @@ func (c *Adapter) Zhanzhang() {
 	extract := c.GetString("extract", "")
 	if res, err := c.adapterService.ZhanzhangExtract(file, length, form, filtration, extract); err == nil {
 		if path, err := c.adapterService.CreateXLSXFile(res); err == nil {
-			c.Succeed(&controllers.ResultJson{Message: "数据处理完成；请及时下载您的文件；刷新页面后将无法还原！！", Data: path})
+			c.Succeed(&controllers.ResultJson{Message: "请及时下载您的文件；刷新页面后将无法还原！！", Data: path})
 		} else {
 			c.Fail(&controllers.ResultJson{Message: fmt.Sprintf(`处理错误：%s`, err.Error())})
 		}
