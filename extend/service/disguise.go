@@ -266,7 +266,7 @@ func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.Han
 			service.contextFiltration(module.Description),
 			service.contextFiltration(module.Context),
 		)
-		_ = request.FromJsonString(service.jsonFormString(map[string]string{"Text": text}))
+		_ = request.FromJsonString(service.jsonFormString(map[string]string{"Text": beego.Substr(text, 0, 2000)}))
 		response, message = client.AutoSummarization(request)
 		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
 			module.Description = *response.Response.Summary

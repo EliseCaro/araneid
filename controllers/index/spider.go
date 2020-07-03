@@ -2,10 +2,12 @@ package index
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	"github.com/beatrice950201/araneid/extend/model/spider"
+	"github.com/go-playground/validator"
 )
 
 type Spider struct {
@@ -61,15 +63,19 @@ func (c *Spider) ResultMaps() spider.Article {
 /** 更新或者插入 **/
 func (c *Spider) ResultInsert(res spider.Article) (err error) {
 	ext := c.articleService.OneByObject(res.Object)
-	if ext.Id > 0 {
-		ext.Title = res.Title
-		ext.Keywords = res.Keywords
-		ext.Description = res.Description
-		ext.Context = res.Context
-		_, err = orm.NewOrm().Update(&ext)
+	if message := c.verifyBase.Begin().Struct(res); message == nil {
+		if ext.Id > 0 {
+			ext.Title = res.Title
+			ext.Keywords = res.Keywords
+			ext.Description = res.Description
+			ext.Context = res.Context
+			_, err = orm.NewOrm().Update(&ext)
+		} else {
+			res.Class = c.randomClass(res.Model).Id
+			_, err = orm.NewOrm().Insert(&res)
+		}
 	} else {
-		res.Class = c.randomClass(res.Model).Id
-		_, err = orm.NewOrm().Insert(&res)
+		err = errors.New(c.verifyBase.Translate(message.(validator.ValidationErrors)))
 	}
 	return err
 }

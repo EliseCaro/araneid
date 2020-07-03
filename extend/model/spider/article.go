@@ -7,7 +7,7 @@ type Article struct {
 	View        int       `orm:"column(view);type(int);default(0);description(排序序号)" json:"view" form:"view"`
 	Model       int       `orm:"column(model);type(int);default(0);description(所属模型)" json:"model" form:"model" validate:"required" label:"所属模型"`
 	Usage       int       `orm:"column(usage);type(int);default(0);description(挂载次数)" json:"usage" form:"usage"`
-	Class       int       `orm:"column(class);type(int);default(0);description(所属分类)" json:"class" form:"class" validate:"required" label:"所属分类"`
+	Class       int       `orm:"column(class);type(int);default(0);description(所属分类)" json:"class" form:"class"`
 	Title       string    `orm:"column(title);size(32);type(char);default();description(标题)" json:"title" form:"title" validate:"required" label:"标题"`
 	Cover       string    `orm:"column(cover);size(200);type(char);default();description(封面图)" json:"cover" form:"cover"`
 	Object      int       `orm:"column(object);type(int);default(0);description(采集结果ID)" json:"object" form:"object" validate:"required" label:"采集结果ID"`
