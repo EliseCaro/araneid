@@ -102,7 +102,11 @@ func (service *DefaultDisguiseService) baiduTranslation(s string) ([]interface{}
 	if result["error_code"] != nil && result["error_code"].(string) == "54003" {
 		return service.baiduTranslation(s)
 	}
-	return result["trans_result"].([]interface{}), result["from"].(string), result["to"].(string)
+	if result["error_code"] != nil {
+		return []interface{}{}, "", ""
+	} else {
+		return result["trans_result"].([]interface{}), result["from"].(string), result["to"].(string)
+	}
 }
 
 /** 作为等价交换手段 **/
