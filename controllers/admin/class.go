@@ -53,10 +53,14 @@ func (c *Class) Import() {
 					}
 				}
 			}
-			if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
-				c.Succeed(&controllers.ResultJson{Message: "批量导入栏目共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Class.Index", ":model", model)})
+			if len(items) > 0 {
+				if index, err := orm.NewOrm().InsertMulti(100, items); err == nil {
+					c.Succeed(&controllers.ResultJson{Message: "批量导入栏目共" + strconv.FormatInt(index, 10) + "个;正在刷新返回！", Url: beego.URLFor("Class.Index", ":model", model)})
+				} else {
+					c.Fail(&controllers.ResultJson{Message: "批量导入栏目失败；失败原因:" + error.Error(err)})
+				}
 			} else {
-				c.Fail(&controllers.ResultJson{Message: "批量导入栏目失败；失败原因:" + error.Error(err)})
+				c.Fail(&controllers.ResultJson{Message: "导入完成；未添加任何数据；已被去重过滤或者格式非法！"})
 			}
 		} else {
 			c.Fail(&controllers.ResultJson{Message: "打开文件失败；失败原因:" + error.Error(err)})
