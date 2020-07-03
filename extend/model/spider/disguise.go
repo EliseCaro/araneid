@@ -30,7 +30,7 @@ func (m *Disguise) TableName() string {
 /** 自然语言处理模型  **/
 type HandleModule struct {
 	Title       string `json:"title" form:"title" validate:"required" label:"内容标题"`
-	Keywords    string `json:"keywords" form:"keywords" validate:"required" label:"关键字"`
-	Description string `json:"description" form:"description" validate:"required" label:"简短描述"`
+	Keywords    string `json:"keywords" form:"keywords"`
+	Description string `json:"description" form:"description"`
 	Context     string `json:"context" form:"context" validate:"required" label:"内容详情"`
 }

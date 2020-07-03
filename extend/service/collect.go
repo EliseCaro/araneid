@@ -111,22 +111,28 @@ func (service *DefaultCollectService) DeleteArray(array []int) (e error) {
 /** 根据采集源跟匹配规则提取全部URL **/
 func (service *DefaultCollectService) ExtractUrls(role string, source []string) []map[string]string {
 	var result []map[string]string
-	collector := service.collectInstance(5, 2, "", false)
+	domain := new(DefaultCollectService).queueUrlDomain(source[0])
+	collector := service.collectInstance(5, 2, domain, true)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		matchText := service.eliminateTrim(e.Text, []string{" ", "\n"})
 		if service.checkSourceRule(role, e.Attr("href")) && matchText != "" && service.inMapHref(e.Attr("href"), result) == false {
-			result = append(result, map[string]string{"title": matchText, "href": e.Attr("href")})
+			result = append(result, map[string]string{
+				"title": matchText,
+				"href":  service.completionSrc(source[0], e.Attr("href")),
+			})
 		}
 	})
 	for _, v := range source {
 		_ = collector.Visit(v)
 	}
+	collector.Wait()
 	return result
 }
 
 /** 根据地址跟字段规则解析一条详情 **/
 func (service *DefaultCollectService) ExtractDocumentMatching(url string, matching []*collect.Matching) (map[string]string, error) {
-	collector := service.collectInstance(5, 1, "", false)
+	domain := new(DefaultCollectService).queueUrlDomain(url)
+	collector := service.collectInstance(5, 1, domain, true)
 	result := make(map[string]string)
 	var message error
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
@@ -141,6 +147,7 @@ func (service *DefaultCollectService) ExtractDocumentMatching(url string, matchi
 		}
 	})
 	_ = collector.Visit(url)
+	collector.Wait()
 	return result, message
 }
 
@@ -431,7 +438,7 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 	matching = append(matching, &collect.Matching{
 		Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0,
 	})
-	collector := service.collectInstance(5, 1, "", false)
+	collector := service.collectInstance(5, 1, service.queueUrlDomain(url), true)
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		result := make(map[string]string)
 		var message error
@@ -439,7 +446,7 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 			if value := service.extractMatchingField(v, e); value != "" {
 				result[v.Field] = value
 			} else {
-				message = errors.New("字段匹配不齐全；已被强制过滤！")
+				message = errors.New(v.Field + "字段匹配不齐全；已被强制过滤！")
 				break
 			}
 		}
@@ -453,10 +460,13 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 				//service.createLogsInform(1, uid, detail.Id, detail.Name, result["meta_title"], url)
 			}
 		} else {
-			service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
+			// todo 采集过程字段空值被过滤的太多，停用采集通知
+			logs.Error("在"+url+"中没有采集到全部数据：具体原因为：", error.Error(message))
+			//service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
 		}
 	})
 	_ = collector.Visit(url)
+	collector.Wait()
 }
 
 /** 获取采集器状态 todo 是否需要改为redis **/
@@ -482,7 +492,7 @@ func (service *DefaultCollectService) collectStart(id, uid int) {
 	collector := service.collectInstance(int(detail.Interval), 2, service.queueUrlDomain(source[0]), true)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		if service.checkSourceRule(detail.SourceRule, e.Attr("href")) {
-			_ = e.Request.Visit(e.Attr("href"))
+			_ = e.Request.Visit(service.completionSrc(source[0], e.Attr("href")))
 		}
 	})
 	collector.OnRequest(func(r *colly.Request) {
