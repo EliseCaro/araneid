@@ -142,17 +142,24 @@ func (service *DefaultCategoryService) Find(id int) (spider.Category, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 根据原始ID获取一太数据**/
+func (service *DefaultCategoryService) FindCid(cid, domain int) spider.Category {
+	var maps spider.Category
+	_ = orm.NewOrm().QueryTable(new(spider.Category)).Filter("cid", cid).Filter("domain", domain).One(&maps)
+	return maps
+}
+
 /** 重建域名分类json **/
 func (service *DefaultCategoryService) InitializeDomainCate(d int) error {
-	var maps []*spider.Category
 	var result []*spider.Class
-	_, _ = orm.NewOrm().QueryTable(new(spider.Category)).Filter("domain", d).All(&maps)
-	for _, v := range maps {
-		class := new(DefaultClassService).One(v.Cid)
-		class.Title = v.Title
-		class.Keywords = v.Keywords
-		class.Description = v.Description
-		result = append(result, &class)
+	domain, _ := new(DefaultDomainService).Find(d)
+	_ = json.Unmarshal([]byte(domain.Cate), &result)
+	for _, v := range result {
+		if index := service.FindCid(v.Id, d); index.Id > 0 {
+			v.Title = index.Title
+			v.Keywords = index.Keywords
+			v.Description = index.Description
+		}
 	}
 	stringJson, _ := json.Marshal(result)
 	_, err := orm.NewOrm().Update(&spider.Domain{Id: d, Cate: string(stringJson)}, "Cate")
