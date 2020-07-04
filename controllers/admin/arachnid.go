@@ -94,8 +94,17 @@ func (c *Arachnid) Status() {
 	}
 }
 
-// todo 待后边来做；可能涉及删除的地方很多
 // @router /arachnid/delete [post]
 func (c *Arachnid) Delete() {
-
+	array := c.checkBoxIds(":ids[]", ":ids")
+	if errorMessage := c.arachnidService.DeleteArray(array); errorMessage != nil {
+		c.Fail(&controllers.ResultJson{
+			Message: error.Error(errorMessage),
+		})
+	} else {
+		c.Succeed(&controllers.ResultJson{
+			Message: "删除成功！马上返回中。。。",
+			Url:     beego.URLFor("Arachnid.Index"),
+		})
+	}
 }

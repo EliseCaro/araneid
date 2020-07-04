@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	table "github.com/beatrice950201/araneid/extend/func"
@@ -35,6 +36,13 @@ func (service *DefaultArachnidService) FindDomain(domain string) (maps spider.Ar
 	return maps
 }
 
+/** 获取是否存在域名池 **/
+func (service *DefaultArachnidService) extArticleDomain(arachnid int) spider.Domain {
+	var maps spider.Domain
+	_ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("arachnid", arachnid).One(&maps)
+	return maps
+}
+
 /** 更新状态 **/
 func (service *DefaultArachnidService) StatusArray(array []int, status int8) (e error) {
 	_ = orm.NewOrm().Begin()
@@ -48,6 +56,26 @@ func (service *DefaultArachnidService) StatusArray(array []int, status int8) (e 
 		_ = orm.NewOrm().Commit()
 	}
 	return e
+}
+
+/** 批量删除结果 **/
+func (service *DefaultArachnidService) DeleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if service.extArticleDomain(v).Id == 0 {
+			if _, message = orm.NewOrm().Delete(&spider.Arachnid{Id: v}); message != nil {
+				_ = orm.NewOrm().Rollback()
+				break
+			}
+		} else {
+			message = errors.New("该项目下还有缓存池；请先删除缓存池！")
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
 }
 
 /************************************************表格渲染机制 ************************************************************/
@@ -136,21 +164,28 @@ func (service *DefaultArachnidService) TableColumnsType() map[string][]string {
 func (service *DefaultArachnidService) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
 		{
-			Text:      "索引池库",
+			Text:      "索引池",
 			ClassName: "btn btn-sm btn-alt-primary jump_urls",
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Indexes.Index", ":id", "__ID__"),
 			},
 		},
 		{
-			Text:      "关键词库",
+			Text:      "关键词",
 			ClassName: "btn btn-sm btn-alt-success jump_urls",
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Keyword.Index", ":id", "__ID__"),
 			},
 		},
 		{
-			Text:      "编辑项目",
+			Text:      "缓存区",
+			ClassName: "btn btn-sm btn-alt-primary jump_urls",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Domain.Index", ":arachnid", "__ID__"),
+			},
+		},
+		{
+			Text:      "编辑",
 			ClassName: "btn btn-sm btn-alt-warning js-tooltip open_iframe",
 			Attribute: map[string]string{
 				"href":                beego.URLFor("Arachnid.Edit", ":id", "__ID__", ":popup", 1),
@@ -160,7 +195,7 @@ func (service *DefaultArachnidService) TableButtonsType() []*table.TableButtons 
 			},
 		},
 		{
-			Text:      "删除项目",
+			Text:      "删除",
 			ClassName: "btn btn-sm btn-alt-danger ids_delete",
 			Attribute: map[string]string{
 				"data-action": beego.URLFor("Arachnid.Delete"),
