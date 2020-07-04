@@ -43,6 +43,7 @@ type Main struct {
 	adapterService      service.DefaultAdapterService
 	domainService       service.DefaultDomainService
 	categoryService     service.DefaultCategoryService
+	detailService       service.DefaultDetailService
 }
 
 /** 准备下一级构造函数 **/

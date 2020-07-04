@@ -316,6 +316,13 @@ func (service *DefaultDomainService) TableButtonsType(id int) []*table.TableButt
 			},
 		},
 		{
+			Text:      "挂载文章",
+			ClassName: "btn btn-sm btn-alt-info jump_urls",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Detail.Index", ":parent", "__ID__"),
+			},
+		},
+		{
 			Text:      "编辑",
 			ClassName: "btn btn-sm btn-alt-warning open_iframe",
 			Attribute: map[string]string{
