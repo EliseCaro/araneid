@@ -95,7 +95,7 @@ func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name s
 	var domain spider.Domain
 	var main = fmt.Sprintf(`%s.%s`, prefix, str)
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&domain); domain.Id > 0 {
-		maps["title"] = domain.Title
+		maps["title"] = domain.Name
 	} else {
 		maps["title"] = service.replaceSiteName(model, prefix, name)
 	}
