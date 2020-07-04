@@ -1,0 +1,71 @@
+<div class="js-wizard-simple block block overflow-hidden">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">基本</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#extend" data-toggle="tab">扩展</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Domain.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0">
+            <div class="fade fade-left tab-pane active show" id="base" role="tabpanel">
+                <div class="form-group row font-size-sm pl-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">站点名称</label>
+                    <div class="col-sm-10">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="站点名称"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">站点名称：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm pl-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="title">站点标题</label>
+                    <div class="col-sm-10">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Title}}" id="title" type="text" name="title" placeholder="站点标题"/>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">站点标题：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0 pl-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="template">挂载模板</label>
+                    <div class="col-sm-10">
+                        <select class="form-control form-control-alt font-size-sm" name="template" id="template">
+                            {{range $index, $item := $.templates}}
+                                 <option {{if eq $.info.Template $item.Name}} selected {{end}} value="{{$item.Name}}">{{$item.Title}}</option>
+                            {{end}}
+                        </select>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">挂载模板：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade fade-left tab-pane" id="extend" role="tabpanel">
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="keywords">站点关键词</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="keywords" name="keywords" rows="3" placeholder="站点关键词">{{$.info.Keywords}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">站点关键词：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="description">站点描述&nbsp;&nbsp;&nbsp;</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="3" placeholder="站点描述">{{$.info.Description}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">站点描述：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

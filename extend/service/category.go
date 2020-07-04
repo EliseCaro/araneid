@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
+	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/go-playground/validator"
 	"regexp"
@@ -131,4 +132,101 @@ func (service *DefaultCategoryService) replaceSiteName(result, match string) str
 func (service *DefaultCategoryService) replaceOldText(result, match string) string {
 	re, _ := regexp.Compile(`#原文#`)
 	return re.ReplaceAllString(match, result) //   在match中将#站点名#替换为result
+}
+
+/** 获取一条数据 **/
+func (service *DefaultCategoryService) Find(id int) (spider.Category, error) {
+	item := spider.Category{Id: id}
+	return item, orm.NewOrm().Read(&item)
+}
+
+/************************************************表格渲染机制 ************************************************************/
+/** 获取需要渲染的Column **/
+func (service *DefaultCategoryService) DataTableColumns() []map[string]interface{} {
+	var maps []map[string]interface{}
+	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "标识", "name": "id", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "标题", "name": "title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "域名", "name": "domain", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "项目", "name": "arachnid", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "关键字", "name": "keywords", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
+	return maps
+}
+
+/** 获取需要渲染的按钮组 **/
+func (service *DefaultCategoryService) DataTableButtons(id, arachnid int) []*table.TableButtons {
+	var array []*table.TableButtons
+	if id > 0 {
+		array = append(array, &table.TableButtons{
+			Text:      "返回上级",
+			ClassName: "btn btn-sm btn-alt-success mt-1 jump_urls",
+			Attribute: map[string]string{"data-action": beego.URLFor("Domain.Index", ":arachnid", arachnid)},
+		})
+	}
+	array = append(array, &table.TableButtons{
+		Text:      "删除选中",
+		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
+		Attribute: map[string]string{"data-action": beego.URLFor("Domain.Delete", ":parent", id)},
+	})
+	return array
+}
+
+/** 处理分页 **/
+func (service *DefaultCategoryService) PageListItems(length, draw, page int, search string, id int) map[string]interface{} {
+	var lists []orm.ParamsList
+	qs := orm.NewOrm().QueryTable(new(spider.Category))
+	if search != "" {
+		qs = qs.Filter("title__icontains", search)
+	}
+	if id > 0 {
+		qs = qs.Filter("domain", id)
+	}
+	recordsTotal, _ := qs.Count()
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "title", "domain", "arachnid", "keywords", "update_time")
+	for _, v := range lists {
+		one, _ := new(DefaultArachnidService).Find(int(v[3].(int64)))
+		v[3] = one.Name
+	}
+	data := map[string]interface{}{
+		"draw":            draw,         // 请求次数
+		"recordsFiltered": recordsTotal, // 从多少条里面筛选
+		"recordsTotal":    recordsTotal, // 总条数
+		"data":            lists,        // 筛选结果
+	}
+	return data
+}
+
+/** 返回表单结构字段如何解析 **/
+func (service *DefaultCategoryService) TableColumnsType() map[string][]string {
+	result := map[string][]string{
+		"columns":   {"string", "string", "string", "string", "string", "date"},
+		"fieldName": {"id", "title", "domain", "arachnid", "keywords", "update_time"},
+		"action":    {"", "", "", "", "", ""},
+	}
+	return result
+}
+
+/** 返回右侧按钮数据结构 **/
+func (service *DefaultCategoryService) TableButtonsType(id int) []*table.TableButtons {
+	buttons := []*table.TableButtons{
+		{
+			Text:      "编辑",
+			ClassName: "btn btn-sm btn-alt-warning open_iframe",
+			Attribute: map[string]string{
+				"href":      beego.URLFor("Category.Edit", ":id", "__ID__", ":popup", 1, ":parent", id),
+				"data-area": "600px,400px",
+			},
+		},
+		{
+			Text:      "删除",
+			ClassName: "btn btn-sm btn-alt-danger ids_delete",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Category.Delete", ":parent", id),
+				"data-ids":    "__ID__",
+			},
+		},
+	}
+	return buttons
 }

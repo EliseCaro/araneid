@@ -41,6 +41,8 @@ type Main struct {
 	keywordService      service.DefaultKeywordService
 	indexesService      service.DefaultIndexesService
 	adapterService      service.DefaultAdapterService
+	domainService       service.DefaultDomainService
+	categoryService     service.DefaultCategoryService
 }
 
 /** 准备下一级构造函数 **/
