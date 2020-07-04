@@ -1,0 +1,33 @@
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">编辑栏目</h3>
+    </div>
+    <div class="block-content pr-0 overflow-hidden">
+        <form action="{{urlfor "Category.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+            <div class="form-group font-size-sm row mb-2">
+                <label class="col-form-label font-weight-normal" for="title">栏目标题</label>
+                <div class="col-sm-10">
+                    <input class="form-control form-control-alt font-size-sm" value="{{$.info.Title}}" id="title" type="text" name="title" placeholder="栏目标题">
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写栏目标题,中英文；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group font-size-sm row mb-2">
+                <label class="col-form-label font-weight-normal" for="keywords">关键字词</label>
+                <div class="col-sm-10">
+                    <input class="form-control form-control-alt font-size-sm" value="{{$.info.Keywords}}" id="keywords" type="text" name="keywords" placeholder="栏目关键字">
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请输入栏目关键字；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group font-size-sm row mb-2">
+                <label class="col-form-label font-weight-normal" for="description">栏目描述</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="3" placeholder="请输入栏目描述...">{{$.info.Description}}</textarea>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请输入栏目描述；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
+                <button type="submit" class="btn btn-sm btn-primary">提交保存</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -43,6 +44,7 @@ func (service *DefaultCategoryService) InitializedCategory(did, aid, cid int) *s
 	} else {
 		if _, err := orm.NewOrm().Insert(item); err == nil {
 			*item = service.AcquireCategory(did, aid, cid)
+			_ = service.InitializeDomainCate(did) // 重建缓存分区
 		} else {
 			logs.Error(`初始化分类[ %s ]失败；失败原因：%s`, cateOne.Title, err.Error())
 		}
@@ -140,6 +142,38 @@ func (service *DefaultCategoryService) Find(id int) (spider.Category, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 重建域名分类json **/
+func (service *DefaultCategoryService) InitializeDomainCate(d int) error {
+	var maps []*spider.Category
+	var result []*spider.Class
+	_, _ = orm.NewOrm().QueryTable(new(spider.Category)).Filter("domain", d).All(&maps)
+	for _, v := range maps {
+		class := new(DefaultClassService).One(v.Cid)
+		class.Title = v.Title
+		class.Keywords = v.Keywords
+		class.Description = v.Description
+		result = append(result, &class)
+	}
+	stringJson, _ := json.Marshal(result)
+	_, err := orm.NewOrm().Update(&spider.Domain{Id: d, Cate: string(stringJson)}, "Cate")
+	return err
+}
+
+/** 批量删除 **/
+func (service *DefaultCategoryService) DeleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if _, message = orm.NewOrm().Delete(&spider.Category{Id: v}); message != nil {
+			_ = orm.NewOrm().Rollback()
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
+}
+
 /************************************************表格渲染机制 ************************************************************/
 /** 获取需要渲染的Column **/
 func (service *DefaultCategoryService) DataTableColumns() []map[string]interface{} {
@@ -160,7 +194,7 @@ func (service *DefaultCategoryService) DataTableButtons(id, arachnid int) []*tab
 	var array []*table.TableButtons
 	if id > 0 {
 		array = append(array, &table.TableButtons{
-			Text:      "返回上级",
+			Text:      "返回域名",
 			ClassName: "btn btn-sm btn-alt-success mt-1 jump_urls",
 			Attribute: map[string]string{"data-action": beego.URLFor("Domain.Index", ":arachnid", arachnid)},
 		})
@@ -168,7 +202,7 @@ func (service *DefaultCategoryService) DataTableButtons(id, arachnid int) []*tab
 	array = append(array, &table.TableButtons{
 		Text:      "删除选中",
 		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
-		Attribute: map[string]string{"data-action": beego.URLFor("Domain.Delete", ":parent", id)},
+		Attribute: map[string]string{"data-action": beego.URLFor("Category.Delete", ":parent", id)},
 	})
 	return array
 }
@@ -186,8 +220,12 @@ func (service *DefaultCategoryService) PageListItems(length, draw, page int, sea
 	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "title", "domain", "arachnid", "keywords", "update_time")
 	for _, v := range lists {
-		one, _ := new(DefaultArachnidService).Find(int(v[3].(int64)))
-		v[3] = one.Name
+		domain, _ := new(DefaultDomainService).Find(int(v[2].(int64)))
+		arachnid, _ := new(DefaultArachnidService).Find(int(v[3].(int64)))
+		v[1] = service.substr2HtmlHref(fmt.Sprintf("http://%s/index/column-%d-0.html", domain.Domain, v[0].(int64)), v[1].(string), 0, 20)
+		v[4] = service.substr2HtmlHref(fmt.Sprintf("http://%s/index/column-%d-0.html", domain.Domain, v[0].(int64)), v[4].(string), 0, 20)
+		v[2] = domain.Domain
+		v[3] = arachnid.Name
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -196,6 +234,12 @@ func (service *DefaultCategoryService) PageListItems(length, draw, page int, sea
 		"data":            lists,        // 筛选结果
 	}
 	return data
+}
+
+/**  转为pop提示 **/
+func (service *DefaultCategoryService) substr2HtmlHref(u, s string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, u, s, beego.Substr(s, start, end))
+	return html
 }
 
 /** 返回表单结构字段如何解析 **/
@@ -216,7 +260,7 @@ func (service *DefaultCategoryService) TableButtonsType(id int) []*table.TableBu
 			ClassName: "btn btn-sm btn-alt-warning open_iframe",
 			Attribute: map[string]string{
 				"href":      beego.URLFor("Category.Edit", ":id", "__ID__", ":popup", 1, ":parent", id),
-				"data-area": "600px,400px",
+				"data-area": "580px,380px",
 			},
 		},
 		{
