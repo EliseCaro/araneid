@@ -71,3 +71,13 @@ func (c *Category) Delete() {
 		})
 	}
 }
+
+// @router /category/empty [post]
+func (c *Category) Empty() {
+	parent, _ := c.GetInt(":parent", 0)
+	c.categoryService.EmptyDelete(parent)
+	c.Succeed(&controllers.ResultJson{
+		Message: "缓存已经清空！将重新生成分类！",
+		Url:     beego.URLFor("Category.Index", ":parent", parent),
+	})
+}

@@ -89,8 +89,12 @@ func (c *Domain) Edit() {
 	c.Data["templates"] = c.templateService.Items(arachnid.Models)
 }
 
-// todo 重建缓存最后再来做
 // @router /domain/empty [post]
 func (c *Domain) Empty() {
-
+	parent, _ := c.GetInt(":parent", 0)
+	c.domainService.EmptyDelete(parent)
+	c.Succeed(&controllers.ResultJson{
+		Message: "缓存已经清空！将重制此项目所有站点数据～",
+		Url:     beego.URLFor("Domain.Index", ":parent", parent),
+	})
 }

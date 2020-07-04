@@ -208,6 +208,21 @@ func (service *DefaultDomainService) DeleteArray(array []int) (message error) {
 	return message
 }
 
+/** 清空 **/
+func (service *DefaultDomainService) EmptyDelete(arachnid int) {
+	var item []*spider.Domain
+	qs := orm.NewOrm().QueryTable(new(spider.Domain))
+	if arachnid > 0 {
+		qs = qs.Filter("arachnid", arachnid)
+	}
+	_, _ = qs.All(&item)
+	for _, v := range item {
+		new(DefaultCategoryService).EmptyDelete(v.Id)
+		new(DefaultDetailService).EmptyDelete(v.Id)
+		_, _ = orm.NewOrm().Delete(&spider.Domain{Id: v.Id})
+	}
+}
+
 /************************************************表格渲染机制 ************************************************************/
 
 /** 获取需要渲染的Column **/

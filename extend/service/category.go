@@ -174,6 +174,19 @@ func (service *DefaultCategoryService) DeleteArray(array []int) (message error) 
 	return message
 }
 
+/** 清空 **/
+func (service *DefaultCategoryService) EmptyDelete(domain int) {
+	var item []*spider.Category
+	qs := orm.NewOrm().QueryTable(new(spider.Category))
+	if domain > 0 {
+		qs = qs.Filter("domain", domain)
+	}
+	_, _ = qs.All(&item)
+	for _, v := range item {
+		_, _ = orm.NewOrm().Delete(&spider.Category{Id: v.Id})
+	}
+}
+
 /************************************************表格渲染机制 ************************************************************/
 /** 获取需要渲染的Column **/
 func (service *DefaultCategoryService) DataTableColumns() []map[string]interface{} {
@@ -203,6 +216,11 @@ func (service *DefaultCategoryService) DataTableButtons(id, arachnid int) []*tab
 		Text:      "删除选中",
 		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
 		Attribute: map[string]string{"data-action": beego.URLFor("Category.Delete", ":parent", id)},
+	})
+	array = append(array, &table.TableButtons{
+		Text:      "清空缓存",
+		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
+		Attribute: map[string]string{"data-action": beego.URLFor("Category.Empty", ":parent", id)},
 	})
 	return array
 }
