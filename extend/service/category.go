@@ -158,6 +158,7 @@ func (service *DefaultCategoryService) InitializeDomainCate(d int) error {
 	for _, v := range result {
 		if index := service.FindCid(v.Id, d); index.Id > 0 {
 			v.Title = index.Title
+			v.Name = index.Name
 			v.Keywords = index.Keywords
 			v.Description = index.Description
 		}

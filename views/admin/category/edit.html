@@ -4,11 +4,17 @@
     </div>
     <div class="block-content pr-0 overflow-hidden">
         <form action="{{urlfor "Category.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
-            <div class="form-group font-size-sm row mb-2">
-                <label class="col-form-label font-weight-normal" for="title">栏目标题</label>
-                <div class="col-sm-10">
+
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">栏目名称</label>
+                <div class="col-sm-4 mr-4 pl-3">
+                    <input class="form-control form-control-alt font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="栏目名称">
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写栏目名称；<code>必填；</code></div>
+                </div>
+                <label class="col-form-label font-weight-normal pl-3" for="title">栏目标题</label>
+                <div class="col-sm-4">
                     <input class="form-control form-control-alt font-size-sm" value="{{$.info.Title}}" id="title" type="text" name="title" placeholder="栏目标题">
-                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写栏目标题,中英文；<code>必填；</code></div>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请填写栏目标题；<code>必填；</code></div>
                 </div>
             </div>
             <div class="form-group font-size-sm row mb-2">
