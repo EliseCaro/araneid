@@ -111,7 +111,7 @@ func (service *DefaultArticleService) PageListItems(length, draw, page int, sear
 	class := DefaultClassService{}
 	for _, v := range lists {
 		v[1] = module.One(int(v[1].(int64))).Name
-		v[2] = class.One(int(v[2].(int64))).Title
+		v[2] = class.One(int(v[2].(int64))).Name
 		v[4] = service.substr2HtmlHref(v[4].(string), 0, 25, int(v[0].(int64)))
 	}
 	data := map[string]interface{}{

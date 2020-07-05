@@ -58,8 +58,8 @@ func (service *DefaultKeywordService) DataTableColumns() []map[string]interface{
 	var maps []map[string]interface{}
 	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "标识", "name": "id", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "所属项目", "name": "arachnid", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "关键词", "name": "title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "所属项目", "name": "arachnid", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "创建时间", "name": "create_time", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
