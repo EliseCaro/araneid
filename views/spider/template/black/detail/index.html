@@ -17,7 +17,7 @@
           <h3 class="news_title">{{$.detail.Title}}</h3>
           <div class="bloginfo">
             <ul>
-              <li class="lmname"><a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Title}}">{{$.cateInfo.Title}}</a></li>
+              <li class="lmname"><a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Name}}">{{$.cateInfo.Name}}</a></li>
               <li class="timer">{{date $.detail.UpdateTime "Y-m-d H:i:s"}}</li>
               <li class="view">{{spiderArticleView $.detail.Oid}} 人已阅读</li>
             </ul>

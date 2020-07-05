@@ -59,8 +59,8 @@ func (c *Main) assignVolt() {
 		cate  []*spider.Class
 		links []*spider.Indexes
 	)
-	json.Unmarshal([]byte(c.DomainCache.Cate), &cate)
-	json.Unmarshal([]byte(c.DomainCache.Links), &links)
+	_ = json.Unmarshal([]byte(c.DomainCache.Cate), &cate)
+	_ = json.Unmarshal([]byte(c.DomainCache.Links), &links)
 	c.Data["cate"] = cate
 	c.Data["cids"] = new(service.DefaultDomainService).CateForIds(cate)
 	c.Data["links"] = links
