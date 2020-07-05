@@ -30,7 +30,7 @@ func (service *DefaultAdapterService) ZhanzhangExtract(id, length, form int, fil
 			rows, _ := f.GetRows(sheet)
 			for _, row := range rows {
 				if len(row) == 9 && row[0] != "" && row[7] != "" && row[8] != "" {
-					if item, message := service.extractUrlsContextRuleHandle(row[0], row[0], row[7], row[8]); message == nil {
+					if item, message := service.extractUrlsContextRuleHandle(row[0], row[7], row[0], row[7], row[8]); message == nil {
 						result = append(result, item)
 					}
 				} else {
@@ -71,13 +71,13 @@ func (service *DefaultAdapterService) SocketContextRuleHandle(id, length, form, 
 }
 
 /** 匹配规则并远程提取 **/
-func (service *DefaultAdapterService) extractUrlsContextRuleHandle(t, k, d, u string) (*spider.Class, error) {
+func (service *DefaultAdapterService) extractUrlsContextRuleHandle(n, t, k, d, u string) (*spider.Class, error) {
 	var message error
 	var result *spider.Class
-	if result, message = service.ruleHandle(t, k, d); message == nil {
+	if result, message = service.ruleHandle(n, t, k, d); message == nil {
 		if service.form == 1 {
-			service.ExtractUrlsContext(u, k, d, func(title, keyword, description string) {
-				result, message = service.ruleHandle(t, service.emptyCheck(keyword, d), service.emptyCheck(description, d))
+			service.ExtractUrlsContext(u, func(title, keyword, description string) {
+				result, message = service.ruleHandle(n, service.emptyCheck(title, t), service.emptyCheck(keyword, k), service.emptyCheck(description, d))
 			})
 		}
 	}
@@ -99,9 +99,10 @@ func (service *DefaultAdapterService) CreateXLSXFile(result []*spider.Class) (st
 	index := f.NewSheet("Sheet1")
 	for k, v := range result {
 		indexes := k + 1
-		_ = f.SetCellValue("Sheet1", "A"+strconv.Itoa(indexes), v.Title)
-		_ = f.SetCellValue("Sheet1", "B"+strconv.Itoa(indexes), v.Keywords)
-		_ = f.SetCellValue("Sheet1", "C"+strconv.Itoa(indexes), v.Description)
+		_ = f.SetCellValue("Sheet1", "A"+strconv.Itoa(indexes), v.Name)
+		_ = f.SetCellValue("Sheet1", "B"+strconv.Itoa(indexes), v.Title)
+		_ = f.SetCellValue("Sheet1", "C"+strconv.Itoa(indexes), v.Keywords)
+		_ = f.SetCellValue("Sheet1", "D"+strconv.Itoa(indexes), v.Description)
 	}
 	f.SetActiveSheet(index)
 	path, _ := new(DefaultAdjunctService).DateFolder(beego.AppConfig.String("upload_folder") + "/sandbox/")
@@ -122,7 +123,7 @@ func (service *DefaultAdapterService) createInitialized(length, form int, filtra
 }
 
 /** 使用爬虫提取标题关键词跟描述 **/
-func (service *DefaultAdapterService) ExtractUrlsContext(urls string, k string, d string, f func(t string, k string, d string)) {
+func (service *DefaultAdapterService) ExtractUrlsContext(urls string, f func(t string, k string, d string)) {
 	var (
 		title    string
 		keyword  string
@@ -155,13 +156,13 @@ func (service *DefaultAdapterService) chineseCount(str1 string) (count int) {
 }
 
 /** 规则处理 **/
-func (service *DefaultAdapterService) ruleHandle(title, keyword, description string) (*spider.Class, error) {
+func (service *DefaultAdapterService) ruleHandle(name, title, keyword, description string) (*spider.Class, error) {
 	if service.length > 0 {
-		title = service.ruleHandleTitle(title)
+		name = service.ruleHandleTitle(name)
 	}
 	var message error
 	var result spider.Class
-	maps := map[string]string{"title": title, "keyword": keyword, "description": description}
+	maps := map[string]string{"name": name, "title": title, "keyword": keyword, "description": description}
 	for k, v := range maps {
 		v = service.ruleHandleFiltration(v) // 过滤
 		if service.ruleHandleExtract(v) {
@@ -174,6 +175,7 @@ func (service *DefaultAdapterService) ruleHandle(title, keyword, description str
 		result.Keywords = maps["keyword"]
 		result.Description = maps["description"]
 		result.Title = maps["title"]
+		result.Name = maps["name"]
 	}
 	return &result, message
 }

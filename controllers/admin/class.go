@@ -48,8 +48,8 @@ func (c *Class) Import() {
 			for _, sheet := range f.GetSheetList() {
 				rows, _ := f.GetRows(sheet)
 				for _, row := range rows {
-					if len(row) >= 3 && c.classService.OneExtends(row[0]).Id == 0 {
-						items = append(items, &spider.Class{Model: model, Title: row[0], Keywords: row[1], Description: row[2]})
+					if len(row) >= 4 && c.classService.OneExtends(row[0]).Id == 0 {
+						items = append(items, &spider.Class{Model: model, Name: row[0], Title: row[1], Keywords: row[2], Description: row[3]})
 					}
 				}
 			}
@@ -174,7 +174,7 @@ func (c *Class) dataTableColumns() []map[string]interface{} {
 	maps = append(maps, map[string]interface{}{"title": "结果标识", "name": "id", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "所属模型", "name": "model", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "挂载次数", "name": "usage", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "栏目标题", "name": "title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "栏目名称", "name": "name", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "数据操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
 	return maps
@@ -222,10 +222,10 @@ func (c *Class) pageListItems(length, draw, page int, search string, id int) map
 		qs = qs.Filter("model", id)
 	}
 	if search != "" {
-		qs = qs.Filter("title__icontains", search)
+		qs = qs.Filter("name__icontains", search)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "model", "usage", "title", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "model", "usage", "name", "update_time")
 	for _, v := range lists {
 		v[1] = c.modelsService.One(int(v[1].(int64))).Name
 	}
@@ -242,7 +242,7 @@ func (c *Class) pageListItems(length, draw, page int, search string, id int) map
 func (c *Class) tableColumnsType() map[string][]string {
 	result := map[string][]string{
 		"columns":   {"string", "string", "string", "string", "date"},
-		"fieldName": {"id", "model", "usage", "title", "update_time"},
+		"fieldName": {"id", "model", "usage", "name", "update_time"},
 		"action":    {"", "", "", "", ""},
 	}
 	return result
