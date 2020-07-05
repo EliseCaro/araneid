@@ -34,6 +34,7 @@ func (service *DefaultCategoryService) InitializedCategory(did, aid, cid int) *s
 		Domain:      did,
 		Cid:         cid,
 		Model:       detail.Models,
+		Name:        cateOne.Name,
 		Title:       service.TagsRandom(aid, domain.Name, cateOne.Title, match.CateTitle),
 		Arachnid:    aid,
 		Keywords:    service.TagsRandom(aid, domain.Name, cateOne.Keywords, match.CateKeyword),
