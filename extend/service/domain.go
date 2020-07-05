@@ -319,8 +319,8 @@ func (service *DefaultDomainService) TableButtonsType(id int) []*table.TableButt
 			Text:      "友情链接",
 			ClassName: "btn btn-sm btn-alt-primary open_iframe",
 			Attribute: map[string]string{
-				"href":      beego.URLFor("Domain.Edit", ":id", "__ID__", ":popup", 1, ":parent", id),
-				"data-area": "600px,375px",
+				"href":      beego.URLFor("Domain.Links", ":id", "__ID__", ":popup", 1, ":parent", id),
+				"data-area": "600px,400px",
 			},
 		},
 		{

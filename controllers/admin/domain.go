@@ -1,10 +1,12 @@
 package admin
 
 import (
+	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
+	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/go-playground/validator"
 )
 
@@ -97,4 +99,26 @@ func (c *Domain) Empty() {
 		Message: "缓存已经清空！将重制此项目所有站点数据～",
 		Url:     beego.URLFor("Domain.Index", ":parent", parent),
 	})
+}
+
+// @router /domain/links [post,get]
+func (c *Domain) Links() {
+	parent, _ := c.GetInt(":parent", 0)
+	id := c.GetMustInt(":id", "非法请求！")
+	if c.IsAjax() {
+		value := c.GetString("inputs", "[]")
+		if _, e := orm.NewOrm().Update(&spider.Domain{Id: id, Links: value}, "Links"); e == nil {
+			c.Succeed(&controllers.ResultJson{
+				Message: "更新友情链接成功", Url: beego.URLFor("Domain.Index", ":arachnid", parent),
+			})
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "更新友情链接失败，请稍后再试！"})
+		}
+	}
+	domain, _ := c.domainService.Find(id)
+	var links []map[string]string
+	_ = json.Unmarshal([]byte(domain.Links), &links)
+	c.Data["links"] = links
+	c.Data["parent"] = parent
+	c.Data["id"] = domain.Id
 }

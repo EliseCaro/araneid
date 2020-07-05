@@ -1,0 +1,43 @@
+<style>
+    .form-group{
+        border: 1px dashed #ddd;
+        position: relative
+    }
+    .prefix_delete {
+        position: absolute;
+        border-radius: 50%;
+        cursor: pointer;
+        top: -7px;
+        left: -7px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        font-size: 19px;
+        z-index: 999;
+    }
+</style>
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">友情链接管理</h3>
+        <div class="block-options">
+            <input type="hidden" name="model" value="{{$.model}}">
+            <button type="button" data-action="{{urlfor "Domain.Links" ":id" $.id ":parent" $.parent}}" class="submit_links btn btn-sm btn-alt-primary js-tooltip" data-placement="left" data-toggle="tooltip" data-original-title="保存修改">保存</button>
+        </div>
+    </div>
+    <div class="block-content row mr-0 ml-0 items_prefix">
+        {{range $i, $item := .links}}
+            <div class="link_item form-group col-sm-12 p-1 badge-primary mb-3" id="item_{{$i}}" data-key="{{$i}}">
+                <div class="input-daterange input-group">
+                    <input type="text" class="form-control form-control-sm col-sm-4" name="title" value="{{$item.title}}" placeholder="名称">
+                    <div class="input-group-prepend input-group-append">
+                        <span class="input-group-text font-w600"><i class="fa fa-fw fa-link"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" value="{{$item.urls}}" name="urls" placeholder="链接">
+                </div>
+                <div class="prefix_delete badge-primary"><i class="si si-close"></i></div>
+            </div>
+        {{end}}
+    </div>
+</div>
