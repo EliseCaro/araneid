@@ -201,7 +201,7 @@ func (service *DefaultCategoryService) DataTableColumns() []map[string]interface
 	var maps []map[string]interface{}
 	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "标识", "name": "id", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "标题", "name": "title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "名称", "name": "name", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "域名", "name": "domain", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "项目", "name": "arachnid", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "关键字", "name": "keywords", "className": "text-center", "order": false})
@@ -238,17 +238,17 @@ func (service *DefaultCategoryService) PageListItems(length, draw, page int, sea
 	var lists []orm.ParamsList
 	qs := orm.NewOrm().QueryTable(new(spider.Category))
 	if search != "" {
-		qs = qs.Filter("title__icontains", search)
+		qs = qs.Filter("name__icontains", search)
 	}
 	if id > 0 {
 		qs = qs.Filter("domain", id)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "title", "domain", "arachnid", "keywords", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "domain", "arachnid", "keywords", "update_time")
 	for _, v := range lists {
 		domain, _ := new(DefaultDomainService).Find(int(v[2].(int64)))
 		arachnid, _ := new(DefaultArachnidService).Find(int(v[3].(int64)))
-		v[1] = service.substr2HtmlHref(fmt.Sprintf("http://%s/index/column-%d-0.html", domain.Domain, v[0].(int64)), v[1].(string), 0, 20)
+		v[1] = service.substr2HtmlHrefEnd(fmt.Sprintf("http://%s/index/column-%d-0.html", domain.Domain, v[0].(int64)), v[1].(string), 0, 20)
 		v[4] = service.substr2HtmlHref(fmt.Sprintf("http://%s/index/column-%d-0.html", domain.Domain, v[0].(int64)), v[4].(string), 0, 20)
 		v[2] = domain.Domain
 		v[3] = arachnid.Name
@@ -268,11 +268,17 @@ func (service *DefaultCategoryService) substr2HtmlHref(u, s string, start, end i
 	return html
 }
 
+/**  转为pop提示 **/
+func (service *DefaultCategoryService) substr2HtmlHrefEnd(u, s string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s</a>`, u, s, beego.Substr(s, start, end))
+	return html
+}
+
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultCategoryService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
 		"columns":   {"string", "string", "string", "string", "string", "date"},
-		"fieldName": {"id", "title", "domain", "arachnid", "keywords", "update_time"},
+		"fieldName": {"id", "name", "domain", "arachnid", "keywords", "update_time"},
 		"action":    {"", "", "", "", "", ""},
 	}
 	return result
