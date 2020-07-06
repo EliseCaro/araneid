@@ -8,6 +8,7 @@ import (
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/service"
 	"strconv"
+	"time"
 )
 
 type Sign struct {
@@ -82,7 +83,7 @@ func (c *Sign) Chart() {
 		_ = _func.SetCache("network_cache", "")
 	}
 	c.Succeed(&controllers.ResultJson{
-		Message: "success!!!",
+		Message: beego.Date(time.Now(), "H:i:s"),
 		Data:    c.adminService.DashboardInitialized(),
 	})
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	_func "github.com/beatrice950201/araneid/extend/func"
+	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
 )
 
@@ -10,10 +11,11 @@ type DefaultAdminService struct{}
 /** 数据总包**/
 type Dashboard struct {
 	Network *net.IOCountersStat
+	Memory  *mem.VirtualMemoryStat
 }
 
 /** 网络监听控制面板 **/
-func (service *DefaultAdminService) NetworkDashboard() *net.IOCountersStat {
+func (service *DefaultAdminService) networkDashboard() *net.IOCountersStat {
 	result := &net.IOCountersStat{}
 	if stat, err := net.IOCounters(false); err == nil {
 		item := &net.IOCountersStat{}
@@ -38,9 +40,16 @@ func (service *DefaultAdminService) NetworkDashboard() *net.IOCountersStat {
 	return result
 }
 
+/** 内存监控 **/
+func (service *DefaultAdminService) memoryDashboard() *mem.VirtualMemoryStat {
+	v, _ := mem.VirtualMemory()
+	return v
+}
+
 /** 返回数据结构 **/
 func (service *DefaultAdminService) DashboardInitialized() *Dashboard {
 	return &Dashboard{
-		Network: service.NetworkDashboard(),
+		Network: service.networkDashboard(),
+		Memory:  service.memoryDashboard(),
 	}
 }

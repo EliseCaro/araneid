@@ -55,19 +55,34 @@
         <!-- END Quick Overview -->
         <!-- Dashboard Charts -->
         <div class="row chart_box" data-action="{{urlfor "Sign.Chart"}}">
-
             <div class="col-lg-6">
                 <div class="block block-rounded block-mode-loading-oneui">
                     <div class="block-header block-header-default">
-                        <h3 class="block-title">网络流量</h3>
-                        <div class="block-options"></div>
+                        <h3 class="block-title">网络实时流量监控</h3>
+                        <div class="block-options">
+                            <span class="badge badge-pill pt-1 pb-1" style="background:rgba(132, 94, 247, .3);color: #ffffff">上行 : <span class="network_up">0</span> KB</span>
+                            <span class="badge badge-pill" style="background:rgba(233, 236, 239, 1);">下行 : <span class="network_dow">0</span> KB</span>
+                        </div>
                     </div>
                     <div class="block-content p-0 text-center">
                         <canvas class="js-chart-dashboard-network"></canvas>
                     </div>
                 </div>
             </div>
-
+            <div class="col-lg-6">
+                <div class="block block-rounded block-mode-loading-oneui">
+                    <div class="block-header block-header-default">
+                        <h3 class="block-title">内存实时占用监控</h3>
+                        <div class="block-options">
+                            <span class="badge badge-pill badge-success pt-1 pb-1">内存总量 : <span class="memory_total">0</span> GB</span>
+                            <span class="badge badge-pill badge-primary pt-1 pb-1">使用数量 : <span class="memory_used">0</span> GB</span>
+                        </div>
+                    </div>
+                    <div class="block-content p-0 text-center">
+                        <canvas class="js-chart-dashboard-memory"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- END Dashboard Charts -->
     </div>
