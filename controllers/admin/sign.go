@@ -13,6 +13,7 @@ import (
 type Sign struct {
 	controllers.Base
 	usersService service.DefaultUsersService
+	adminService service.DefaultAdminService
 }
 
 /** 实现上一级构造 **/
@@ -72,4 +73,16 @@ func (c *Sign) Layout() {
 		c.Ctx.SetCookie("layout_style", s, 86400*30*12, "/")
 	}
 	c.Succeed(&controllers.ResultJson{Message: "success!!"})
+}
+
+// @router /sign/chart [post]
+func (c *Sign) Chart() {
+	init, _ := c.GetInt("init", 1)
+	if init == 1 {
+		_ = _func.SetCache("network_cache", "")
+	}
+	c.Succeed(&controllers.ResultJson{
+		Message: "success!!!",
+		Data:    c.adminService.DashboardInitialized(),
+	})
 }

@@ -6,9 +6,7 @@ import (
 	"net/http"
 )
 
-type Admin struct {
-	Main
-}
+type Admin struct{ Main }
 
 // @router /admin/socket [get]
 func (c *Admin) Socket() {

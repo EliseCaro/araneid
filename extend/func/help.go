@@ -188,10 +188,14 @@ func snakeString(s string) string {
 }
 
 /** 获取缓存实例 **/
-func cacheInitialized() (Bm cache.Cache) {
-	cachePath := beego.AppConfig.String("cache_path")
-	fileSuffix := beego.AppConfig.String("file_suffix")
-	option := fmt.Sprintf(`{"CachePath":"%s","FileSuffix":"%s","DirectoryLevel":"2","EmbedExpiry":"120"}`, cachePath, fileSuffix)
-	Bm, _ = cache.NewCache("file", option)
+var Bm cache.Cache
+
+func cacheInitialized() cache.Cache {
+	if Bm == nil {
+		cachePath := beego.AppConfig.String("cache_path")
+		fileSuffix := beego.AppConfig.String("file_suffix")
+		option := fmt.Sprintf(`{"CachePath":"%s","FileSuffix":"%s","DirectoryLevel":"2","EmbedExpiry":"120"}`, cachePath, fileSuffix)
+		Bm, _ = cache.NewCache("file", option)
+	}
 	return Bm
 }
