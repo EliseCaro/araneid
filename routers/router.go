@@ -34,6 +34,7 @@ func init() {
 			&admin.Class{}, &admin.Article{}, &admin.Prefix{}, &admin.Match{},
 			&admin.Arachnid{}, &admin.Keyword{}, &admin.Indexes{}, &admin.Statistics{},
 			&admin.Adapter{}, &admin.Domain{}, &admin.Category{}, &admin.Detail{},
+			&admin.Automatic{},
 		)),
 	)
 }
