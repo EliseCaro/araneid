@@ -63,6 +63,7 @@ func (c *Spider) ResultMaps() spider.Article {
 /** 更新或者插入 **/
 func (c *Spider) ResultInsert(res spider.Article) (err error) {
 	ext := c.articleService.OneByObject(res.Object)
+	var last int64
 	if message := c.verifyBase.Begin().Struct(res); message == nil {
 		if ext.Id > 0 {
 			ext.Title = res.Title
@@ -72,7 +73,8 @@ func (c *Spider) ResultInsert(res spider.Article) (err error) {
 			_, err = orm.NewOrm().Update(&ext)
 		} else {
 			res.Class = c.randomClass(res.Model).Id
-			_, err = orm.NewOrm().Insert(&res)
+			last, err = orm.NewOrm().Insert(&res)
+			c.automaticBase.AutomaticDocument(int(last)) // 百度自动提交
 		}
 	} else {
 		err = errors.New(c.verifyBase.Translate(message.(validator.ValidationErrors)))
