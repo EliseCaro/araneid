@@ -28,6 +28,7 @@ type Main struct {
 	categoryService service.DefaultCategoryService
 	detailService   service.DefaultDetailService
 	verifyBase      service.DefaultBaseVerify
+	automaticBase   service.DefaultAutomaticService
 }
 
 /** 准备下一级构造函数 **/

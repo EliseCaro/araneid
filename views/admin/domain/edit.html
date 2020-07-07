@@ -13,11 +13,16 @@
     <form action="{{urlfor "Domain.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
         <div class="block-content block-content-full tab-content px-md-5 pr-0">
             <div class="fade fade-left tab-pane active show" id="base" role="tabpanel">
-                <div class="form-group row font-size-sm pl-2">
+                <div class="form-group row font-size-sm mb-2">
                     <label class="col-form-label font-weight-normal pr-0 pl-2" for="name">站点名称</label>
-                    <div class="col-sm-10">
-                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="站点名称"/>
-                        <div class="help-block pt-1 pb-1 font-size-minimum">站点名称：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    <div class="col-sm-4 mr-4 pl-3">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Name}}" id="name" type="text" name="name" placeholder="站点名称">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">请填写站点名称；<code>必填；</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal pl-3" for="submit">自动推送</label>
+                    <div class="col-sm-4">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Submit}}" id="submit" type="text" name="submit" placeholder="自动推送">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">百度推送Token；<code>留空则不推送；</code></div>
                     </div>
                 </div>
                 <div class="form-group row font-size-sm pl-2">

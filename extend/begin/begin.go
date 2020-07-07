@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/attachment"
+	"github.com/beatrice950201/araneid/extend/model/automatic"
 	"github.com/beatrice950201/araneid/extend/model/collect"
 	"github.com/beatrice950201/araneid/extend/model/config"
 	"github.com/beatrice950201/araneid/extend/model/dictionaries"
@@ -66,6 +67,7 @@ func databasesBegin() {
 		new(spider.Template),
 		new(spider.Arachnid),
 		new(spider.Category),
+		new(automatic.Automatic),
 		new(attachment.Attachment),
 		new(dictionaries.DictConfig),
 		new(dictionaries.Dictionaries),

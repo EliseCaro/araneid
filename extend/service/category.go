@@ -24,6 +24,13 @@ func (service *DefaultCategoryService) AcquireCategory(did, aid, cid int) spider
 	return maps
 }
 
+/** 根据老id查询新ID数据 **/
+func (service *DefaultCategoryService) AcquireCategoryOldWhere(oid int) spider.Category {
+	var maps spider.Category
+	_ = orm.NewOrm().QueryTable(new(spider.Category)).Filter("cid", oid).One(&maps)
+	return maps
+}
+
 /** 初始化一个分类 **/
 func (service *DefaultCategoryService) InitializedCategory(did, aid, cid int) *spider.Category {
 	detail, _ := new(DefaultArachnidService).Find(aid)
