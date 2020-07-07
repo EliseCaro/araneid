@@ -49,7 +49,13 @@ func (c *Class) Import() {
 				rows, _ := f.GetRows(sheet)
 				for _, row := range rows {
 					if len(row) >= 4 && c.classService.OneExtends(row[0]).Id == 0 {
-						items = append(items, &spider.Class{Model: model, Name: row[0], Title: row[1], Keywords: row[2], Description: row[3]})
+						items = append(items, &spider.Class{
+							Model:       model,
+							Name:        c.classService.EliminateTrim(row[0], []string{"\n", "\r"}),
+							Title:       c.classService.EliminateTrim(row[1], []string{"\n", "\r"}),
+							Keywords:    c.classService.EliminateTrim(row[2], []string{"\n", "\r"}),
+							Description: c.classService.EliminateTrim(row[3], []string{"\n", "\r"}),
+						})
 					}
 				}
 			}

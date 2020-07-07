@@ -35,6 +35,17 @@ func (service *DefaultDomainService) Find(id int) (spider.Domain, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 返回带前缀或不带前缀的域名 **/
+func (service *DefaultDomainService) getDomain(d, p string) string {
+	var domain string
+	if p != "" {
+		domain = fmt.Sprintf(`%s.%s`, p, domain)
+	} else {
+		domain = d
+	}
+	return domain
+}
+
 /** 重制一个域名数据 **/
 func (service *DefaultDomainService) InitializedDomain(model, arachnid int, prefix, domain string) *spider.Domain {
 	arachnidInfo, _ := new(DefaultArachnidService).Find(arachnid)
@@ -44,7 +55,7 @@ func (service *DefaultDomainService) InitializedDomain(model, arachnid int, pref
 		Name:   service.domainNameRandom(model, prefix),
 		Title:  service.domainTagsRandom(model, arachnid, prefix, matchModel.IndexTitle),
 		Links:  service.modelIndexRandom(arachnidInfo.Link, model, arachnid, arachnidInfo.Domain),
-		Status: int8(1), Domain: fmt.Sprintf(`%s.%s`, prefix, domain),
+		Status: int8(1), Domain: service.getDomain(domain, prefix),
 		Template:    service.modelTemplateRandom(model),
 		Keywords:    service.domainTagsRandom(model, arachnid, prefix, matchModel.IndexKeyword),
 		Arachnid:    arachnid,
@@ -93,12 +104,7 @@ func (service *DefaultDomainService) modelLinksRange(model, count int, domain st
 func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name string) *map[string]string {
 	var maps = make(map[string]string)
 	var domain spider.Domain
-	var main string
-	if prefix != "" {
-		main = fmt.Sprintf(`%s.%s`, prefix, str)
-	} else {
-		main = str
-	}
+	var main = service.getDomain(str, prefix)
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&domain); domain.Id > 0 {
 		maps["title"] = domain.Name
 	} else {
@@ -111,12 +117,7 @@ func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name s
 /** 获取一条域名配置不存在则创建 **/
 func (service *DefaultDomainService) AcquireDomain(model, arachnid int, prefix, domain string) spider.Domain {
 	var maps spider.Domain
-	var main string
-	if prefix != "" {
-		main = fmt.Sprintf(`%s.%s`, prefix, domain)
-	} else {
-		main = domain
-	}
+	var main = service.getDomain(domain, prefix)
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&maps); maps.Id <= 0 {
 		maps = *service.InitializedDomain(model, arachnid, prefix, domain)
 	}

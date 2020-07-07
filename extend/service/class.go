@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/extend/model/spider"
+	"strings"
 )
 
 type DefaultClassService struct{}
@@ -12,6 +13,14 @@ func (service *DefaultClassService) OneExtends(title string) spider.Class {
 	var maps spider.Class
 	_ = orm.NewOrm().QueryTable(new(spider.Class)).Filter("title", title).One(&maps)
 	return maps
+}
+
+/** 剔除字符规定字符 **/
+func (service *DefaultClassService) EliminateTrim(str string, symbol []string) string {
+	for _, v := range symbol {
+		str = strings.Replace(str, v, "", -1)
+	}
+	return str
 }
 
 /** 根据爬虫文档Id获取一条数据 **/
