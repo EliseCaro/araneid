@@ -26,5 +26,5 @@ func (c *Admin) Socket() {
 
 // @router / [get]
 func (c *Admin) Index() {
-	c.Data["Title"] = "admin"
+	c.Data["disk"] = c.adminService.DiskDashboard()
 }
