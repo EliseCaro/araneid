@@ -74,7 +74,7 @@ func (c *Spider) ResultInsert(res spider.Article) (err error) {
 		} else {
 			res.Class = c.randomClass(res.Model).Id
 			last, err = orm.NewOrm().Insert(&res)
-			c.automaticBase.AutomaticDocument(int(last)) // 百度自动提交
+			c.automaticService.AutomaticDocument(int(last)) // 百度自动提交
 		}
 	} else {
 		err = errors.New(c.verifyBase.Translate(message.(validator.ValidationErrors)))

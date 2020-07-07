@@ -45,6 +45,7 @@ type Main struct {
 	categoryService     service.DefaultCategoryService
 	detailService       service.DefaultDetailService
 	adminService        service.DefaultAdminService
+	automaticService    service.DefaultAutomaticService
 }
 
 /** 准备下一级构造函数 **/

@@ -82,6 +82,7 @@ func (c *Domain) Edit() {
 			})
 		}
 		if _, err := orm.NewOrm().Update(&domain); err == nil {
+			c.automaticService.AutomaticClass(domain.Id)
 			c.Succeed(&controllers.ResultJson{Message: "更新站点成功", Url: beego.URLFor("Domain.Index", ":arachnid", domain.Arachnid)})
 		} else {
 			c.Fail(&controllers.ResultJson{Message: "更新站点失败，请稍后再试！"})

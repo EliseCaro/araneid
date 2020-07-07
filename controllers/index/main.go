@@ -11,24 +11,24 @@ import (
 
 type Main struct {
 	controllers.Base
-	Arachnid        spider.Arachnid
-	Model           spider.Models
-	DomainCache     spider.Domain
-	DomainPrefix    string
-	DomainMain      string
-	spiderExtend    bool
-	articleService  service.DefaultArticleService
-	classService    service.DefaultClassService
-	disguiseService service.DefaultDisguiseService
-	modelsService   service.DefaultModelsService
-	arachnidService service.DefaultArachnidService
-	prefixService   service.DefaultPrefixService
-	templateService service.DefaultTemplateService
-	domainService   service.DefaultDomainService
-	categoryService service.DefaultCategoryService
-	detailService   service.DefaultDetailService
-	verifyBase      service.DefaultBaseVerify
-	automaticBase   service.DefaultAutomaticService
+	Arachnid         spider.Arachnid
+	Model            spider.Models
+	DomainCache      spider.Domain
+	DomainPrefix     string
+	DomainMain       string
+	spiderExtend     bool
+	articleService   service.DefaultArticleService
+	classService     service.DefaultClassService
+	disguiseService  service.DefaultDisguiseService
+	modelsService    service.DefaultModelsService
+	arachnidService  service.DefaultArachnidService
+	prefixService    service.DefaultPrefixService
+	templateService  service.DefaultTemplateService
+	domainService    service.DefaultDomainService
+	categoryService  service.DefaultCategoryService
+	detailService    service.DefaultDetailService
+	verifyBase       service.DefaultBaseVerify
+	automaticService service.DefaultAutomaticService
 }
 
 /** 准备下一级构造函数 **/
