@@ -39,7 +39,7 @@ func (service *DefaultDomainService) Find(id int) (spider.Domain, error) {
 func (service *DefaultDomainService) getDomain(d, p string) string {
 	var domain string
 	if p != "" {
-		domain = fmt.Sprintf(`%s.%s`, p, domain)
+		domain = fmt.Sprintf(`%s.%s`, p, d)
 	} else {
 		domain = d
 	}
@@ -104,6 +104,7 @@ func (service *DefaultDomainService) modelLinksRange(model, count int, domain st
 func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name string) *map[string]string {
 	var maps = make(map[string]string)
 	var domain spider.Domain
+	beego.Warn(str, prefix)
 	var main = service.getDomain(str, prefix)
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&domain); domain.Id > 0 {
 		maps["title"] = domain.Name
