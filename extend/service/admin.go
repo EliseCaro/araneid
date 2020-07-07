@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/astaxie/beego"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
@@ -144,9 +145,25 @@ func (service *DefaultAdminService) DashboardInitialized() *Dashboard {
 /** 获取监控面板 远行程序数量 **/
 func (service *DefaultAdminService) DashboardProcessing() []map[string]interface{} {
 	var result []map[string]interface{}
-	result = append(result, map[string]interface{}{"title": "远行蜘蛛池", "count": new(DefaultArachnidService).aliveNum()})
-	result = append(result, map[string]interface{}{"title": "远行采集器", "count": new(DefaultCollectService).aliveNum()})
-	result = append(result, map[string]interface{}{"title": "远行发布器", "count": new(DefaultCollectService).alivePushNum()})
-	result = append(result, map[string]interface{}{"title": "云盘资料数", "count": new(DefaultAdjunctService).aliveNum()})
+	result = append(result, map[string]interface{}{
+		"title": "远行蜘蛛池",
+		"count": new(DefaultArachnidService).aliveNum(),
+		"urls":  beego.URLFor("Arachnid.Index"),
+	})
+	result = append(result, map[string]interface{}{
+		"title": "远行采集器",
+		"count": new(DefaultCollectService).aliveNum(),
+		"urls":  beego.URLFor("Collect.Index"),
+	})
+	result = append(result, map[string]interface{}{
+		"title": "远行发布器",
+		"count": new(DefaultCollectService).alivePushNum(),
+		"urls":  beego.URLFor("Collect.Index"),
+	})
+	result = append(result, map[string]interface{}{
+		"title": "云盘资料数",
+		"count": new(DefaultAdjunctService).aliveNum(),
+		"urls":  beego.URLFor("Attachment.Index"),
+	})
 	return result
 }
