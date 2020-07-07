@@ -93,7 +93,12 @@ func (service *DefaultDomainService) modelLinksRange(model, count int, domain st
 func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name string) *map[string]string {
 	var maps = make(map[string]string)
 	var domain spider.Domain
-	var main = fmt.Sprintf(`%s.%s`, prefix, str)
+	var main string
+	if prefix != "" {
+		main = fmt.Sprintf(`%s.%s`, prefix, str)
+	} else {
+		main = str
+	}
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&domain); domain.Id > 0 {
 		maps["title"] = domain.Name
 	} else {
@@ -106,7 +111,12 @@ func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name s
 /** 获取一条域名配置不存在则创建 **/
 func (service *DefaultDomainService) AcquireDomain(model, arachnid int, prefix, domain string) spider.Domain {
 	var maps spider.Domain
-	var main = fmt.Sprintf(`%s.%s`, prefix, domain)
+	var main string
+	if prefix != "" {
+		main = fmt.Sprintf(`%s.%s`, prefix, domain)
+	} else {
+		main = domain
+	}
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&maps); maps.Id <= 0 {
 		maps = *service.InitializedDomain(model, arachnid, prefix, domain)
 	}

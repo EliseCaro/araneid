@@ -43,8 +43,17 @@ func (c *Base) Prepare() {
 /** 域名鉴权 **/
 func (c *Base) DomainCheck(callback func(string, string) (bool, string, string)) {
 	domain := strings.Split(c.Ctx.Input.Domain(), ".")
-	if len(domain) == 3 {
-		is, title, context := callback(domain[0], fmt.Sprintf("%s.%s", domain[1], domain[2]))
+	if len(domain) == 2 || len(domain) == 3 {
+		var (
+			is      bool
+			title   string
+			context string
+		)
+		if len(domain) == 2 {
+			is, title, context = callback("", fmt.Sprintf("%s.%s", domain[0], domain[1]))
+		} else {
+			is, title, context = callback(domain[0], fmt.Sprintf("%s.%s", domain[1], domain[2]))
+		}
 		if is == false {
 			c.Abort500(title, context)
 		}
