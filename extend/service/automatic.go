@@ -31,6 +31,18 @@ func (service *DefaultAutomaticService) AutomaticDocument(object int) {
 	}
 }
 
+/** 分类自动提交 **/
+func (service *DefaultAutomaticService) AutomaticClass(domain int) {
+	if detail, _ := new(DefaultDomainService).Find(domain); detail.Domain != "" && detail.Submit != "" {
+		var cate []*spider.Class
+		_ = json.Unmarshal([]byte(detail.Cate), &cate)
+		for _, v := range cate {
+			urls := fmt.Sprintf(`http://%s/index/column-%d-0.html`, detail.Domain, v.Id)
+			service.baiduAutomatic(detail.Domain, detail.Submit, urls)
+		}
+	}
+}
+
 /** 百度提交 **/
 func (service *DefaultAutomaticService) baiduAutomatic(domain, token, urls string) {
 	action := fmt.Sprintf(beego.AppConfig.String("baidu_automatic_urls"), domain, token)
