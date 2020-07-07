@@ -30,6 +30,12 @@ func (service *DefaultArachnidService) Find(id int) (spider.Arachnid, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 获取远行中的数量 **/
+func (service *DefaultArachnidService) aliveNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(spider.Arachnid)).Filter("status", 1).Count()
+	return index
+}
+
 /** 根据域名获取蜘蛛池 **/
 func (service *DefaultArachnidService) FindDomain(domain string) (maps spider.Arachnid) {
 	_ = orm.NewOrm().QueryTable(new(spider.Arachnid)).Filter("domain__icontains", domain).One(&maps)

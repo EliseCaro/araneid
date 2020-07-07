@@ -25,6 +25,18 @@ import (
 
 type DefaultCollectService struct{}
 
+/** 获取远行中的数量 **/
+func (service *DefaultCollectService) aliveNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(collect.Collect)).Filter("status", 1).Count()
+	return index
+}
+
+/** 获取远行中的发布器数量 **/
+func (service *DefaultCollectService) alivePushNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(collect.Collect)).Filter("push_status", 1).Count()
+	return index
+}
+
 /** 发布一条数据;返回格式：{status:[false|true],message:[message]} **/
 func (service *DefaultCollectService) PushDetailAPI(item collect.Result) {
 	collectDetail := service.One(item.Collect)

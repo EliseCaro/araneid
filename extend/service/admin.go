@@ -56,28 +56,6 @@ func (service *DefaultAdminService) diskDetail(item *DiskStatus) string {
 	return html
 }
 
-/** 硬盘监控;从控制器直接提交 **/
-func (service *DefaultAdminService) DiskDashboard() []*DiskStatus {
-	var result []*DiskStatus
-	parts, _ := disk.Partitions(true)
-	for _, v := range parts {
-		diskInfo, _ := disk.Usage(v.Mountpoint)
-		item := &DiskStatus{
-			Name:        diskInfo.Path,
-			FsType:      diskInfo.Fstype,
-			Total:       diskInfo.Total / 1024 / 1024 / 1024,
-			Free:        diskInfo.Free / 1024 / 1024 / 1024,
-			Used:        diskInfo.Used / 1024 / 1024 / 1024,
-			UsedPercent: service.decimal(diskInfo.UsedPercent),
-		}
-		if item.Total > 0 {
-			item.Detail = service.diskDetail(item)
-			result = append(result, item)
-		}
-	}
-	return result
-}
-
 /** 网络监听控制面板 **/
 func (service *DefaultAdminService) networkDashboard() *net.IOCountersStat {
 	result := &net.IOCountersStat{}
@@ -131,6 +109,28 @@ func (service *DefaultAdminService) loadDashboard() *load.AvgStat {
 	return info
 }
 
+/** 硬盘监控;从控制器直接提交 **/
+func (service *DefaultAdminService) DiskDashboard() []*DiskStatus {
+	var result []*DiskStatus
+	parts, _ := disk.Partitions(true)
+	for _, v := range parts {
+		diskInfo, _ := disk.Usage(v.Mountpoint)
+		item := &DiskStatus{
+			Name:        diskInfo.Path,
+			FsType:      diskInfo.Fstype,
+			Total:       diskInfo.Total / 1024 / 1024 / 1024,
+			Free:        diskInfo.Free / 1024 / 1024 / 1024,
+			Used:        diskInfo.Used / 1024 / 1024 / 1024,
+			UsedPercent: service.decimal(diskInfo.UsedPercent),
+		}
+		if item.Total > 0 {
+			item.Detail = service.diskDetail(item)
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
 /** 返回数据结构 **/
 func (service *DefaultAdminService) DashboardInitialized() *Dashboard {
 	return &Dashboard{
@@ -139,4 +139,14 @@ func (service *DefaultAdminService) DashboardInitialized() *Dashboard {
 		CPU:     service.cpuDashboard(),
 		Load:    service.loadDashboard(),
 	}
+}
+
+/** 获取监控面板 远行程序数量 **/
+func (service *DefaultAdminService) DashboardProcessing() []map[string]interface{} {
+	var result []map[string]interface{}
+	result = append(result, map[string]interface{}{"title": "远行蜘蛛池", "count": new(DefaultArachnidService).aliveNum()})
+	result = append(result, map[string]interface{}{"title": "远行采集器", "count": new(DefaultCollectService).aliveNum()})
+	result = append(result, map[string]interface{}{"title": "远行发布器", "count": new(DefaultCollectService).alivePushNum()})
+	result = append(result, map[string]interface{}{"title": "云盘资料数", "count": new(DefaultAdjunctService).aliveNum()})
+	return result
 }

@@ -35,6 +35,12 @@ func (service *DefaultAdjunctService) FindId(id int) (item attachment.Attachment
 	return item
 }
 
+/** 云盘全部文件数量 **/
+func (service *DefaultAdjunctService) aliveNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(attachment.Attachment)).Count()
+	return index
+}
+
 /**  下载远程附件下载到第三方 **/
 func (service *DefaultAdjunctService) DownloadFileCloud(url string, cloud map[string]string) string {
 	up := upyun.NewUpYun(&upyun.UpYunConfig{Bucket: cloud["bucket"], Operator: cloud["name"], Password: cloud["password"]})

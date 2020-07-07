@@ -1,7 +1,6 @@
 <main id="main-container">
-    <!-- Page Content -->
     <div class="content">
-        <!-- Quick Overview -->
+        <!-- 开始圆形进度条 -->
         <div class="row">
             <div class="col-6 col-lg-3">
                 <a class="block block-link-shadow text-center" href="javascript:void(0)">
@@ -59,8 +58,8 @@
                 {{end}}
             {{end}}
         </div>
-        <!-- END Quick Overview -->
-        <!-- Dashboard Charts -->
+        <!-- 结束圆形进度条 -->
+        <!-- 开始折线图 -->
         <div class="row chart_box" data-action="{{urlfor "Sign.Chart"}}">
             <div class="col-lg-6">
                 <div class="block block-rounded block-mode-loading-oneui">
@@ -91,9 +90,22 @@
                 </div>
             </div>
         </div>
-        <!-- END Dashboard Charts -->
+        <!-- 结束折线图 -->
+        <!-- 开始系统数量统计 -->
+        <div class="row">
+            {{range $i, $e := .processing}}
+                <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+                    <a class="block block-rounded block-link-pop border-left border-primary border-4x" href="javascript:void(0)">
+                        <div class="block-content block-content-full">
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">{{$e.title}}</div>
+                            <div class="font-size-h2 font-w400 text-dark">{{$e.count}} 个</div>
+                        </div>
+                    </a>
+                </div>
+            {{end}}
+        </div>
+        <!--结束系统数量统计 -->
     </div>
-    <!-- END Page Content -->
 </main>
-<!-- END Main Container -->
+
 
