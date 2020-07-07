@@ -102,6 +102,7 @@ func logsBegin() {
 	logsPath := beego.AppConfig.String("logs_path") + time.Now().Format("20060102") + ".log"
 	option := fmt.Sprintf(`{"filename":"%s","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10,"color":true}`, logsPath)
 	_ = logs.SetLogger(logs.AdapterFile, option)
+	beego.BConfig.Log.AccessLogs = true // 开启成功日志
 }
 
 /****************************以下全部为模板函数 **********************************/
