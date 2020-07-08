@@ -16,9 +16,9 @@ import (
 type DefaultJournalService struct{}
 
 /** 根据URL获取一条数据 **/
-func (service *DefaultJournalService) One(urls string) spider.Journal {
+func (service *DefaultJournalService) One(urls, name string) spider.Journal {
 	var maps spider.Journal
-	_ = orm.NewOrm().QueryTable(new(spider.Journal)).Filter("urls", urls).One(&maps)
+	_ = orm.NewOrm().QueryTable(new(spider.Journal)).Filter("urls", urls).Filter("spider_name", name).One(&maps)
 	return maps
 }
 
@@ -73,7 +73,7 @@ func (service *DefaultJournalService) HandleInstantiation(ctx *context.Context) 
 			Usage:       1,
 		}
 		var message error
-		if one := service.One(item.Urls); one.Id > 0 {
+		if one := service.One(item.Urls, item.SpiderName); one.Id > 0 {
 			one.Usage += 1
 			_, message = orm.NewOrm().Update(&one)
 		} else {
