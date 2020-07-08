@@ -131,16 +131,7 @@ func DomainStatic(driver string) string {
 
 /** 获取缓存配置 **/
 func CacheConfig() (c map[string]string) {
-	menusCache := GetCache("databases_config_all")
-	if menusCache != "" {
-		c = menusCache.(map[string]string)
-	} else {
-		c = resolverConfig()
-	}
-	if AnalysisDebug() == false {
-		_ = SetCache("databases_config_all", c)
-	}
-	return c
+	return resolverConfig()
 }
 
 /** 获取一个随机数 **/
