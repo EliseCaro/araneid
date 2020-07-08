@@ -74,7 +74,7 @@ func (c *Main) assignVolt() {
 
 /** 区分蜘蛛池跟主站 **/
 func (c *Main) mainCheckDomain(prefix, main string) (bool, string, string) {
-	adminDomain := beego.AppConfig.String("web_admin_domain")
+	adminDomain := beego.AppConfig.String("system_admin_domain")
 	c.DomainPrefix = prefix
 	c.DomainMain = main
 	if adminDomain != fmt.Sprintf("%s.%s", prefix, main) {
