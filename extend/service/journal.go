@@ -23,6 +23,15 @@ func (service *DefaultJournalService) One(urls, name string) spider.Journal {
 	return maps
 }
 
+/** 测试使用 **/
+func (service *DefaultJournalService) CachedHandleSetDebug() {
+	var maps []*spider.Journal
+	_, _ = orm.NewOrm().QueryTable(new(spider.Journal)).All(&maps)
+	for _, item := range maps {
+		service.cachedHandleSet(*item)
+	}
+}
+
 /** 写入缓存【用来做七天数据分析跟一条数据分析】 **/
 func (service *DefaultJournalService) cachedHandleSet(index spider.Journal) {
 	var items []*spider.Journal
@@ -49,14 +58,19 @@ func (service *DefaultJournalService) CachedHandleGetDya() []*spider.Journal {
 }
 
 /** 获取一周缓存 **/
-func (service *DefaultJournalService) CachedHandleGetWeek() []*spider.Journal {
-	var items []*spider.Journal
+func (service *DefaultJournalService) CachedHandleGetWeek() []map[string]interface{} {
+	var items []map[string]interface{}
 	var current = time.Now().Unix()
 	for i := 0; i <= 6; i++ {
 		date := time.Unix(current-(int64(i)*86400), 0).Format("20060102")
 		tags := fmt.Sprintf(`journal_logs_%s`, date)
 		if cache := _func.GetCache(tags); cache != "" {
-			items = append(items, cache.([]*spider.Journal)...)
+			item := map[string]interface{}{
+				"items": cache.([]*spider.Journal),
+				"count": len(cache.([]*spider.Journal)),
+				"date":  time.Unix(current-(int64(i)*86400), 0).Format("01-02"),
+			}
+			items = append(items, item)
 		}
 	}
 	return items

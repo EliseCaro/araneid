@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"encoding/json"
 	"github.com/astaxie/beego"
 )
 
@@ -9,9 +10,9 @@ type Statistics struct{ Main }
 
 // @router /statistics/index [get,post]
 func (c *Statistics) Index() {
-	w := c.journalService.CachedHandleGetWeek()
-	beego.Warn(w)
-	beego.Info("__________________1222____________________________")
-	d := c.journalService.CachedHandleGetDya()
-	beego.Warn(d)
+	c.journalService.CachedHandleSetDebug() //todo 功能做好需要删除掉
+	week, _ := json.Marshal(c.journalService.CachedHandleGetWeek())
+	c.Data["week"] = string(week)
+	day := c.journalService.CachedHandleGetDya()
+	beego.Warn(day)
 }
