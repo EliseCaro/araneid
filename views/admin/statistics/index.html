@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="content content-boxed">
+    <div class="content">
         <div class="row">
             <div class="col-md-6">
                 <ul class="timeline timeline-alt py-0">
@@ -39,10 +39,19 @@
                         </div>
                     </li>
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-default">
-                            日
+                        <div class="timeline-event-icon bg-primary">日</div>
+                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
+                            <div class="row">
+                                {{range $i, $e := .class}}
+                                    <div class="col-md-3 text-center mb-3">
+                                        <div style="width: 100% !important;" class="btn btn-sm btn-alt-primary" data-toggle="click-ripple">
+                                            <div class="font-size-base font-w400 ">+{{$e}}</div>
+                                            <div class="font-size-sm font-w600">{{$i}}</div>
+                                        </div>
+                                    </div>
+                                {{end}}
+                           </div>
                         </div>
-                        <div class="timeline-event-block block invisible" style="height: 50px;" data-toggle="appear"></div>
                     </li>
                 </ul>
             </div>

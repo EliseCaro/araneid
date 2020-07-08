@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
@@ -9,6 +10,7 @@ import (
 	bmCache "github.com/beatrice950201/araneid/extend/cache"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -23,13 +25,72 @@ func (service *DefaultJournalService) One(urls, name string) spider.Journal {
 	return maps
 }
 
-/** 测试使用 **/
+/** 测试使用 todo 开发完成应该删除 **/
 func (service *DefaultJournalService) CachedHandleSetDebug() {
 	var maps []*spider.Journal
 	_, _ = orm.NewOrm().QueryTable(new(spider.Journal)).All(&maps)
 	for _, item := range maps {
 		service.cachedHandleSet(*item)
 	}
+}
+
+/** 获取折线图随机颜色 **/
+func (service *DefaultJournalService) randomColor() string {
+	color := []string{
+		"rgba(27, 158, 183,0.8)",
+		"rgba(34, 184, 207, .5)",
+		"rgba(132, 94, 247, .3)",
+	}
+	return color[rand.Intn(len(color))]
+}
+
+/** 解析一组数据中每种蜘蛛有几个**/
+func (service *DefaultJournalService) CachedHandleAnalysisClass(items []*spider.Journal) map[string]int64 {
+	result := make(map[string]int64)
+	for _, item := range items {
+		if _, ok := result[item.SpiderTitle]; ok == true {
+			result[item.SpiderTitle] += 1
+		} else {
+			result[item.SpiderTitle] = 1
+		}
+	}
+	return result
+}
+
+/** 解析成控制面板折线图 **/
+func (service *DefaultJournalService) CachedHandleAnalysisWeek() string {
+	var result []map[string]interface{}
+	var date []string
+	data := service.CachedHandleGetWeek()
+	class := _func.ParseAttrConfigMap(beego.AppConfig.String("system_spider_class"))
+	for n, k := range class {
+		var res []int64
+		for _, i := range data {
+			res = append(res, service.CachedHandleAnalysisDayClassSpider(i["items"].([]*spider.Journal), n))
+		}
+		if len(result) < 6 { // 最对只展示5个
+			result = append(result, map[string]interface{}{
+				"label": k, "data": res,
+				"backgroundColor": service.randomColor(),
+			})
+		}
+	}
+	for _, i := range data {
+		date = append(date, i["date"].(string))
+	}
+	bytes, _ := json.Marshal(map[string]interface{}{"date": date, "items": result})
+	return string(bytes)
+}
+
+/** 从数据中提取每种蜘蛛每天有几个 **/
+func (service *DefaultJournalService) CachedHandleAnalysisDayClassSpider(items []*spider.Journal, name string) int64 {
+	var n int64
+	for _, i := range items {
+		if i.SpiderName == name {
+			n += 1
+		}
+	}
+	return n
 }
 
 /** 写入缓存【用来做七天数据分析跟一条数据分析】 **/
@@ -64,14 +125,16 @@ func (service *DefaultJournalService) CachedHandleGetWeek() []map[string]interfa
 	for i := 0; i <= 6; i++ {
 		date := time.Unix(current-(int64(i)*86400), 0).Format("20060102")
 		tags := fmt.Sprintf(`journal_logs_%s`, date)
-		if cache := _func.GetCache(tags); cache != "" {
-			item := map[string]interface{}{
-				"items": cache.([]*spider.Journal),
-				"count": len(cache.([]*spider.Journal)),
-				"date":  time.Unix(current-(int64(i)*86400), 0).Format("01-02"),
-			}
-			items = append(items, item)
+		item := map[string]interface{}{
+			"items": []*spider.Journal{},
+			"count": 0,
+			"date":  time.Unix(current-(int64(i)*86400), 0).Format("01-02"),
 		}
+		if cache := _func.GetCache(tags); cache != "" {
+			item["items"] = cache.([]*spider.Journal)
+			item["count"] = len(cache.([]*spider.Journal))
+		}
+		items = append(items, item)
 	}
 	return items
 }
