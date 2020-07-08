@@ -25,15 +25,21 @@ import (
 
 /** 初始化 **/
 func init() {
-	databasesBegin()
+	coreDbBegin()
+	logsDbBegin()
 	configBegin()
 	socketBegin()
-	viewBegin()
-	logsBegin()
+	viewItBegin()
+	logsItBegin()
+}
+
+/** 初始化日志数据库 **/
+func logsDbBegin() {
+
 }
 
 /** 初始化数据库 **/
-func databasesBegin() {
+func coreDbBegin() {
 	orm.Debug = _func.AnalysisDebug()
 	host := beego.AppConfig.String("db_host")
 	username := beego.AppConfig.String("db_username")
@@ -45,34 +51,13 @@ func databasesBegin() {
 	_ = orm.RegisterDataBase("default", "mysql", fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%s`, username, password, host, port, database, charset, `Asia%2FShanghai`), 30)
 	orm.RegisterModelWithPrefix(
 		prefix,
-		new(users.Users),
-		new(roles.Roles),
-		new(menus.Menus),
-		new(spider.Match),
-		new(spider.Robot),
-		new(spider.Class),
-		new(spider.Prefix),
-		new(spider.Models),
-		new(inform.Inform),
-		new(spider.Detail),
-		new(spider.Domain),
-		new(config.Config),
-		new(spider.Keyword),
-		new(spider.Article),
-		new(inform.Context),
-		new(collect.Result),
-		new(spider.Indexes),
-		new(collect.Collect),
-		new(spider.Disguise),
-		new(spider.Template),
-		new(spider.Arachnid),
-		new(spider.Category),
-		new(automatic.Automatic),
-		new(attachment.Attachment),
-		new(dictionaries.DictConfig),
-		new(dictionaries.Dictionaries),
+		new(users.Users), new(roles.Roles), new(menus.Menus), new(spider.Match), new(spider.Robot), new(spider.Class),
+		new(spider.Prefix), new(spider.Models), new(inform.Inform), new(spider.Detail), new(spider.Domain), new(config.Config),
+		new(spider.Keyword), new(spider.Article), new(inform.Context), new(collect.Result), new(spider.Indexes),
+		new(collect.Collect), new(spider.Disguise), new(spider.Template), new(spider.Arachnid), new(spider.Category),
+		new(automatic.Automatic), new(attachment.Attachment), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
 	)
-	_ = orm.RunSyncdb("default", false, true)
+	_ = orm.RunSyncdb("default", false, _func.AnalysisDebug())
 }
 
 /** 覆盖配置 **/
@@ -88,7 +73,7 @@ func socketBegin() {
 }
 
 /** 注册模板函数 **/
-func viewBegin() {
+func viewItBegin() {
 	_ = beego.AddFuncMap("breadcrumbMapTitle", breadcrumbMapTitle)
 	_ = beego.AddFuncMap("fileBuyName", fileBuyName)
 	_ = beego.AddFuncMap("fileBuySize", fileBuySize)
@@ -98,7 +83,7 @@ func viewBegin() {
 }
 
 /** 注册日志 **/
-func logsBegin() {
+func logsItBegin() {
 	logsPath := beego.AppConfig.String("logs_path") + time.Now().Format("20060102") + ".log"
 	option := fmt.Sprintf(`{"filename":"%s","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10,"color":true}`, logsPath)
 	_ = logs.SetLogger(logs.AdapterFile, option)
