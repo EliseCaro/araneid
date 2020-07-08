@@ -88,7 +88,7 @@ func (c *Main) popupInfo() {
 
 /** 检测后台域名 **/
 func (c *Main) AdminCheck(prefix, main string) (bool, string, string) {
-	adminDomain := beego.AppConfig.String("system_admin_domain")
+	adminDomain := beego.AppConfig.String("web_admin_domain")
 	if adminDomain == fmt.Sprintf("%s.%s", prefix, main) {
 		return true, "success!!", "success!!"
 	} else {

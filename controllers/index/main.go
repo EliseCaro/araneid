@@ -29,6 +29,7 @@ type Main struct {
 	detailService    service.DefaultDetailService
 	verifyBase       service.DefaultBaseVerify
 	automaticService service.DefaultAutomaticService
+	journalService   service.DefaultJournalService
 }
 
 /** 准备下一级构造函数 **/
@@ -52,6 +53,7 @@ func (c *Main) NestPrepare() {
 	if app, ok := c.AppController.(NextPreparer); ok {
 		app.NextPrepare()
 	}
+	c.journalService.HandleInstantiation(c.Ctx) // 处理蜘蛛日志
 }
 
 /** 提交蜘蛛池默认数据 **/
@@ -72,7 +74,7 @@ func (c *Main) assignVolt() {
 
 /** 区分蜘蛛池跟主站 **/
 func (c *Main) mainCheckDomain(prefix, main string) (bool, string, string) {
-	adminDomain := beego.AppConfig.String("system_admin_domain")
+	adminDomain := beego.AppConfig.String("web_admin_domain")
 	c.DomainPrefix = prefix
 	c.DomainMain = main
 	if adminDomain != fmt.Sprintf("%s.%s", prefix, main) {

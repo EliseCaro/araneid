@@ -34,9 +34,7 @@ func init() {
 }
 
 /** 初始化日志数据库 **/
-func logsDbBegin() {
-
-}
+func logsDbBegin() {}
 
 /** 初始化数据库 **/
 func coreDbBegin() {
@@ -56,6 +54,7 @@ func coreDbBegin() {
 		new(spider.Keyword), new(spider.Article), new(inform.Context), new(collect.Result), new(spider.Indexes),
 		new(collect.Collect), new(spider.Disguise), new(spider.Template), new(spider.Arachnid), new(spider.Category),
 		new(automatic.Automatic), new(attachment.Attachment), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
+		new(spider.Journal),
 	)
 	_ = orm.RunSyncdb("default", false, _func.AnalysisDebug())
 }
