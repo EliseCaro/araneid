@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
+	bmCache "github.com/beatrice950201/araneid/extend/cache"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"net/http"
@@ -34,7 +35,7 @@ func (service *DefaultJournalService) cachedHandleSet(index spider.Journal) {
 		index.Id = len(items)
 	}
 	items = append(items, &index)
-	_ = _func.SetCache(tags, items)
+	_ = bmCache.Bm.Put(tags, items, (86400*10)*time.Second)
 }
 
 /** 获取今日缓存 **/
