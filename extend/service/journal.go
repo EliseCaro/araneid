@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/logs"
@@ -9,6 +10,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type DefaultJournalService struct{}
@@ -18,6 +20,47 @@ func (service *DefaultJournalService) One(urls string) spider.Journal {
 	var maps spider.Journal
 	_ = orm.NewOrm().QueryTable(new(spider.Journal)).Filter("urls", urls).One(&maps)
 	return maps
+}
+
+/** 写入缓存【用来做七天数据分析跟一条数据分析】 **/
+func (service *DefaultJournalService) cachedHandleSet(index spider.Journal) {
+	var items []*spider.Journal
+	var tags = fmt.Sprintf(`journal_logs_%s`, time.Now().Format("20060102"))
+	var cache = _func.GetCache(tags)
+	if cache == "" {
+		index.Id = 1
+	} else {
+		items = cache.([]*spider.Journal)
+		index.Id = len(items)
+	}
+	items = append(items, &index)
+	_ = _func.SetCache(tags, items)
+}
+
+/** 获取今日缓存 **/
+func (service *DefaultJournalService) CachedHandleGetDya() []*spider.Journal {
+	var items []*spider.Journal
+	var tags = fmt.Sprintf(`journal_logs_%s`, time.Now().Format("20060102"))
+	beego.Warn(tags)
+	beego.Warn(_func.GetCache(tags))
+	if cache := _func.GetCache(tags); cache != "" {
+		items = cache.([]*spider.Journal)
+	}
+	return items
+}
+
+/** 获取一周缓存 **/
+func (service *DefaultJournalService) CachedHandleGetWeek() []*spider.Journal {
+	var items []*spider.Journal
+	var current = time.Now().Unix()
+	for i := 1; i <= 7; i++ {
+		date := time.Unix(current-(int64(i)*86400), 0).Format("20060102")
+		tags := fmt.Sprintf(`journal_logs_%s`, date)
+		if cache := _func.GetCache(tags); cache != "" {
+			items = append(items, cache.([]*spider.Journal)...)
+		}
+	}
+	return items
 }
 
 /** 初始化记录接口 **/
@@ -38,7 +81,9 @@ func (service *DefaultJournalService) HandleInstantiation(ctx *context.Context) 
 		} else {
 			_, message = orm.NewOrm().Insert(&item)
 		}
-		if message != nil {
+		if message == nil {
+			service.cachedHandleSet(item)
+		} else {
 			logs.Error("蜘蛛访问记录失败；失败原因：%s", message.Error())
 		}
 	}

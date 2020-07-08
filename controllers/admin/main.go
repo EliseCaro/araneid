@@ -46,6 +46,7 @@ type Main struct {
 	detailService       service.DefaultDetailService
 	adminService        service.DefaultAdminService
 	automaticService    service.DefaultAutomaticService
+	journalService      service.DefaultJournalService
 }
 
 /** 准备下一级构造函数 **/

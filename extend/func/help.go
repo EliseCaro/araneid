@@ -2,10 +2,9 @@ package _func
 
 import (
 	"encoding/binary"
-	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/orm"
+	"github.com/beatrice950201/araneid/extend/cache"
 	"github.com/beatrice950201/araneid/extend/model/config"
 	"math/rand"
 	"net"
@@ -76,12 +75,12 @@ func LayoutSections(cname, aname, module string) map[string]string {
 
 /** 写入缓存 **/
 func SetCache(key string, val interface{}) error {
-	return cacheInitialized().Put(key, val, 86400*time.Second)
+	return cache.Bm.Put(key, val, 86400*time.Second)
 }
 
 /** 读取缓存 **/
 func GetCache(key string) interface{} {
-	return cacheInitialized().Get(key)
+	return cache.Bm.Get(key)
 }
 
 /** 判断数组是否存在某个值 **/
@@ -185,17 +184,4 @@ func snakeString(s string) string {
 		data = append(data, d)
 	}
 	return strings.ToLower(string(data[:]))
-}
-
-/** 获取缓存实例 **/
-var Bm cache.Cache
-
-func cacheInitialized() cache.Cache {
-	if Bm == nil {
-		cachePath := beego.AppConfig.String("cache_path")
-		fileSuffix := beego.AppConfig.String("file_suffix")
-		option := fmt.Sprintf(`{"CachePath":"%s","FileSuffix":"%s","DirectoryLevel":"2","EmbedExpiry":"120"}`, cachePath, fileSuffix)
-		Bm, _ = cache.NewCache("file", option)
-	}
-	return Bm
 }
