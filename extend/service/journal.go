@@ -29,6 +29,7 @@ func (service *DefaultJournalService) HandleInstantiation(ctx *context.Context) 
 			Urls:        service.GetURL(ctx.Request),
 			Domain:      ctx.Input.Domain(),
 			SpiderIp:    ctx.Input.IP(),
+			Usage:       1,
 		}
 		var message error
 		if one := service.One(item.Urls); one.Id > 0 {
