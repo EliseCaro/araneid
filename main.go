@@ -3,10 +3,11 @@ package main
 import (
 	"github.com/astaxie/beego"
 	_ "github.com/beatrice950201/araneid/extend/begin"
-	_ "github.com/beatrice950201/araneid/extend/cache"
+	"github.com/beatrice950201/araneid/extend/cache"
 	_ "github.com/beatrice950201/araneid/routers"
 )
 
 func main() {
+	cache.Run()
 	beego.Run()
 }
