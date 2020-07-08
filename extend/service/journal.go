@@ -41,8 +41,6 @@ func (service *DefaultJournalService) cachedHandleSet(index spider.Journal) {
 func (service *DefaultJournalService) CachedHandleGetDya() []*spider.Journal {
 	var items []*spider.Journal
 	var tags = fmt.Sprintf(`journal_logs_%s`, time.Now().Format("20060102"))
-	beego.Warn(tags)
-	beego.Warn(_func.GetCache(tags))
 	if cache := _func.GetCache(tags); cache != "" {
 		items = cache.([]*spider.Journal)
 	}
@@ -53,7 +51,7 @@ func (service *DefaultJournalService) CachedHandleGetDya() []*spider.Journal {
 func (service *DefaultJournalService) CachedHandleGetWeek() []*spider.Journal {
 	var items []*spider.Journal
 	var current = time.Now().Unix()
-	for i := 1; i <= 7; i++ {
+	for i := 0; i <= 6; i++ {
 		date := time.Unix(current-(int64(i)*86400), 0).Format("20060102")
 		tags := fmt.Sprintf(`journal_logs_%s`, date)
 		if cache := _func.GetCache(tags); cache != "" {
