@@ -38,10 +38,16 @@ func (service *DefaultJournalService) CachedHandleSetDebug() {
 func (service *DefaultJournalService) randomColor() string {
 	color := []string{
 		"rgba(27, 158, 183,0.8)",
-		"rgba(34, 184, 207, .5)",
 		"rgba(132, 94, 247, .3)",
+		"rgba(233, 236, 239, 1)",
+		"rgba(34, 184, 207, .3)",
 	}
-	return color[rand.Intn(len(color))]
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var num int
+	for i := 0; i < 10; i++ {
+		num = r.Intn(len(color))
+	}
+	return color[num]
 }
 
 /** 解析一组数据中每种蜘蛛有几个**/
