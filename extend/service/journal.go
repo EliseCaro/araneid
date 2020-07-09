@@ -288,3 +288,89 @@ func (service *DefaultJournalService) UserAgent(agent string) (n, t string) {
 	}
 	return n, t
 }
+
+/****************** 以下为表格渲染  ***********************/
+
+/** 获取需要渲染的Column **/
+func (service *DefaultJournalService) DataTableColumns() []map[string]interface{} {
+	var maps []map[string]interface{}
+	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问标识", "name": "id", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问地址", "name": "urls", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问次数", "name": "usage", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问域名", "name": "domain", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问IP", "name": "spider_ip", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "蜘蛛归类", "name": "spider_title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "访问时间", "name": "create_time", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "数据操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
+	return maps
+}
+
+/** 获取需要渲染的按钮组 **/
+func (service *DefaultJournalService) DataTableButtons() []*_func.TableButtons {
+	var array []*_func.TableButtons
+	array = append(array, &_func.TableButtons{
+		Text:      "删除选中",
+		ClassName: "btn btn-sm btn-alt-warning mt-1 ids_deletes",
+		Attribute: map[string]string{"data-action": beego.URLFor("Journal.Delete")},
+	})
+	array = append(array, &_func.TableButtons{
+		Text:      "清空记录",
+		ClassName: "btn btn-sm btn-alt-danger mt-1 js-tooltip ids_deletes",
+		Attribute: map[string]string{
+			"data-action":         beego.URLFor("Journal.Empty"),
+			"data-toggle":         "tooltip",
+			"data-original-title": "清空后将无法恢复，请谨慎操作！",
+		},
+	})
+	return array
+}
+
+/** 处理分页 **/
+func (service *DefaultJournalService) PageListItems(length, draw, page int, search string) map[string]interface{} {
+	var lists []orm.ParamsList
+	qs := orm.NewOrm().QueryTable(new(spider.Journal))
+	recordsTotal, _ := qs.Count()
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "urls", "usage", "domain", "spider_ip", "spider_title", "create_time")
+	for _, v := range lists {
+		v[1] = service.substr2HtmlHref(v[1].(string), v[1].(string), 0, 20)
+	}
+	data := map[string]interface{}{
+		"draw":            draw,         // 请求次数
+		"recordsFiltered": recordsTotal, // 从多少条里面筛选
+		"recordsTotal":    recordsTotal, // 总条数
+		"data":            lists,        // 筛选结果
+	}
+	return data
+}
+
+/**  转为pop提示 **/
+func (service *DefaultJournalService) substr2HtmlHref(u, s string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, u, s, beego.Substr(s, start, end))
+	return html
+}
+
+/** 返回表单结构字段如何解析 **/
+func (service *DefaultJournalService) TableColumnsType() map[string][]string {
+	result := map[string][]string{
+		"columns":   {"string", "string", "string", "string", "string", "string", "date"},
+		"fieldName": {"id", "urls", "usage", "domain", "spider_ip", "spider_title", "create_time"},
+		"action":    {"", "", "", "", "", "", ""},
+	}
+	return result
+}
+
+/** 返回右侧按钮数据结构 **/
+func (service *DefaultJournalService) TableButtonsType() []*_func.TableButtons {
+	buttons := []*_func.TableButtons{
+		{
+			Text:      "删除",
+			ClassName: "btn btn-sm btn-alt-danger ids_delete",
+			Attribute: map[string]string{
+				"data-action": beego.URLFor("Journal.Delete"),
+				"data-ids":    "__ID__",
+			},
+		},
+	}
+	return buttons
+}
