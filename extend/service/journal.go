@@ -184,7 +184,7 @@ func (service *DefaultJournalService) GetURL(r *http.Request) (Url string) {
 func (service *DefaultJournalService) UserAgent(agent string) (n, t string) {
 	class := _func.ParseAttrConfigMap(beego.AppConfig.String("system_spider_class"))
 	for index, item := range class {
-		if strings.Index(agent, index) > 0 {
+		if strings.Index(agent, index) >= 0 {
 			n = index
 			t = item
 			break
