@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
@@ -41,4 +42,26 @@ func (c *Journal) searchMap(str string) map[string]string {
 	str = strings.ReplaceAll(str, "|", "\n")
 	maps := _func.ParseAttrConfigMap(str)
 	return maps
+}
+
+// @router /journal/delete [post]
+func (c *Journal) Delete() {
+	array := c.checkBoxIds(":ids[]", ":ids")
+	if errorMessage := c.journalService.DeleteArray(array); errorMessage != nil {
+		c.Fail(&controllers.ResultJson{Message: error.Error(errorMessage)})
+	} else {
+		c.Succeed(&controllers.ResultJson{
+			Message: "删除成功！马上返回中。。。",
+			Url:     beego.URLFor("Journal.Index"),
+		})
+	}
+}
+
+// @router /journal/empty [post]
+func (c *Journal) Empty() {
+	c.journalService.EmptyDelete()
+	c.Succeed(&controllers.ResultJson{
+		Message: "蜘蛛记录已经清空！马上返回中。。。",
+		Url:     beego.URLFor("Journal.Index"),
+	})
 }

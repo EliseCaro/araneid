@@ -306,6 +306,30 @@ func (service *DefaultJournalService) UserAgent(agent string) (n, t string) {
 
 /****************** 以下为表格渲染  ***********************/
 
+/** 批量删除 **/
+func (service *DefaultJournalService) DeleteArray(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if _, message = orm.NewOrm().Delete(&spider.Journal{Id: v}); message != nil {
+			_ = orm.NewOrm().Rollback()
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
+}
+
+/** 清空 **/
+func (service *DefaultJournalService) EmptyDelete() {
+	var item []*spider.Journal
+	_, _ = orm.NewOrm().QueryTable(new(spider.Journal)).All(&item)
+	for _, v := range item {
+		_, _ = orm.NewOrm().Delete(&spider.Journal{Id: v.Id})
+	}
+}
+
 /** 获取需要渲染的Column **/
 func (service *DefaultJournalService) DataTableColumns() []map[string]interface{} {
 	var maps []map[string]interface{}
