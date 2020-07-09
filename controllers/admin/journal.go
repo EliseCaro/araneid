@@ -19,8 +19,8 @@ func (c *Journal) Index() {
 		if search := c.GetString("search[value]", ""); search != "" {
 			searchMap = c.searchMap(search)
 		}
-		if search := c.GetString(":search", ""); search != "" {
-			searchMap = c.searchMap(search)
+		if searchOne := c.GetString(":search", ""); searchOne != "" {
+			searchMap = c.searchMap(searchOne)
 		}
 		result := c.journalService.PageListItems(length, draw, c.PageNumber(), searchMap)
 		result["data"] = c.tableBuilder.Field(true, result["data"].([]orm.ParamsList), c.journalService.TableColumnsType(), c.journalService.TableButtonsType())

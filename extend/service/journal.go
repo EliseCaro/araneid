@@ -61,8 +61,9 @@ func (service *DefaultJournalService) HotDomain() []*map[string]interface{} {
 	for _, item := range maps {
 		if domain := new(DefaultDomainService).OneDomain(item["domain"].(string)); domain.Name != "" {
 			result = append(result, &map[string]interface{}{
-				"domain": domain.Domain,
+				"id":     domain.Id,
 				"name":   domain.Name,
+				"domain": domain.Domain,
 				"count":  item["num"].(string),
 			})
 		}
@@ -180,10 +181,18 @@ func (service *DefaultJournalService) cachedHandleSetMonitorTags(items spider.Jo
 			if _, ok := countResult[n]; ok == true {
 				countResult[n]["count"] = countResult[n]["count"].(int) + 1
 			} else {
-				countResult[n] = map[string]interface{}{"count": 1, "title": t}
+				countResult[n] = map[string]interface{}{
+					"urls":  beego.URLFor("Journal.Index", ":search", fmt.Sprintf(`date:%s|spider_ip:%s`, time.Now().Format("2006-01-02"), n)),
+					"count": 1,
+					"title": t,
+				}
 			}
 		} else {
-			countResult[n] = map[string]interface{}{"count": 1, "title": t}
+			countResult[n] = map[string]interface{}{
+				"urls":  beego.URLFor("Journal.Index", ":search", fmt.Sprintf(`date:%s|spider_ip:%s`, time.Now().Format("2006-01-02"), n)),
+				"count": 1,
+				"title": t,
+			}
 		}
 		_ = bmCache.Bm.Put("spider_monitor_count", countResult, (86400*365)*time.Second)
 	}
@@ -359,6 +368,15 @@ func (service *DefaultJournalService) searchAnalysis(search map[string]string, q
 	}
 	if _, ok := search["spider_name"]; ok == true {
 		qs = qs.Filter("spider_name__icontains", search["spider_name"])
+	}
+	if _, ok := search["spider_title"]; ok == true {
+		qs = qs.Filter("spider_title__icontains", search["spider_title"])
+	}
+	if _, ok := search["spider_ip"]; ok == true {
+		qs = qs.Filter("spider_ip__icontains", search["spider_ip"])
+	}
+	if _, ok := search["domain"]; ok == true {
+		qs = qs.Filter("domain", search["domain"])
 	}
 	return qs
 }

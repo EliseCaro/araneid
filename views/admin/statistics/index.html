@@ -23,7 +23,7 @@
                 <div class="block block-rounded block-bordered mb-3">
                     <div class="block-content p-2">
                         {{range $i, $e := .hotDomain}}
-                            <a class="btn btn-sm btn-primary" data-toggle="click-ripple" href="javascript:void(0)">
+                            <a class="btn btn-sm btn-primary" data-toggle="click-ripple" target="_blank" href="http://{{$e.domain}}/">
                                 {{$e.name}} <span class="badge badge-pill badge-secondary ml-1">{{$e.count}}</span>
                             </a>
                         {{end}}
@@ -74,7 +74,7 @@
                             <div class="block-content p-0">
                                 <div class="row items-push text-center pt-0 pb-0">
                                     {{range $i, $e := .monitorTags}}
-                                        <a href="javascript:void(0)" class="col-6 col-xl-3 block">
+                                        <a href="{{$e.urls}}" class="col-6 col-xl-3 block">
                                             <div class="font-size-h2 font-w400 text-primary">{{$e.count}}</div>
                                             <div class="font-size-sm font-w600 text-uppercase text-muted">{{$e.title}}</div>
                                         </a>
