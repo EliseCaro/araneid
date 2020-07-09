@@ -20,7 +20,7 @@
     <div class="content">
         <div class="row">
             <div class="col-md-6">
-                <div class="block block-rounded block-bordered mb-3">
+                <div class="block block-rounded block-bordered mb-3" style="min-height:49px;">
                     <div class="block-content p-2">
                         {{range $i, $e := .hotDomain}}
                             <a class="btn btn-sm btn-primary" data-toggle="click-ripple" target="_blank" href="http://{{$e.domain}}/">
@@ -39,7 +39,7 @@
                     </li>
                     <li class="timeline-event">
                         <div class="timeline-event-icon bg-primary">日统</div>
-                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
+                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" style="min-height:102px;" data-toggle="appear">
                             <div class="block-content p-0">
                                 <div class="row items-push text-center pt-0 pb-0">
                                     {{range $i, $e := .class}}
@@ -70,7 +70,7 @@
                 <ul class="timeline timeline-alt py-0">
                     <li class="timeline-event mb-3">
                         <div class="timeline-event-icon bg-info">沙盒</div>
-                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
+                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" style="min-height:274px;" data-toggle="appear">
                             <div class="block-content p-0">
                                 <div class="row items-push text-center pt-0 pb-0">
                                     {{range $i, $e := .monitorTags}}
