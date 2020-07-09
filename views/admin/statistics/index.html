@@ -1,22 +1,41 @@
-<style>.timeline-event-icon{width: 2.8rem;height: 2.0rem;line-height: 2.0rem;}</style>
+<style>
+    .timeline-event-icon{width: 2.8rem;height: 2.0rem;line-height: 2.0rem;}
+    .tag_hot_domain{
+        position: absolute;
+        top: -5px;
+        right: 3px;
+    }
+</style>
 <main id="main-container">
-    <div class="bg-white border-bottom">
-        <div class="content">
-            <div class="row items-push text-center">
-                {{range $i, $e := .headMenu}}
-                    <div class="col-4 col-md-2">
-                        <div class="font-size-sm font-w600 text-muted text-uppercase">{{$e.title}}</div>
-                        <a class="link-fx font-size-h3" href="{{if $e.urls }} {{$e.urls}} {{else}} javascript:void(0) {{end}}">{{$e.count}}</a>
-                    </div>
-                {{end}}
-            </div>
+    <div class="content">
+        <div class="row">
+            {{range $i, $e := .headMenu}}
+                <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+                    <a class="block block-rounded block-link-pop border-left border-primary border-4x mb-0" href="{{if $e.urls }} {{$e.urls}} {{else}} javascript:void(0) {{end}}">
+                        <div class="block-content block-content-full">
+                            <div class="font-size-sm font-w600 text-uppercase text-muted">{{$e.title}}</div>
+                            <div class="font-size-h2 font-w400 text-dark">{{$e.count}}</div>
+                        </div>
+                    </a>
+                </div>
+            {{end}}
         </div>
     </div>
     <div class="content">
         <div class="row">
             <div class="col-md-6">
+                <div class="block block-rounded block-bordered mb-3">
+                    <div class="block-content p-2">
+                        {{range $i, $e := .hotDomain}}
+                            <a class="btn btn-sm btn-primary" data-toggle="click-ripple" href="javascript:void(0)">
+                                {{$e.name}} <span class="badge badge-pill badge-secondary ml-1">{{$e.count}}</span>
+                            </a>
+                        {{end}}
+                        <span class="badge tag_hot_domain badge-pill badge-danger ml-1">热</span>
+                    </div>
+                </div>
                 <ul class="timeline timeline-alt py-0">
-                    <li class="timeline-event">
+                    <li class="timeline-event mb-3">
                         <div class="timeline-event-icon bg-success">周统</div>
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <canvas class="js-chart-dashboard-journal"></canvas>
@@ -38,10 +57,22 @@
                         </div>
                     </li>
                 </ul>
+                <div class="row">
+                    {{range $i, $e := .footerMenu}}
+                        <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+                            <a class="block block-rounded block-link-pop border-left border-primary border-4x mb-0" href="{{if $e.urls }} {{$e.urls}} {{else}} javascript:void(0) {{end}}">
+                                <div class="block-content block-content-full pt-3 pb-2">
+                                    <div class="font-size-sm font-w600 text-uppercase text-muted">{{$e.title}}</div>
+                                    <div class="font-size-h2 font-w400 text-dark">{{$e.count}}</div>
+                                </div>
+                            </a>
+                        </div>
+                    {{end}}
+                </div>
             </div>
             <div class="col-md-6">
                 <ul class="timeline timeline-alt py-0">
-                    <li class="timeline-event">
+                    <li class="timeline-event mb-3">
                         <div class="timeline-event-icon bg-info">沙盒</div>
                         <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
                             <div class="block-content p-0">

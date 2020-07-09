@@ -35,6 +35,13 @@ func (service *DefaultDomainService) Find(id int) (spider.Domain, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 根据URL获取一条数据 **/
+func (service *DefaultDomainService) OneDomain(domain string) spider.Domain {
+	var maps spider.Domain
+	_ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", domain).One(&maps)
+	return maps
+}
+
 /** 获取全部站群数量 **/
 func (service *DefaultDomainService) AliveAllNum() int64 {
 	index, _ := orm.NewOrm().QueryTable(new(spider.Domain)).Count()

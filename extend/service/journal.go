@@ -51,6 +51,25 @@ func (service *DefaultJournalService) SumDay() int64 {
 	return int64(len(service.CachedHandleGetDya()))
 }
 
+/** 获取热门网站 **/
+func (service *DefaultJournalService) HotDomain() []*map[string]interface{} {
+	var result []*map[string]interface{}
+	var maps []orm.Params
+	var prefix = beego.AppConfig.String("db_prefix")
+	sql := fmt.Sprintf(`SELECT domain,COUNT(id) AS num FROM %sspider_journal GROUP BY domain ORDER BY num DESC LIMIT 10`, prefix)
+	_, _ = orm.NewOrm().Raw(sql).Values(&maps)
+	for _, item := range maps {
+		if domain := new(DefaultDomainService).OneDomain(item["domain"].(string)); domain.Name != "" {
+			result = append(result, &map[string]interface{}{
+				"domain": domain.Domain,
+				"name":   domain.Name,
+				"count":  item["num"].(string),
+			})
+		}
+	}
+	return result
+}
+
 /** 获取折线图随机颜色 **/
 func (service *DefaultJournalService) randomColor() string {
 	color := []string{
