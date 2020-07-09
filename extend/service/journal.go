@@ -76,7 +76,7 @@ func (service *DefaultJournalService) CachedHandleAnalysisWeek() string {
 		}
 		if len(result) < 6 { // 最对只展示5个
 			result = append(result, map[string]interface{}{
-				"label": k, "data": res,
+				"label": k, "data": res, "fill": true,
 				"backgroundColor": service.randomColor(),
 			})
 		}

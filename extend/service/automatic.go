@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 /** 自动推送url链接层 **/
@@ -30,6 +31,27 @@ func (service *DefaultAutomaticService) AutomaticDocument(object int) {
 		urls := fmt.Sprintf(`http://%s/index/detail-%d.html`, domain.Domain, detail.Id)
 		service.baiduAutomatic(domain.Domain, domain.Submit, urls)
 	}
+}
+
+/** 解析一个星期的推送记录 **/
+func (service *DefaultAutomaticService) AnalysisWeek() string {
+	var result []int64
+	var labels []string
+	var current = time.Now().Unix()
+	for i := 0; i <= 6; i++ {
+		date := time.Unix(current-(int64(i)*86400), 0).Format("2006-01-02")
+		qs := orm.NewOrm().QueryTable(new(automatic.Automatic)).Filter("status", 1)
+		qs = qs.Filter("update_time__gte", fmt.Sprintf(`%s 00:00:00`, date))
+		num, _ := qs.Filter("update_time__lte", fmt.Sprintf(`%s 23:59:59`, date)).Count()
+		result = append(result, num)
+		labels = append(labels, time.Unix(current-(int64(i)*86400), 0).Format("01-02"))
+	}
+	ret := map[string]interface{}{
+		"date":  labels,
+		"items": []map[string]interface{}{{"label": "自动推送量", "data": result, "fill": true, "backgroundColor": "rgba(75, 106, 199,0.8)"}},
+	}
+	byteStr, _ := json.Marshal(ret)
+	return string(byteStr)
 }
 
 /** 分类自动提交 **/
