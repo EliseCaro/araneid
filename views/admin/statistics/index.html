@@ -1,3 +1,4 @@
+<style>.timeline-event-icon{width: 2.8rem;height: 2.0rem;line-height: 2.0rem;}</style>
 <main id="main-container">
     <div class="bg-white border-bottom">
         <div class="content content-boxed">
@@ -33,24 +34,24 @@
             <div class="col-md-6">
                 <ul class="timeline timeline-alt py-0">
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-success">周</div>
+                        <div class="timeline-event-icon bg-success">周统</div>
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <canvas class="js-chart-dashboard-journal"></canvas>
                         </div>
                     </li>
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-primary">日</div>
+                        <div class="timeline-event-icon bg-primary">日统</div>
                         <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
-                            <div class="row">
-                                {{range $i, $e := .class}}
-                                    <div class="col-md-3 text-center mb-3">
-                                        <div style="width: 100% !important;" class="btn btn-sm btn-alt-primary" data-toggle="click-ripple">
-                                            <div class="font-size-base font-w400 ">+{{$e}}</div>
-                                            <div class="font-size-sm font-w600">{{$i}}</div>
-                                        </div>
-                                    </div>
-                                {{end}}
-                           </div>
+                            <div class="block-content p-0">
+                                <div class="row items-push text-center pt-0 pb-0">
+                                    {{range $i, $e := .class}}
+                                        <a href="javascript:void(0)" class="col-6 col-xl-3 block">
+                                            <div class="font-size-h2 font-w400 text-primary">{{$e}}</div>
+                                            <div class="font-size-sm font-w600 text-uppercase text-muted">{{$i}}</div>
+                                        </a>
+                                    {{end}}
+                                </div>
+                            </div>
                         </div>
                     </li>
                 </ul>
@@ -58,24 +59,23 @@
             <div class="col-md-6">
                 <ul class="timeline timeline-alt py-0">
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-primary">周</div>
+                        <div class="timeline-event-icon bg-primary">推送</div>
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <canvas class="js-chart-dashboard-auto"></canvas>
                         </div>
                     </li>
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-info">
-                           日
-                        </div>
-                        <div class="timeline-event-block block invisible" data-toggle="appear">
-                            <div class="block-header">
-                                <h3 class="block-title">Products</h3>
-                                <div class="block-options">
-                                    <div class="timeline-event-time block-options-item font-size-sm">4 hrs ago</div>
+                        <div class="timeline-event-icon bg-info">沙盒</div>
+                        <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
+                            <div class="block-content p-0">
+                                <div class="row items-push text-center pt-0 pb-0">
+                                    {{range $i, $e := .monitorTags}}
+                                        <a href="javascript:void(0)" class="col-6 col-xl-3 block">
+                                            <div class="font-size-h2 font-w400 text-primary">{{$e.count}}</div>
+                                            <div class="font-size-sm font-w600 text-uppercase text-muted">{{$e.title}}</div>
+                                        </a>
+                                    {{end}}
                                 </div>
-                            </div>
-                            <div class="block-content block-content-full">
-                                122
                             </div>
                         </div>
                     </li>

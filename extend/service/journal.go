@@ -31,6 +31,8 @@ func (service *DefaultJournalService) CachedHandleSetDebug() {
 	_, _ = orm.NewOrm().QueryTable(new(spider.Journal)).All(&maps)
 	for _, item := range maps {
 		service.cachedHandleSet(*item)
+		service.cachedHandleSetMonitorDomain(*item)
+		service.cachedHandleSetMonitorTags(*item)
 	}
 }
 
@@ -99,6 +101,64 @@ func (service *DefaultJournalService) CachedHandleAnalysisDayClassSpider(items [
 	return n
 }
 
+/** 匹配沙盒监听 **/
+func (service *DefaultJournalService) SpiderIp(ip string) (n, t string) {
+	class := _func.ParseAttrConfigMap(beego.AppConfig.String("system_spider_monitor"))
+	for index, item := range class {
+		if strings.Index(ip, index) >= 0 {
+			n = index
+			t = item
+			break
+		}
+	}
+	return n, t
+}
+
+/** 写入沙盒数据 **/
+func (service *DefaultJournalService) cachedHandleSetMonitorDomain(items spider.Journal) {
+	if n, _ := service.SpiderIp(items.SpiderIp); n != "" {
+		var domainResult []*spider.Journal
+		domain := _func.GetCache(items.Domain)
+		if domain != "" {
+			domainResult = domain.([]*spider.Journal)
+			items.Id = len(domainResult)
+		} else {
+			items.Id = 1
+		}
+		domainResult = append(domainResult, &items)
+		_ = bmCache.Bm.Put(items.Domain, domainResult, (86400*365)*time.Second)
+	}
+}
+
+/** 写入数量统计缓存 **/
+func (service *DefaultJournalService) cachedHandleSetMonitorTags(items spider.Journal) {
+	if n, t := service.SpiderIp(items.SpiderIp); n != "" {
+		var countResult = make(map[string]map[string]interface{})
+		count := _func.GetCache("spider_monitor_count")
+		if count != "" {
+			countResult = count.(map[string]map[string]interface{})
+			if _, ok := countResult[n]; ok == true {
+				countResult[n]["count"] = countResult[n]["count"].(int) + 1
+			} else {
+				countResult[n] = map[string]interface{}{"count": 1, "title": t}
+			}
+		} else {
+			countResult[n] = map[string]interface{}{"count": 1, "title": t}
+		}
+		_ = bmCache.Bm.Put("spider_monitor_count", countResult, (86400*365)*time.Second)
+	}
+}
+
+/** 获取数量统计缓存 **/
+func (service *DefaultJournalService) CachedHandleGetMonitorTags() map[string]map[string]interface{} {
+	count := _func.GetCache("spider_monitor_count")
+	var countResult = make(map[string]map[string]interface{})
+	if count != "" {
+		countResult = count.(map[string]map[string]interface{})
+	}
+	return countResult
+}
+
 /** 写入缓存【用来做七天数据分析跟一条数据分析】 **/
 func (service *DefaultJournalService) cachedHandleSet(index spider.Journal) {
 	var items []*spider.Journal
@@ -165,6 +225,8 @@ func (service *DefaultJournalService) HandleInstantiation(ctx *context.Context) 
 		}
 		if message == nil {
 			service.cachedHandleSet(item)
+			service.cachedHandleSetMonitorDomain(item)
+			service.cachedHandleSetMonitorTags(item)
 		} else {
 			logs.Error("蜘蛛访问记录失败；失败原因：%s", message.Error())
 		}
