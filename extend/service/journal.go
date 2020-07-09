@@ -87,13 +87,19 @@ func (service *DefaultJournalService) randomColor() string {
 }
 
 /** 解析一组数据中每种蜘蛛有几个**/
-func (service *DefaultJournalService) CachedHandleAnalysisClass(items []*spider.Journal) map[string]int64 {
-	result := make(map[string]int64)
+func (service *DefaultJournalService) CachedHandleAnalysisClass(items []*spider.Journal) map[string]map[string]interface{} {
+	var result = make(map[string]map[string]interface{})
 	for _, item := range items {
-		if _, ok := result[item.SpiderTitle]; ok == true {
-			result[item.SpiderTitle] += 1
+		if _, ok := result[item.SpiderName]; ok == true {
+			num := result[item.SpiderName]["count"].(int) + 1
+			result[item.SpiderName]["count"] = num
 		} else {
-			result[item.SpiderTitle] = 1
+			result[item.SpiderName] = map[string]interface{}{
+				"count": 1,
+				"title": item.SpiderTitle,
+				"tags":  item.SpiderName,
+				"urls":  beego.URLFor("Journal.Index", ":search", fmt.Sprintf(`date:%s|spider_name:%s`, time.Now().Format("2006-01-02"), item.SpiderName)),
+			}
 		}
 	}
 	return result
@@ -350,6 +356,9 @@ func (service *DefaultJournalService) searchAnalysis(search map[string]string, q
 	if _, ok := search["date"]; ok == true {
 		qs = qs.Filter("create_time__gte", fmt.Sprintf(`%s 00:00:00`, search["date"]))
 		qs = qs.Filter("create_time__lte", fmt.Sprintf(`%s 23:59:59`, search["date"]))
+	}
+	if _, ok := search["spider_name"]; ok == true {
+		qs = qs.Filter("spider_name__icontains", search["spider_name"])
 	}
 	return qs
 }

@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
@@ -39,7 +38,6 @@ func (c *Journal) Index() {
 
 /** 解析条件 **/
 func (c *Journal) searchMap(str string) map[string]string {
-	beego.Error(str)
 	str = strings.ReplaceAll(str, "|", "\n")
 	maps := _func.ParseAttrConfigMap(str)
 	return maps
