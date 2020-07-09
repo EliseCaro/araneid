@@ -327,9 +327,10 @@ func (service *DefaultJournalService) DataTableButtons() []*_func.TableButtons {
 }
 
 /** 处理分页 **/
-func (service *DefaultJournalService) PageListItems(length, draw, page int, search string) map[string]interface{} {
+func (service *DefaultJournalService) PageListItems(length, draw, page int, search map[string]string) map[string]interface{} {
 	var lists []orm.ParamsList
 	qs := orm.NewOrm().QueryTable(new(spider.Journal))
+	qs = service.searchAnalysis(search, qs)
 	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "urls", "usage", "domain", "spider_ip", "spider_title", "create_time")
 	for _, v := range lists {
@@ -342,6 +343,15 @@ func (service *DefaultJournalService) PageListItems(length, draw, page int, sear
 		"data":            lists,        // 筛选结果
 	}
 	return data
+}
+
+/** 解析map写入条件 **/
+func (service *DefaultJournalService) searchAnalysis(search map[string]string, qs orm.QuerySeter) orm.QuerySeter {
+	if _, ok := search["date"]; ok == true {
+		qs = qs.Filter("create_time__gte", fmt.Sprintf(`%s 00:00:00`, search["date"]))
+		qs = qs.Filter("create_time__lte", fmt.Sprintf(`%s 23:59:59`, search["date"]))
+	}
+	return qs
 }
 
 /**  转为pop提示 **/
