@@ -12,6 +12,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -34,6 +35,20 @@ func (service *DefaultJournalService) CachedHandleSetDebug() {
 		service.cachedHandleSetMonitorDomain(*item)
 		service.cachedHandleSetMonitorTags(*item)
 	}
+}
+
+/** 统计总蜘蛛数量 **/
+func (service *DefaultJournalService) SumAll() int64 {
+	var maps []orm.Params
+	var prefix = beego.AppConfig.String("db_prefix")
+	_, _ = orm.NewOrm().Raw("SELECT SUM(`usage`) AS size FROM " + prefix + "spider_journal").Values(&maps)
+	size, _ := strconv.ParseInt(maps[0]["size"].(string), 10, 64)
+	return size
+}
+
+/** 统计日总蜘蛛数量 **/
+func (service *DefaultJournalService) SumDay() int64 {
+	return int64(len(service.CachedHandleGetDya()))
 }
 
 /** 获取折线图随机颜色 **/

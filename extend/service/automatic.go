@@ -33,6 +33,21 @@ func (service *DefaultAutomaticService) AutomaticDocument(object int) {
 	}
 }
 
+/** 统计日总蜘蛛数量 **/
+func (service *DefaultAutomaticService) SumAll() int64 {
+	sum, _ := orm.NewOrm().QueryTable(new(automatic.Automatic)).Filter("status", 1).Count()
+	return sum
+}
+
+/** 统计日总蜘蛛数量 **/
+func (service *DefaultAutomaticService) SumDay() int64 {
+	date := time.Now().Format("2006-01-02")
+	qs := orm.NewOrm().QueryTable(new(automatic.Automatic)).Filter("status", 1)
+	qs = qs.Filter("update_time__gte", fmt.Sprintf(`%s 00:00:00`, date))
+	sum, _ := qs.Filter("update_time__lte", fmt.Sprintf(`%s 23:59:59`, date)).Count()
+	return sum
+}
+
 /** 解析一个星期的推送记录 **/
 func (service *DefaultAutomaticService) AnalysisWeek() string {
 	var result []int64

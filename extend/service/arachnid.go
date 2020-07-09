@@ -36,6 +36,12 @@ func (service *DefaultArachnidService) aliveNum() int64 {
 	return index
 }
 
+/** 获取全部站群数量 **/
+func (service *DefaultArachnidService) AliveAllNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(spider.Arachnid)).Count()
+	return index
+}
+
 /** 根据域名获取蜘蛛池 **/
 func (service *DefaultArachnidService) FindDomain(domain string) (maps spider.Arachnid) {
 	_ = orm.NewOrm().QueryTable(new(spider.Arachnid)).Filter("domain__icontains", domain).One(&maps)

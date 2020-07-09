@@ -35,6 +35,12 @@ func (service *DefaultDomainService) Find(id int) (spider.Domain, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 获取全部站群数量 **/
+func (service *DefaultDomainService) AliveAllNum() int64 {
+	index, _ := orm.NewOrm().QueryTable(new(spider.Domain)).Count()
+	return index
+}
+
 /** 返回带前缀或不带前缀的域名 **/
 func (service *DefaultDomainService) getDomain(d, p string) string {
 	var domain string

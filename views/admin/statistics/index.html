@@ -1,31 +1,14 @@
 <style>.timeline-event-icon{width: 2.8rem;height: 2.0rem;line-height: 2.0rem;}</style>
 <main id="main-container">
     <div class="bg-white border-bottom">
-        <div class="content content-boxed">
+        <div class="content">
             <div class="row items-push text-center">
-                <div class="col-6 col-md-3">
-                    <div class="font-size-sm font-w600 text-muted text-uppercase">今日蜘蛛量</div>
-                    <a class="link-fx font-size-h3" href="javascript:void(0)">17980</a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="font-size-sm font-w600 text-muted text-uppercase">全部蜘蛛量</div>
-                    <a class="link-fx font-size-h3" href="javascript:void(0)">27</a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="font-size-sm font-w600 text-muted text-uppercase">Followers</div>
-                    <a class="link-fx font-size-h3" href="javascript:void(0)">1360</a>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="font-size-sm font-w600 text-muted text-uppercase mb-2">739 Ratings</div>
-                    <span class="text-warning">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-half"></i>
-                                </span>
-                    <span class="font-size-sm text-muted">(4.9)</span>
-                </div>
+                {{range $i, $e := .headMenu}}
+                    <div class="col-4 col-md-2">
+                        <div class="font-size-sm font-w600 text-muted text-uppercase">{{$e.title}}</div>
+                        <a class="link-fx font-size-h3" href="{{if $e.urls }} {{$e.urls}} {{else}} javascript:void(0) {{end}}">{{$e.count}}</a>
+                    </div>
+                {{end}}
             </div>
         </div>
     </div>
@@ -59,12 +42,6 @@
             <div class="col-md-6">
                 <ul class="timeline timeline-alt py-0">
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-primary">推送</div>
-                        <div class="timeline-event-block block invisible" data-toggle="appear">
-                            <canvas class="js-chart-dashboard-auto"></canvas>
-                        </div>
-                    </li>
-                    <li class="timeline-event">
                         <div class="timeline-event-icon bg-info">沙盒</div>
                         <div class="timeline-event-block block invisible pl-3 pr-3 pt-3 pb-0" data-toggle="appear">
                             <div class="block-content p-0">
@@ -77,6 +54,12 @@
                                     {{end}}
                                 </div>
                             </div>
+                        </div>
+                    </li>
+                    <li class="timeline-event">
+                        <div class="timeline-event-icon bg-primary">推送</div>
+                        <div class="timeline-event-block block invisible" data-toggle="appear">
+                            <canvas class="js-chart-dashboard-auto"></canvas>
                         </div>
                     </li>
                 </ul>
