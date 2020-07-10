@@ -81,7 +81,7 @@ func (c *Base) extractModuleName() string {
 /** 设置资源版本号码 **/
 func (c *Base) setStaticVersions() {
 	debug := _func.AnalysisDebug()
-	versions := beego.AppConfig.String("web_versions")
+	versions := beego.AppConfig.String("system_versions")
 	if debug == true {
 		versions = strconv.FormatInt(time.Now().Unix(), 10)
 	}

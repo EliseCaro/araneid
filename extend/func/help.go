@@ -5,11 +5,13 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/extend/cache"
+	"github.com/beatrice950201/araneid/extend/model/attachment"
 	"github.com/beatrice950201/araneid/extend/model/config"
 	"math/rand"
 	"net"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -95,7 +97,7 @@ func InArray(need int, needArr []int) bool {
 
 /** 获取配置每页显示多少条 **/
 func WebPageSize() int {
-	o, _ := beego.AppConfig.Int("web_page_size")
+	o, _ := beego.AppConfig.Int("system_page_size")
 	return o
 }
 
@@ -144,6 +146,13 @@ func RandomString() string {
 	return string(b)
 }
 
+/** 获取一个文件地址 **/
+func FilePath(id int) string {
+	var item attachment.Attachment
+	_ = orm.NewOrm().QueryTable(new(attachment.Attachment)).Filter("id", id).One(&item)
+	return DomainStatic(item.Driver) + item.Path
+}
+
 /*********************************以下为私有方法******************************/
 
 /** 获取全部配置并解析 **/
@@ -154,6 +163,10 @@ func resolverConfig() map[string]string {
 	)
 	_, _ = orm.NewOrm().QueryTable(new(config.Config)).Filter("status", 1).All(&list)
 	for _, v := range list {
+		if v.Form == "image" && v.Value != "" {
+			i, _ := strconv.Atoi(v.Value)
+			v.Value = FilePath(i)
+		}
 		resolverList[v.Class+"_"+v.Name] = v.Value
 	}
 	return resolverList
