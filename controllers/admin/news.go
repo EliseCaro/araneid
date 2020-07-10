@@ -10,11 +10,11 @@ import (
 	"github.com/go-playground/validator"
 )
 
-/** 功能与优势 **/
-type Advantage struct{ Main }
+/** 新闻中心 **/
+type News struct{ Main }
 
-// @router /advantage/index [get,post]
-func (c *Advantage) Index() {
+// @router /news/index [get,post]
+func (c *News) Index() {
 	if c.IsAjax() {
 		length, _ := c.GetInt("length", table.WebPageSize())
 		draw, _ := c.GetInt("draw", 0)
@@ -31,12 +31,13 @@ func (c *Advantage) Index() {
 		dataTableCore = dataTableCore.TableButtons(v)
 	}
 	c.TableColumnsRender(dataTableCore.ColumnsItemsMaps, dataTableCore.OrderItemsMaps, dataTableCore.ButtonsItemsMaps, table.WebPageSize())
+
 }
 
-// @router /advantage/create [get,post]
-func (c *Advantage) Create() {
+// @router /news/create [get,post]
+func (c *News) Create() {
 	if c.IsAjax() {
-		item := index.Advantage{}
+		item := index.News{}
 		if err := c.ParseForm(&item); err != nil {
 			c.Fail(&controllers.ResultJson{Message: "解析错误: " + error.Error(err)})
 		}
@@ -46,18 +47,20 @@ func (c *Advantage) Create() {
 			})
 		}
 		if _, err := orm.NewOrm().Insert(&item); err == nil {
-			c.Succeed(&controllers.ResultJson{Message: "添加成功", Url: beego.URLFor("Advantage.Index")})
+			_ = c.adjunctService.Inc(item.Cover, 0)
+			c.Succeed(&controllers.ResultJson{Message: "添加成功", Url: beego.URLFor("News.Index")})
 		} else {
 			c.Fail(&controllers.ResultJson{Message: "添加失败，请稍后再试！"})
 		}
 	}
 }
 
-// @router /advantage/edit [get,post]
-func (c *Advantage) Edit() {
+// @router /news/edit [get,post]
+func (c *News) Edit() {
 	id := c.GetMustInt(":id", "非法请求！")
+	item, _ := c.Find(id)
 	if c.IsAjax() {
-		item, _ := c.Find(id)
+		oldImage := item.Cover
 		if err := c.ParseForm(&item); err != nil {
 			c.Fail(&controllers.ResultJson{Message: "解析错误: " + error.Error(err)})
 		}
@@ -67,16 +70,18 @@ func (c *Advantage) Edit() {
 			})
 		}
 		if _, err := orm.NewOrm().Update(&item); err == nil {
-			c.Succeed(&controllers.ResultJson{Message: "更新成功", Url: beego.URLFor("Advantage.Index")})
+			_ = c.adjunctService.Inc(item.Cover, oldImage)
+			c.Succeed(&controllers.ResultJson{Message: "更新成功", Url: beego.URLFor("News.Index")})
 		} else {
 			c.Fail(&controllers.ResultJson{Message: "更新失败，请稍后再试！"})
 		}
 	}
-	c.Data["info"], _ = c.Find(id)
+	c.Data["info"] = item
+	c.Data["cover"] = c.adjunctService.FindId(item.Cover)
 }
 
-// @router /advantage/status [post]
-func (c *Advantage) Status() {
+// @router /news/status [post]
+func (c *News) Status() {
 	status, _ := c.GetInt8(":status", 0)
 	array := c.checkBoxIds(":ids[]", ":ids")
 	if errorMessage := c.StatusArray(array, status); errorMessage != nil {
@@ -86,13 +91,13 @@ func (c *Advantage) Status() {
 	} else {
 		c.Succeed(&controllers.ResultJson{
 			Message: "状态更新成功！马上返回中。。。",
-			Url:     beego.URLFor("Advantage.Index"),
+			Url:     beego.URLFor("News.Index"),
 		})
 	}
 }
 
-// @router /advantage/delete [post]
-func (c *Advantage) Delete() {
+// @router /news/delete [post]
+func (c *News) Delete() {
 	array := c.checkBoxIds(":ids[]", ":ids")
 	if errorMessage := c.DeleteArray(array); errorMessage != nil {
 		c.Fail(&controllers.ResultJson{
@@ -101,7 +106,7 @@ func (c *Advantage) Delete() {
 	} else {
 		c.Succeed(&controllers.ResultJson{
 			Message: "删除成功！马上返回中。。。",
-			Url:     beego.URLFor("Advantage.Index"),
+			Url:     beego.URLFor("News.Index"),
 		})
 	}
 }
@@ -109,13 +114,15 @@ func (c *Advantage) Delete() {
 /************************************************表格渲染机制 ************************************************************/
 
 /** 批量删除 **/
-func (c *Advantage) DeleteArray(array []int) (e error) {
+func (c *News) DeleteArray(array []int) (e error) {
 	_ = orm.NewOrm().Begin()
 	for _, v := range array {
-		if _, e = orm.NewOrm().Delete(&index.Advantage{Id: v}); e != nil {
+		one, _ := c.Find(v)
+		if _, e = orm.NewOrm().Delete(&index.News{Id: v}); e != nil {
 			_ = orm.NewOrm().Rollback()
 			break
 		}
+		_ = c.adjunctService.Dec(one.Cover)
 	}
 	if e == nil {
 		_ = orm.NewOrm().Commit()
@@ -124,10 +131,10 @@ func (c *Advantage) DeleteArray(array []int) (e error) {
 }
 
 /** 更新状态 **/
-func (c *Advantage) StatusArray(array []int, status int8) (e error) {
+func (c *News) StatusArray(array []int, status int8) (e error) {
 	_ = orm.NewOrm().Begin()
 	for _, v := range array {
-		if _, e = orm.NewOrm().Update(&index.Advantage{Id: v, Status: status}, "Status"); e != nil {
+		if _, e = orm.NewOrm().Update(&index.News{Id: v, Status: status}, "Status"); e != nil {
 			_ = orm.NewOrm().Rollback()
 			break
 		}
@@ -139,67 +146,65 @@ func (c *Advantage) StatusArray(array []int, status int8) (e error) {
 }
 
 /** 获取一条数据 **/
-func (c *Advantage) Find(id int) (index.Advantage, error) {
-	item := index.Advantage{
+func (c *News) Find(id int) (index.News, error) {
+	item := index.News{
 		Id: id,
 	}
 	return item, orm.NewOrm().Read(&item)
 }
 
 /** 获取需要渲染的Column **/
-func (c *Advantage) DataTableColumns() []map[string]interface{} {
+func (c *News) DataTableColumns() []map[string]interface{} {
 	var maps []map[string]interface{}
 	maps = append(maps, map[string]interface{}{"title": "", "name": "_checkbox_", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "ID", "name": "id", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "标题", "name": "title", "className": "text-center", "order": false})
+	maps = append(maps, map[string]interface{}{"title": "关键字", "name": "keywords", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "描述", "name": "description", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "状态", "name": "status", "className": "text-center data_table_btn_style", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "创建时间", "name": "create_time", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "操作", "name": "button", "className": "text-center data_table_btn_style", "order": false})
 	return maps
 }
 
 /** 获取需要渲染的按钮组 **/
-func (c *Advantage) DataTableButtons() []*table.TableButtons {
+func (c *News) DataTableButtons() []*table.TableButtons {
 	var array []*table.TableButtons
 	array = append(array, &table.TableButtons{
 		Text:      "添加",
-		ClassName: "btn btn-sm btn-alt-primary open_iframe",
-		Attribute: map[string]string{
-			"href":      beego.URLFor("Advantage.Create", ":id", "__ID__", ":popup", 1),
-			"data-area": "600px,400px",
-		},
+		ClassName: "btn btn-sm btn-alt-success mt-1 jump_urls",
+		Attribute: map[string]string{"data-action": beego.URLFor("News.Create")},
 	})
 	array = append(array, &table.TableButtons{
 		Text:      "删除",
 		ClassName: "btn btn-sm btn-alt-danger mt-1 ids_deletes",
-		Attribute: map[string]string{"data-action": beego.URLFor("Advantage.Delete")},
+		Attribute: map[string]string{"data-action": beego.URLFor("News.Delete")},
 	})
 	array = append(array, &table.TableButtons{
 		Text:      "启用",
 		ClassName: "btn btn-sm btn-alt-primary mt-1 ids_enables",
-		Attribute: map[string]string{"data-action": beego.URLFor("Advantage.Status"), "data-field": "status"},
+		Attribute: map[string]string{"data-action": beego.URLFor("News.Status"), "data-field": "status"},
 	})
 	array = append(array, &table.TableButtons{
 		Text:      "禁用",
 		ClassName: "btn btn-sm btn-alt-warning mt-1 ids_disables",
-		Attribute: map[string]string{"data-action": beego.URLFor("Advantage.Status"), "data-field": "status"},
+		Attribute: map[string]string{"data-action": beego.URLFor("News.Status"), "data-field": "status"},
 	})
 	return array
 }
 
 /** 处理分页 **/
-func (c *Advantage) PageListItems(length, draw, page int, search string) map[string]interface{} {
+func (c *News) PageListItems(length, draw, page int, search string) map[string]interface{} {
 	var lists []orm.ParamsList
-	qs := orm.NewOrm().QueryTable(new(index.Advantage))
+	qs := orm.NewOrm().QueryTable(new(index.News))
 	if search != "" {
 		qs = qs.Filter("title__icontains", search)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "title", "description", "status", "create_time", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "title", "keywords", "description", "status", "update_time")
 	for _, v := range lists {
 		v[2] = c.substr2HtmlHref("javascript:void(0)", v[2].(string), 0, 20)
+		v[3] = c.substr2HtmlHref("javascript:void(0)", v[3].(string), 0, 20)
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -211,37 +216,34 @@ func (c *Advantage) PageListItems(length, draw, page int, search string) map[str
 }
 
 /**  转为pop提示 **/
-func (c *Advantage) substr2HtmlHref(u, s string, start, end int) string {
+func (c *News) substr2HtmlHref(u, s string, start, end int) string {
 	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, u, s, beego.Substr(s, start, end))
 	return html
 }
 
 /** 返回表单结构字段如何解析 **/
-func (c *Advantage) TableColumnsType() map[string][]string {
+func (c *News) TableColumnsType() map[string][]string {
 	result := map[string][]string{
-		"columns":   {"string", "string", "string", "switch", "date", "date"},
-		"fieldName": {"id", "title", "description", "status", "create_time", "update_time"},
-		"action":    {"", "", "", beego.URLFor("Advantage.Status"), "", ""},
+		"columns":   {"string", "string", "string", "string", "switch", "date"},
+		"fieldName": {"id", "title", "keywords", "description", "status", "update_time"},
+		"action":    {"", "", "", "", beego.URLFor("News.Status"), ""},
 	}
 	return result
 }
 
 /** 返回右侧按钮数据结构 **/
-func (c *Advantage) TableButtonsType() []*table.TableButtons {
+func (c *News) TableButtonsType() []*table.TableButtons {
 	buttons := []*table.TableButtons{
 		{
-			Text:      "编辑",
-			ClassName: "btn btn-sm btn-alt-primary open_iframe",
-			Attribute: map[string]string{
-				"href":      beego.URLFor("Advantage.Edit", ":id", "__ID__", ":popup", 1),
-				"data-area": "600px,400px",
-			},
+			Text:      "修改",
+			ClassName: "btn btn-sm btn-alt-primary jump_urls",
+			Attribute: map[string]string{"data-action": beego.URLFor("News.Edit", ":id", "__ID__")},
 		},
 		{
 			Text:      "删除",
 			ClassName: "btn btn-sm btn-alt-danger ids_delete",
 			Attribute: map[string]string{
-				"data-action": beego.URLFor("Advantage.Delete"),
+				"data-action": beego.URLFor("News.Delete"),
 				"data-ids":    "__ID__",
 			},
 		},

@@ -1,0 +1,76 @@
+<main id="main-container">
+    {{template "admin/breadcrumb.html" .}}
+    <div class="content p-3">
+        <div class="js-wizard-simple block block overflow-hidden">
+            <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <ul class="nav nav-tabs nav-tabs-alt nav-justified font-size-sm" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link rounded-0 font-weight-normal  active" href="#base" data-toggle="tab">基础信息</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-0 font-weight-normal " href="#expert" data-toggle="tab">扩展信息</a>
+                </li>
+            </ul>
+            <form action="{{urlfor "News.Create"}}" class="ajax_from" method="post">
+                <div class="block-content tab-content pt-0">
+                    <div class="fade fade-left show tab-pane active pt-4 pl-2 pr-2" id="base" role="tabpanel">
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="title">文章标题</label>
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control form-control-alt font-size-sm" id="title" name="title" placeholder="文章标题">
+                                <div class="help-block pt-1 pb-1 font-size-minimum">文章标题; &nbsp;<code>请填写中文字符的文章标题</code></div>
+                            </div>
+                        </div>
+                        <div class="form-group row font-size-sm mb-3">
+                            <label class="upload_single_label col-sm-1 col-form-label font-weight-normal" for="cover">封面图片</label>
+                            <div class="ml-3 upload_single" data-name="image"></div>
+                            <div class="upload_onLoad">{{/*默认加载*/}}</div>
+                            <input type="hidden" name="cover" id="cover" value="0"/>
+                        </div>
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="seo_title">SEO标题</label>
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control form-control-alt font-size-sm" id="seo_title" name="seo_title" placeholder="SEO标题">
+                                <div class="help-block pt-1 pb-1 font-size-minimum">SEO标题; &nbsp;<code>请填写中文字符的SEO标题</code></div>
+                            </div>
+                        </div>
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="keywords" style="line-height: 77px;">SEO关键字</label>
+                            <div class="col-sm-5">
+                                <textarea class="form-control form-control-alt font-size-sm" id="keywords" name="keywords" rows="3" placeholder="请输入SEO关键字.."></textarea>
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请输入SEO关键字；<code>必填；</code></div>
+                            </div>
+                            <label class="col-sm-1 col-form-label font-weight-normal text-right pr-2" for="description" style="line-height: 77px;">SEO描述</label>
+                            <div class="col-sm-5">
+                                <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="3" placeholder="请输入SEO描述.."></textarea>
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请输入SEO描述；<code>必填；</code></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade fade-left pt-4 pl-2 pr-2" id="expert" role="tabpanel">
+                        <div class="form-group row font-size-sm">
+                            <label class="col-sm-1 col-form-label font-weight-normal" for="context" style="line-height: 404px">文档详情</label>
+                            <div class="col-sm-11">
+                                <textarea id="context" class="js-summernote form-control-alt font-size-sm" name="context"></textarea>
+                                <div class="help-block pt-1 pb-1 font-size-minimum">请输入文档详情；<code>必填；</code></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                            <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
