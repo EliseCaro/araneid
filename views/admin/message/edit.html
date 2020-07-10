@@ -1,0 +1,17 @@
+<div class="block block-themed">
+    <div class="block-content pr-0 overflow-hidden">
+        <form action="{{urlfor "Message.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-sm-2 col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="reply">回复内容</label>
+                <div class="col-sm-9" style="flex: 0 0 79%;max-width: 79%;">
+                    <textarea class="form-control form-control-alt font-size-sm" id="reply" name="reply" rows="3" placeholder="回复内容">{{$.info.Reply}}</textarea>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">请认真填写每一个问题回复；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
+                <input type="hidden" name="status" value="1">
+                <button type="submit" class="btn btn-sm btn-primary">确认回复</button>
+            </div>
+        </form>
+    </div>
+</div>

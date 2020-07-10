@@ -35,7 +35,7 @@ func init() {
 			&admin.Arachnid{}, &admin.Keyword{}, &admin.Indexes{}, &admin.Statistics{},
 			&admin.Adapter{}, &admin.Domain{}, &admin.Category{}, &admin.Detail{},
 			&admin.Automatic{}, &admin.Journal{}, &admin.Advantage{}, &admin.News{},
-			&admin.Team{},
+			&admin.Team{}, &admin.Message{},
 		)),
 	)
 }

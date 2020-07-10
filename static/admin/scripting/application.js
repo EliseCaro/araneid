@@ -24,7 +24,9 @@ const application = {
             text  : "禁用条目后将在启用之前无法使用！您确定该操作吗？",
         },
          loader:function (type) {
-             One.loader(type)
+             if(typeof(One) !== "undefined"){
+                 One.loader(type)
+             }
          },
          alert:function (option,func) {
              parent === self ? swal(option) : parent.swal(option);
@@ -158,5 +160,7 @@ const application = {
 
 $(document).ready(function(){
     application.binds.init();
-    application.cms.layout_theme(layout_theme_type)
+    if(typeof(layout_theme_type) !== "undefined"){
+        application.cms.layout_theme(layout_theme_type)
+    }
 });
