@@ -24,7 +24,7 @@ const application = {
             text  : "禁用条目后将在启用之前无法使用！您确定该操作吗？",
         },
          loader:function (type) {
-             if(typeof(One) !== "undefined"){
+             if(typeof(One) !== "undefined" && typeof(One) !== undefined){
                  One.loader(type)
              }
          },
