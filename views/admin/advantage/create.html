@@ -1,0 +1,32 @@
+<div class="block block-themed">
+    <div class="block-header">
+        <h3 class="block-title">创建优势</h3>
+    </div>
+    <div class="block-content pr-0 overflow-hidden">
+        <form action="{{urlfor "Advantage.Create"}}" class="ajax_from" method="post">
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" for="title">功能标题</label>
+                <div class="col-sm-10">
+                    <input class="form-control form-control-alt font-size-sm" id="title" type="text" name="title" placeholder="优势标题">
+                    <div class="help-block pt-1 pb-1 font-size-minimum">功能标题；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="icon">展示图标</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-alt font-size-sm" id="icon" name="icon" rows="3" placeholder="展示图标"></textarea>
+                    <div class="help-block pt-1 pb-1 font-size-minimum">填写取出宽高后的SVG内容；<code>必填；</code></div>
+                </div>
+            </div>
+            <div class="form-group row font-size-sm mb-2">
+                <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="description">简短描述</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="3" placeholder="简短描述"></textarea>
+                </div>
+            </div>
+            <div class="form-group text-center fixed-bottom badge-light mb-0 p-3">
+                <button type="submit" class="btn btn-sm btn-primary">提交保存</button>
+            </div>
+        </form>
+    </div>
+</div>
