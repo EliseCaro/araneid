@@ -41,7 +41,7 @@ func (c *Attachment) Index() {
 	for _, v := range c.adjunctService.DataTableButtons() {
 		dataTableCore = dataTableCore.TableButtons(v)
 	}
-	c.TableColumnsRender(dataTableCore.ColumnsItemsMaps, dataTableCore.OrderItemsMaps, dataTableCore.ButtonsItemsMaps, 10)
+	c.TableColumnsRender(dataTableCore.ColumnsItemsMaps, dataTableCore.OrderItemsMaps, dataTableCore.ButtonsItemsMaps, _func.WebPageSize())
 }
 
 // @router /attachment/space [post]

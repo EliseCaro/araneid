@@ -244,10 +244,10 @@ func (service *DefaultAdjunctService) TableButtonsType() []*table.TableButtons {
 func (service *DefaultAdjunctService) PageListItems(length, draw, page int, search string) map[string]interface{} {
 	var lists []orm.ParamsList
 	qs := orm.NewOrm().QueryTable(new(attachment.Attachment))
-	recordsTotal, _ := qs.Count()
 	if search != "" {
 		qs = qs.Filter("name__icontains", search)
 	}
+	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "name", "ext", "size", "usage", "driver", "update_time")
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
