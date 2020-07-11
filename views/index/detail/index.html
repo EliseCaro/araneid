@@ -2,9 +2,9 @@
 <html lang="zh-cn">
     <head>
         {{template "index/base/head.html" .}}
-        <title>{{config "String" "web_seo_title" ""}}</title>
-        <meta name="description" content="{{config "String" "web_seo_description" ""}}">
-        <meta name="keywords" content="{{config "String" "seo_keyword" ""}}">
+        <title>{{$.info.SeoTitle}}</title>
+        <meta name="description" content="{{$.info.Description}}">
+        <meta name="keywords" content="{{$.info.Keywords}}">
     </head>
 <body>
     {{template "index/base/menu.html" .}}
