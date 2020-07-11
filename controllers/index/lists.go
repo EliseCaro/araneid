@@ -20,7 +20,7 @@ func (c *Lists) Index() {
 
 /** 提交主站列表 **/
 func (c *Lists) assignItem() {
-	pageSize := 2
+	pageSize := _func.WebPageSize()
 	pageNum := c.getPage()
 	qm := orm.NewOrm().QueryTable(new(index.News)).Filter("status", 1)
 	var list []*index.News
@@ -32,7 +32,7 @@ func (c *Lists) assignItem() {
 /** 提交分类数据 **/
 func (c *Lists) assignCate() {
 	id := c.GetMustInt(":id", "非法请求～")
-	pageSize := 10
+	pageSize := _func.WebPageSize()
 	pageNum := c.getPage()
 	qm := orm.NewOrm().QueryTable(new(spider.Article)).Filter("class", id)
 	var list []*spider.Article

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        {{template "index/base/head.html" .}}
+        <title>{{config "String" "web_seo_title" ""}}</title>
+        <meta name="description" content="{{config "String" "web_seo_description" ""}}">
+        <meta name="keywords" content="{{config "String" "seo_keyword" ""}}">
+    </head>
+<body>
+    {{template "index/base/menu.html" .}}
+    <section class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-content text-center">
+                        <div class="section-heading">
+                            <h2 class="section__title">资讯详情</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="breadcrumb-list">
+            <ul class="list-items">
+                <li class="active__list-item"><a href="{{urlfor "Index.Index"}}" title="{{config "String" "web_seo_title" ""}}">首页</a></li>
+                <li>资讯详情</li>
+            </ul>
+        </div>
+    </section>
+    <section class="blog-area padding-top-120px padding-bottom-60px">
+        <div id="particles-bg"></div>
+        <div class="container">
+            <div class="card-item blog-card-detail">
+                <div class="card-img-box">
+                    <img src="{{$.info.Cover | fileBuyPath}}" alt="{{$.info.Title}}">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">
+                        <a href="{{urlfor "Detail.Index" ":id" $.info.Id}}" title="{{$.info.Title}}">{{$.info.Title}}</a>
+                    </h3>
+                    <ul class="list-items">
+                        <li class="card-dot-active"><span class="la la-user"></span> 系统管理员</li>
+                        <li><span class="la la-calendar"></span> {{date $.info.UpdateTime "Y年m月d日"}}</li>
+                    </ul>
+                    <p class="card-desc mb-3">{{$.info.Description}}</p>
+                    <div class="blockquote-item mt-4" style="background-image:url({{$.info.Cover | fileBuyPath}})">{{str2html $.info.Context}}</div>
+                </div>
+            </div>
+            <div class="related-post pt-3">
+                <div class="related-post-inner mt-4">
+                    <div class="row">
+                        {{range $i, $e := .rand}}
+                        <div class="col-lg-4">
+                            <div class="card-item">
+                                <div class="card-img-box">
+                                    <img src="{{$e.Cover | fileBuyPath}}" alt="{{$e.Title}}">
+                                </div>
+                                <div class="card-content">
+                                    <h3 class="card-title">
+                                        <a title="{{$e.Title}}" href="{{urlfor "Detail.Index" ":id" $e.Id}}">{{$e.Title}}</a>
+                                    </h3>
+                                    <ul class="list-items">
+                                        <li class="card-dot-active">
+                                            <span class="la la-user"></span> 系统管理员
+                                        </li>
+                                        <li><span class="la la-calendar"></span> {{date $e.UpdateTime "Y年m月d日"}}</li>
+                                    </ul>
+                                    <a title="{{$e.Title}}" href="{{urlfor "Detail.Index" ":id" $e.Id}}" class="template-btn btn-layout-small">查看详情</a>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{template "index/base/script.html" .}}
+</body>
+</html>
