@@ -1,0 +1,57 @@
+<div id="loading-area">
+    <div class="loader-col">
+        <div class="loader" id="loader"></div>
+    </div>
+</div>
+<section class="header-menu-area header-menu-area-2">
+    <div class="header-menu-fluid">
+        <div class="container">
+            <div class="main-menu-content-2">
+                <div class="row align-items-center h-100">
+                    <div class="col-lg-3">
+                        <div class="logo-box">
+                            <a href="{{urlfor "Index.Index"}}" class="logo">
+                                <img src="{{config "String" "web_web_logo" ""}}" alt="{{config "String" "web_seo_title" ""}}">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="menu-wrapper">
+                            <nav class="main-menu">
+                                <ul>
+                                    <li><a href="{{urlfor "Index.Index"}}" title="{{config "String" "web_seo_title" ""}}">首页</a></li>
+                                    <li><a href="{{urlfor "Lists.Index" ":id" 1 ":page" 0}}" title="动态资讯">动态资讯</a></li>
+                                    <li><a href="{{urlfor "Index.Index"}}" title="产品优势" class="scrollbar" data-box="#advantage">产品优势</a></li>
+                                    <li><a href="{{urlfor "Index.Index"}}" title="海量模板" class="scrollbar" data-box="#template">海量模板</a></li>
+                                    <li><a href="{{urlfor "Index.Index"}}" title="核心团队" class="scrollbar" data-box="#team">核心团队</a></li>
+                                    <li><a href="{{urlfor "Index.Index"}}" title="联系我"   class="scrollbar" data-box="#message">联系我</a></li>
+                                </ul>
+                            </nav>
+                            <div class="logo-right-button logo-right-button-2">
+                                <ul>
+                                    <li>
+                                        <a href="{{urlfor "Index.Index"}}" class="template-btn scrollbar" data-box="#message">建议/反馈</a>
+                                    </li>
+                                </ul>
+                                <div class="side-menu-open">
+                                    <i class="la la-bars"></i>
+                                </div>
+                            </div>
+                            <div class="side-nav-container">
+                                <div class="humburger-menu">
+                                    <div class="humburger-menu-lines side-menu-close"></div>
+                                </div>
+                                <div class="side-menu-wrap">
+                                    <ul class="side-menu-ul">
+                                        <li class="sidenav__item"><a href="{{urlfor "Index.Index"}}" title="{{config "String" "web_seo_title" ""}}">首页</a></li>
+                                        <li class="sidenav__item"><a href="{{urlfor "Lists.Index" ":id" 1 ":page" 0}}" title="新闻动态">新闻动态</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

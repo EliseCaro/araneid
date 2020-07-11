@@ -1,81 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
+    {{template "index/base/head.html" .}}
     <meta name="description" content="{{config "String" "web_seo_description" ""}}">
     <meta name="keywords" content="{{config "String" "seo_keyword" ""}}">
     <title>{{config "String" "web_seo_title" ""}}</title>
-    <link rel="icon" sizes="16x16" href="/static/favicon.png">
-    <link rel="stylesheet" href="/static/index/styles/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/index/styles/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/index/styles/line-awesome.css">
-    <link rel="stylesheet" href="/static/index/styles/animate.min.css">
-    <link rel="stylesheet" href="/static/index/styles/owl.carousel.min.css">
-    <link rel="stylesheet" href="/static/index/styles/owl.theme.default.min.css">
-    <link rel="stylesheet" href="/static/index/styles/magnific-popup.css">
-    <link rel="stylesheet" href="/static/index/styles/style.css?v={{$.versions}}">
     <link rel="stylesheet" href="/static/admin/plugins/sweet-alert/sweetalert.css?v={{$.versions}}">
 </head>
 <body>
-    <div id="loading-area">
-        <div class="loader-col">
-            <div class="loader" id="loader"></div>
-        </div>
-    </div>
-    <section class="header-menu-area header-menu-area-2">
-        <div class="header-menu-fluid">
-            <div class="container">
-                <div class="main-menu-content-2">
-                    <div class="row align-items-center h-100">
-                        <div class="col-lg-3">
-                            <div class="logo-box">
-                                <a href="index.html" class="logo">
-                                    <img src="{{config "String" "web_web_logo" ""}}" alt="{{config "String" "web_seo_title" ""}}">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-9">
-                            <div class="menu-wrapper">
-                                <nav class="main-menu">
-                                    <ul>
-                                        <li><a href="/" title="{{config "String" "web_seo_title" ""}}">首页</a></li>
-                                        <li><a href="{{urlfor "Lists.Index" ":id" 1 ":page" 0}}" title="新闻动态">新闻动态</a></li>
-                                        <li><a href="#" title="产品优势">产品优势</a></li>
-                                        <li><a href="#" title="海量模板">海量模板</a></li>
-                                        <li><a href="#" title="核心团队">核心团队</a></li>
-                                        <li><a href="#" title="联系我">联系我</a></li>
-                                    </ul>
-                                </nav>
-                                <div class="logo-right-button logo-right-button-2">
-                                    <ul>
-                                        <li>
-                                            <a href="#" class="template-btn">建议/反馈</a>
-                                        </li>
-                                    </ul>
-                                    <div class="side-menu-open">
-                                        <i class="la la-bars"></i>
-                                    </div>
-                                </div>
-                                <div class="side-nav-container">
-                                    <div class="humburger-menu">
-                                        <div class="humburger-menu-lines side-menu-close"></div>
-                                    </div>
-                                    <div class="side-menu-wrap">
-                                        <ul class="side-menu-ul">
-                                            <li class="sidenav__item"><a href="/" title="{{config "String" "web_seo_title" ""}}">首页</a></li>
-                                            <li class="sidenav__item"><a href="{{urlfor "Lists.Index" ":id" 1 ":page" 0}}" title="新闻动态">新闻动态</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    {{template "index/base/menu.html" .}}
     <section class="slider-area banner-area text-center">
         <div class="single-slide-item slide-bg1">
             <div class="container">
@@ -102,6 +35,7 @@
         </div>
     </section>
     <section class="funfact-area section--padding text-center">
+        <div id="particles-bg"></div>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -148,7 +82,7 @@
             </div>
         </div>
     </section>
-    <section class="hiw-area section-bg section--padding text-center">
+    <section id="advantage" class="hiw-area section-bg section--padding text-center">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -205,7 +139,75 @@
             </div>
         </div>
     </section>
-    <section class="accordion-area section-bg section-padding">
+    <section class="team-area section--padding section-bg" id="team">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading text-center">
+                        <h5 class="section__meta">我们的团队</h5>
+                        <h2 class="section__title padding-bottom-15px">建立自我，追求无我</h2>
+                        <div class="section-divider"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                {{range $i, $e := .team}}
+                    <div class="col-lg-6">
+                        <div class="team-item">
+                            <div class="team-avatar">
+                                <img src="{{$e.Avatar | fileBuyPath}}" alt="{{$e.Name}}">
+                                <div class="team-social">
+                                    <ul class="social-links">
+                                        {{if $e.QQ }}<li><a rel="nofollow" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={{$e.QQ}}&site=qq&menu=yes"><i class="fa fa-qq"></i></a></li>{{end}}
+                                        {{if $e.Weibo}}<li><a rel="nofollow" target="_blank" href="{{$e.Weibo}}"><i class="fa fa-weibo"></i></a></li>{{end}}
+                                        {{if $e.Github}}<li><a rel="nofollow" target="_blank" href="{{$e.Github}}"><i class="fa fa-github"></i></a></li>{{end}}
+                                        {{if $e.Blog}}<li><a rel="nofollow" target="_blank" href="{{$e.Blog}}"><i class="fa fa-rss-square"></i></a></li>{{end}}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="team-detail">
+                                <h3 class="team__title">{{$e.Name}}</h3>
+                                <p class="team__meta">{{$e.Major}}</p>
+                                <div class="section-block"></div>
+                                <p class="team__meta pt-3">{{$e.Description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+    </section>
+    <div class="section-block"></div>
+    <section class="blog-area section--padding" id="template">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="section-heading">
+                        <h5 class="section__meta">精致的模板</h5>
+                        <h2 class="section__title padding-bottom-15px line-height-55">每一套模板皆是精挑细选</h2>
+                    </div>
+                    <div class="section-divider"></div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                {{range $i, $e := .Template}}
+                    {{if lt $i 3 }}
+                        <div class="col-lg-4 column-td-6">
+                            <div class="card-item">
+                                <div class="card-img-box">
+                                    <img src="data:image/png;base64,{{$e.Cover}}" alt="{{$e.Title}}">
+                                </div>
+                                <div class="card-content">
+                                    <h3 class="card-title">{{$e.Remark}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    {{end}}
+                {{end}}
+            </div>
+        </div>
+    </section>
+    <section class="accordion-area section-bg section-padding" id="message">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -280,100 +282,10 @@
             </div>
         </div>
     </section>
-    <section class="team-area section--padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-heading text-center">
-                        <h5 class="section__meta">我们的团队</h5>
-                        <h2 class="section__title padding-bottom-15px">建立自我，追求无我</h2>
-                        <div class="section-divider"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-5">
-                {{range $i, $e := .team}}
-                    <div class="col-lg-6">
-                        <div class="team-item">
-                            <div class="team-avatar">
-                                <img src="{{$e.Avatar | fileBuyPath}}" alt="{{$e.Name}}">
-                                <div class="team-social">
-                                    <ul class="social-links">
-                                        {{if $e.QQ }}<li><a rel="nofollow" target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={{$e.QQ}}&site=qq&menu=yes"><i class="fa fa-qq"></i></a></li>{{end}}
-                                        {{if $e.Weibo}}<li><a rel="nofollow" target="_blank" href="{{$e.Weibo}}"><i class="fa fa-weibo"></i></a></li>{{end}}
-                                        {{if $e.Github}}<li><a rel="nofollow" target="_blank" href="{{$e.Github}}"><i class="fa fa-github"></i></a></li>{{end}}
-                                        {{if $e.Blog}}<li><a rel="nofollow" target="_blank" href="{{$e.Blog}}"><i class="fa fa-rss-square"></i></a></li>{{end}}
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="team-detail">
-                                <h3 class="team__title">{{$e.Name}}</h3>
-                                <p class="team__meta">{{$e.Major}}</p>
-                                <div class="section-block"></div>
-                                <p class="team__meta pt-3">{{$e.Description}}</p>
-                            </div>
-                        </div>
-                    </div>
-                {{end}}
-            </div>
-        </div>
-    </section>
     <div class="section-block"></div>
-    <section class="blog-area section--padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="section-heading">
-                        <h5 class="section__meta">精致的模板</h5>
-                        <h2 class="section__title padding-bottom-15px line-height-55">每一套模板皆是精挑细选</h2>
-                    </div>
-                    <div class="section-divider"></div>
-                </div>
-            </div>
-            <div class="row mt-5">
-                {{range $i, $e := .Template}}
-                    {{if lt $i 3 }}
-                        <div class="col-lg-4 column-td-6">
-                            <div class="card-item">
-                                <div class="card-img-box">
-                                    <img src="data:image/png;base64,{{$e.Cover}}" alt="{{$e.Title}}">
-                                </div>
-                                <div class="card-content">
-                                    <h3 class="card-title">{{$e.Remark}}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    {{end}}
-                {{end}}
-            </div>
-        </div>
-    </section>
-
-
-    <section class="footer-area">
-        <div id="particles-bg"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="copyright-content text-center">
-                        <p class="copy__desc">{{config "String" "web_web_copyright" ""}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <div id="scroll-top"><i class="fa fa-angle-up" title="回到顶部"></i></div>
-    <script src="/static/index/script/jquery-3.4.1.min.js"></script>
-    <script src="/static/index/script/popper.min.js"></script>
-    <script src="/static/index/script/bootstrap.min.js"></script>
-    <script src="/static/index/script/owl.carousel.min.js"></script>
-    <script src="/static/index/script/magnific-popup.min.js"></script>
-    <script src="/static/index/script/purecounter.js"></script>
-    <script src="/static/index/script/particles.min.js"></script>
-    <script src="/static/index/script/particlesRun.js"></script>
-    <script src="/static/index/script/smooth-scrolling.js"></script>
-    <script src="/static/index/script/main.js"></script>
+    {{template "index/base/script.html" .}}
     <script src="/static/admin/plugins/sweet-alert/sweetalert.min.js?v={{$.versions}}"></script>
     <script src="/static/admin/scripting/application.js?v={{$.versions}}"></script>
+    <script>$('.scrollbar').on('click', function() {const id = $(this).data("box");$('html,body').animate({scrollTop: $(id).offset().top + 'px'},1500);return false});</script>
 </body>
 </html>

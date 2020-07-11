@@ -19,6 +19,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/users"
 	"github.com/beatrice950201/araneid/extend/service"
 	_ "github.com/go-sql-driver/mysql"
+	"html/template"
 	"reflect"
 	"strconv"
 	"time"
@@ -80,6 +81,7 @@ func viewItBegin() {
 	_ = beego.AddFuncMap("fileBuyPath", fileBuyPath)
 	_ = beego.AddFuncMap("spiderArticleLimit", spiderArticleLimit)
 	_ = beego.AddFuncMap("spiderArticleView", spiderArticleView)
+	_ = beego.AddFuncMap("configStrToHtml", configStrToHtml)
 }
 
 /** 注册日志 **/
@@ -141,4 +143,10 @@ func spiderArticleView(oid int) int {
 	var maps spider.Article
 	_ = orm.NewOrm().QueryTable(new(spider.Article)).Filter("id", oid).One(&maps)
 	return maps.View
+}
+
+/** 配置解析到html **/
+func configStrToHtml(s string) template.HTML {
+	c := beego.AppConfig.String(s)
+	return beego.Str2html(c)
 }
