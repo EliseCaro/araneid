@@ -2,7 +2,7 @@
     <div class="title"><h3>点击排行</h3></div>
     <ul class="recnewlist">
         {{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "view DESC" }}
-            <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+            <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 13}}...</a></li>
         {{end}}
     </ul>
 </div>

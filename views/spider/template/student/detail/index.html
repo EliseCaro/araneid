@@ -1,0 +1,27 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>{{$.detail.Title}}</title>
+  <meta name="keywords" content="{{$.detail.Keywords}}" />
+  <meta name="description" content="{{$.detail.Description}}" />
+  <link rel="stylesheet" type="text/css" href="/static/spider/template/student/common.css?v={{$.versions}}">
+  <link rel="stylesheet" type="text/css" href="/static/spider/template/student/yahua.css?v={{$.versions}}">
+</head>
+<body>
+{{template "spider/template/student/base/header.html" .}}
+<div class="banpage" style="background-image:url({{randomCover $.model.Id}});"></div>
+<div class="newslist mt40" style="overflow:hidden;">
+  <div class="list_newscon l" style="width: 850px;">
+    <div class="title3">
+      <h2>{{$.detail.Title}}</h2>
+      <span>发布时间：{{date $.detail.UpdateTime "Y-m-d"}} 浏览量：{{spiderArticleView $.detail.Oid}}次</span> </div>
+      <div class="newsconent" style="padding-top: 20px;line-height: 25px;">{{str2html $.detail.Context}}</div>
+  </div>
+  <div class="r">
+    {{template "spider/template/student/base/ranking.html" .}}
+    {{template "spider/template/student/base/recom.html" .}}
+  </div>
+</div>
+{{template "spider/template/student/base/footer.html" .}}
+</body>
+</html>
