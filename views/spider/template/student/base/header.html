@@ -1,0 +1,14 @@
+<div class="headerbg" style="background-color: #158d91;overflow: hidden">
+    <div class="header" style="margin: 18px auto">
+        <a class="logo l" href="/" title="{{$.domain.name}}">{{$.domain.name}}</a>
+        <div class="menu r">
+            <ul class="nav">
+                {{range $i, $e := .cate}}
+                    {{if lt $i 9 }}
+                        <li><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+    </div>
+</div>

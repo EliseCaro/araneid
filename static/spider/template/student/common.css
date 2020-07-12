@@ -1,0 +1,54 @@
+/* CSS Document */
+body,div,a,img,ul,li,ol,dl,dt,dd.form,input,h1,h2,h3,h4,h5,h6,p,span,form,input{ margin:0; padding:0; font-family:"微软雅黑";border:0px; font-size:14px;}
+
+dd{-webkit-margin-start:0px;}
+a{ text-decoration:none;}
+a,img{ border:0;}
+ul,li{ list-style:none;}
+h1,h2,h3,h4,h5,h6{ font-weight:normal;}
+a:hover,.nav li a:hover{ color:#158d91;}
+img{ display:block;}
+
+.l{ float:left;}
+.r{ float:right;}
+.c{ clear:both;}
+.m16{ margin-right:15px;}
+.mb40{ margin-bottom:40px;}
+.mt40{ margin-top:40px;}
+
+
+.headerbg,.footer{ width:100%; height:auto;}
+.headerbg{ background-color:#fdfdfd;}
+.footer{ background-color:#3b3b3b; padding:25px 0px;}
+.main,.header,.kecapt,.link{ width:1200px; margin:0 auto; overflow:hidden;}
+.header{ margin:25px auto;}
+
+/*logo 导航*/
+.logo{ display:block;color: #ffffff;font-size: 25px;font-style:oblique}
+.logo:hover{color: #ffffff;}
+.nav{
+    overflow: hidden;
+}
+.nav li,.nav li a{ float:left;}
+.nav li a{ margin:0 29px; font-size:14px; color:#ffffff; font-weight:bold; line-height:36px;}
+.nav li a:hover{color: #ffffff;}
+/*logo 导航*/
+
+/*网站底部*/
+.footernav{}
+.footernav li{ float:left;}
+.footernav li a{ display:block; width:auto; height:auto; float:left; font-size:13px; color:#b6b6b6; line-height:20px; padding:0 10px; background:url(./footernav.gif) no-repeat left center;}
+.footernav li:first-child a{ background:none; padding-left:0px;}
+.copyright{ font-size:13px; color:#7f7f7f; line-height:22px;}
+.copyright a{color: #ffffff}
+/*网站底部*/
+
+/*返回顶部*/
+#gotop {width: 50px;height: 50px;position: fixed;right: 15px;bottom:42px;z-index: 100020;display: none;}
+#gotop.off {opacity: 0;visibility: hidden}
+#gotoparrow {display: block;width: 50px;height: 50px;background:url(./gotop.png) no-repeat left center;cursor: pointer;}
+/*返回顶部*/
+
+
+
+

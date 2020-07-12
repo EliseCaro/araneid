@@ -1,0 +1,12 @@
+<div class="footer">
+    <div class="main">
+        <ul class="l footernav">
+            <li><a href="javascript:void(0)">友情链接：</a></li>
+            {{range $i, $e := .links}}
+                <li> <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a></li>
+            {{end}}
+        </ul>
+        <div class="r copyright"> {{str2html $.arachnid.Statistics}}</div>
+    </div>
+    <div id="gotop"> <a id="gotoparrow" onclick="return false;" title="回到顶部"></a> </div>
+</div>
