@@ -82,6 +82,7 @@ func viewItBegin() {
 	_ = beego.AddFuncMap("spiderArticleLimit", spiderArticleLimit)
 	_ = beego.AddFuncMap("spiderArticleView", spiderArticleView)
 	_ = beego.AddFuncMap("configStrToHtml", configStrToHtml)
+	_ = beego.AddFuncMap("randomCover", randomCover)
 }
 
 /** 注册日志 **/
@@ -133,7 +134,7 @@ func spiderArticleLimit(cid interface{}, limit int, where, sort string) []spider
 	if reflect.TypeOf(cid).String() == "int" {
 		value = strconv.Itoa(cid.(int))
 	}
-	sql := fmt.Sprintf(`SELECT id,title,description FROM %sspider_article WHERE %s%s ORDER BY %s LIMIT %d`, prefix, where, value, sort, limit)
+	sql := fmt.Sprintf(`SELECT id,title,description,update_time,create_time FROM %sspider_article WHERE %s%s ORDER BY %s LIMIT %d`, prefix, where, value, sort, limit)
 	_, _ = orm.NewOrm().Raw(sql).QueryRows(&maps)
 	return maps
 }
@@ -149,4 +150,9 @@ func spiderArticleView(oid int) int {
 func configStrToHtml(s string) template.HTML {
 	c := beego.AppConfig.String(s)
 	return beego.Str2html(c)
+}
+
+/** 获取随机图片 **/
+func randomCover(template string, model int) string {
+	return _func.RandomCover(template, model)
 }

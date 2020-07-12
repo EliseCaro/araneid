@@ -2,11 +2,13 @@ package _func
 
 import (
 	"encoding/binary"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/extend/cache"
 	"github.com/beatrice950201/araneid/extend/model/attachment"
 	"github.com/beatrice950201/araneid/extend/model/config"
+	"io/ioutil"
 	"math/rand"
 	"net"
 	"os"
@@ -34,6 +36,18 @@ func Long2IP(intIP uint32) net.IP {
 	bytes[2] = byte((intIP >> 16) & 0xFF)
 	bytes[3] = byte((intIP >> 24) & 0xFF)
 	return net.IPv4(bytes[3], bytes[2], bytes[1], bytes[0])
+}
+
+/** 获取随机封面图 **/
+func RandomCover(template string, model int) string {
+	path := fmt.Sprintf(`./static/spider/template/%s/image/%d`, template, model)
+	rd, _ := ioutil.ReadDir(path)
+	var names []string
+	for _, fi := range rd {
+		names = append(names, fi.Name())
+	}
+	n := names[rand.Intn(len(names)-1)]
+	return fmt.Sprintf(`/static/spider/template/%s/image/%d/%s`, template, model, n)
 }
 
 /** 解析debug为bool格式 **/

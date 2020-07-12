@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>{{$.detail.Title}}</title>
+    <meta name="keywords" content="{{$.detail.Keywords}}" />
+    <meta name="description" content="{{$.detail.Description}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/spider/template/blue/style.css?v={{$.versions}}" rel="stylesheet">
+</head>
+<body>
+<div class="navbar">
+    {{template "spider/template/blue/base/header.html" .}}
+    <div class="main">
+        <div class="wrapper">
+            <div class="project_mod">
+                <div class="body" style="padding-top: 0;">
+                    <div class="lft newsview" style="width: 64%;">
+                        <h3 class="news_title">{{$.detail.Title}}</h3>
+                        <div class="bloginfo">
+                            <ul>
+                                <li class="lmname"><a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Name}}">{{$.cateInfo.Name}}</a></li>
+                                <li class="timer">{{date $.detail.UpdateTime "Y-m-d H:i:s"}}</li>
+                                <li class="view">{{spiderArticleView $.detail.Oid}} 人已阅读</li>
+                            </ul>
+                        </div>
+                        <div class="news_about"><strong>简介</strong>{{$.detail.Description}}</div>
+                        <div class="news_con">{{str2html $.detail.Context}}</div>
+                    </div>
+                    <div class="col home_col rgt " style="width: 29.5%">
+                        {{template "spider/template/blue/base/ranking.html" .}}
+                        {{template "spider/template/blue/base/recom.html" .}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "spider/template/blue/base/footer.html" .}}
+</div>
+</body>
+</html>

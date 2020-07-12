@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ch">
+<head>
+  <meta charset="UTF-8">
+  <title>{{$.cateInfo.Title}}</title>
+  <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+  <meta name="description" content="{{$.cateInfo.Description}}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/spider/template/blue/style.css?v={{$.versions}}" rel="stylesheet">
+  <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+  <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+  <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+</head>
+<body>
+<div class="navbar">
+  {{template "spider/template/blue/base/header.html" .}}
+  <div class="main">
+    <div class="wrapper">
+      <div class="project_mod">
+        <div class="head">
+          <div class="lft">
+            <strong>{{$.cateInfo.Name}}</strong>
+            <div class="type">
+              {{range $i, $e := .cate}}
+                {{if ne $e.Id $.cateInfo.Cid}}<a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a><span>|</span>{{end}}
+              {{end}}
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="hotsell lft" style="width: 69%;">
+            <div class="bd" style="width: 100%">
+              <ul style="overflow: hidden;width: 100%">
+                {{range $index, $elem := .pageList.List}}
+                  <li style="width: 210px;margin-right: 15px;">
+                    <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="pic">
+                      <img style="width: 100%;height: 130px" src="{{randomCover "blue" $.model.Id}}" alt="{{$elem.Title}}">
+                    </a>
+                    <p><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></p>
+                </li>
+                {{end}}
+              </ul>
+              <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+            </div>
+          </div>
+          <div class="col home_col rgt " style="width: 29.5%">
+            {{template "spider/template/blue/base/ranking.html" .}}
+            {{template "spider/template/blue/base/recom.html" .}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{template "spider/template/blue/base/footer.html" .}}
+</div>
+</body>
+</html>

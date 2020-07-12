@@ -14,11 +14,13 @@ type Index struct{ Main }
 
 // @router / [get]
 func (c *Index) Index() {
-	c.Data["advantage"] = c.advantage()   // 产品优势
-	c.Data["news"] = c.newsList()         //  新闻资讯
-	c.Data["team"] = c.teamList()         //  团队信息
-	c.Data["Template"] = c.templateList() //  模板信息
-	c.Data["message"] = c.messageList()   //  反馈信息
+	if !c.spiderExtend {
+		c.Data["advantage"] = c.advantage()   // 产品优势
+		c.Data["news"] = c.newsList()         //  新闻资讯
+		c.Data["team"] = c.teamList()         //  团队信息
+		c.Data["Template"] = c.templateList() //  模板信息
+		c.Data["message"] = c.messageList()   //  反馈信息
+	}
 }
 
 // @router /index/message [post]

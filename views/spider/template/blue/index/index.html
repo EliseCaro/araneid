@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ch">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{$.domain.title}}</title>
+    <meta name="keywords" content="{{$.domain.keywords}}" />
+    <meta name="description" content="{{$.domain.description}}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/spider/template/blue/style.css?v={{$.versions}}" rel="stylesheet">
+    <script src="/static/spider/template/blue/jquery.min.js" type="text/javascript" ></script>
+    <script src="/static/spider/template/blue/jquery.Slide.js" type="text/javascript" ></script>
+    <script src="/static/spider/template/blue/jquery.placeholder.js" type="text/javascript" ></script>
+    <script src="/static/spider/template/blue/application.js?v={{$.versions}}" type="text/javascript" ></script>
+  </head>
+<body>
+  <div class="navbar">
+    {{template "spider/template/blue/base/header.html" .}}
+    <div class="main">
+      <div class="wrapper">
+        <div class="row clearfix">
+          <div class="leftbox">
+            <div class="focusBox">
+              <ul class="pic">
+                {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
+                    <li>
+                      <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                        <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                      </a>
+                    </li>
+                {{end}}
+              </ul>
+              <div class="txt-bg"></div>
+              <div class="txt">
+                <ul>
+                  {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
+                  <li>
+                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                  </li>
+                  {{end}}
+                </ul>
+              </div>
+              <ul class="num"><li><a></a></li><li><a></a></li><li><a></a></li><li><a></a></li></ul>
+            </div>
+            <div class="hotsell">
+              <div class="hd">
+                <h2>大家都喜欢<i class="new"><img src="/static/spider/template/blue/new.png" alt="大家都喜欢"/></i></h2>
+              </div>
+              <div class="bd">
+                <ul>
+                  {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "view DESC" }}
+                    <li>
+                      <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="pic">
+                        <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                      </a>
+                      <p><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+                    </li>
+                  {{end}}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="rightbox">
+            <div class="col home_col">
+              {{range $i, $e := .cate}}
+                {{if lt $i 4 }}
+                   <div class="item">
+                      <div class="hd">
+                        <h2>{{$e.Name}}</h2>
+                        <span><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">更多&gt;&gt;</a></span>
+                      </div>
+                      <div class="bd">
+                         {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+                            <div class="view">
+                              <div class="thumb">
+                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                  <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                                </a>
+                              </div>
+                              <div class="desc">
+                                <h3><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h3>
+                                <p>{{$item.Description}}</p>
+                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="v">已经被查看{{$item.View}}次</a> </div>
+                            </div>
+                         {{end}}
+                        <ul>
+                          {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "RAND()" }}
+                             <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a> <em>被查看{{$item.View}}次</em> </li>
+                          {{end}}
+                        </ul>
+                      </div>
+                </div>
+                {{end}}
+              {{end}}
+            </div>
+          </div>
+        </div>
+        <div class="project_mod">
+          <div class="head">
+            <div class="lft">
+              {{range $i, $e := .cate}}
+                 {{if eq $i 0}}<strong>{{$e.Name}}</strong>{{end}}
+              {{end}}
+              <div class="type">
+                {{range $i, $e := .cate}}
+                   {{if gt $i 0}}<a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a><span>|</span>{{end}}
+                {{end}}
+              </div>
+            </div>
+            {{range $i, $e := .cate}}
+              {{if eq $i 0}}<span class="more"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">更多&gt;&gt;</a></span> {{end}}
+            {{end}}
+          </div>
+          <div class="body">
+            {{range $i, $e := .cate}}
+              {{if eq $i 0}}
+                  <div class="lft">
+                    {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "id DESC" }}
+                      <div class="thumb">
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                          <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                        </a>
+                      </div>
+                    {{end}}
+                    <ul class="list">
+                      {{range $index, $item := spiderArticleLimit $e.Id 6 "class=" "id DESC" }}
+                          <li>
+                            <i>{{date $item.UpdateTime "Y-m-d"}}</i>
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a><em>被查看{{$item.View}}次</em>
+                          </li>
+                      {{end}}
+                    </ul>
+                  </div>
+              {{end}}
+            {{end}}
+            <div class="rgt">
+              {{range $i, $e := .cate}}
+                {{if eq $i 1 2}}
+                  <div class="item  {{if eq $i 2}}last{{end}} clearfix">
+                    {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "id DESC" }}
+                      <div class="thumb">
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                          <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                        </a>
+                      </div>
+                    {{end}}
+                    <ul class="list">
+                      {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "id DESC" }}
+                        <li>
+                          <i>{{date $item.UpdateTime "Y-m-d"}}</i>
+                          <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a><em>被查看{{$item.View}}次</em>
+                        </li>
+                      {{end}}
+                    </ul>
+                  </div>
+                {{end}}
+              {{end}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{template "spider/template/blue/base/footer.html" .}}
+  </div>
+</body>
+</html>

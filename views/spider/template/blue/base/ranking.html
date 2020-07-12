@@ -1,0 +1,23 @@
+<div class="item" style="width: 100%;margin-right:0;height: auto;">
+    <div class="hd" style="background-size: 100%;"><h2>点击排行</h2></div>
+    <div class="bd">
+        {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "view DESC" }}
+            <div class="view">
+                <div class="thumb">
+                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                        <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                    </a>
+                </div>
+                <div class="desc">
+                    <h3><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h3>
+                    <p>{{$item.Description}}</p>
+                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="v">已经被查看{{$item.View}}次</a> </div>
+            </div>
+        {{end}}
+        <ul>
+            {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "view DESC" }}
+                <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a> <em>被查看{{$item.View}}次</em> </li>
+            {{end}}
+        </ul>
+    </div>
+</div>

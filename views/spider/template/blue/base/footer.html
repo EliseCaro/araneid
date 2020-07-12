@@ -1,0 +1,12 @@
+<div class="bk30"></div>
+<div class="footer">
+    <div class="wrapper">
+        <div class="hot-word">
+            <strong>友情链接：</strong>
+            {{range $i, $e := .links}}
+                <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a>
+            {{end}}
+        </div>
+        <p>{{str2html $.arachnid.Statistics}}</p>
+    </div>
+</div>

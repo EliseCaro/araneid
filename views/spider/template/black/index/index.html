@@ -16,7 +16,7 @@
           <div class="newstitle"><span><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">+</a></span><b>{{$e.Name}}</b></div>
           <ul class="newsli">
             {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
-              <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+              <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 40}}</a></li>
             {{end}}
           </ul>
         </div>
@@ -35,7 +35,7 @@
       {{end}}
       <div class="blank"></div>
       <div class="blogs">
-        {{range $index, $item := spiderArticleLimit $.cids 20 "class IN " "id DESC" }}
+        {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "id DESC" }}
           <div class="bloglist">
             <h2><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h2>
             <p>{{$item.Description}}</p>
