@@ -17,40 +17,28 @@
               <div class="title2">
                 <h3>{{$e.Name}}</h3>
               </div>
-              <dl>
-                <dt>
-                    <a href="#">
-                        <img src="images/educatcon.jpg" width="108" height="71" alt=""/>
-                    </a>
-                </dt>
-                <dd>
-                  <h3>2017学业生涯网学历文凭...</h3>
-                  <span>2017年度学业生涯网学历文凭提升方案已经发布，更多内容点击... <a href="#">>></a></span> </dd>
-              </dl>
-              <ul>
-                <li><a href="#">
-                    <h3>努力提高自己的学历一直是奋斗的...</h3>
-                    <span>16/09/01</span></a></li>
-                <li><a href="#">
-                    <h3>如何正确选择适合自己的方法途径呢?</h3>
-                    <span>16/08/30</span></a></li>
-                <li><a href="#">
-                    <h3>中专在读：可以通过单招考试考入...</h3>
-                    <span>16/08/29</span></a></li>
-                <li><a href="#">
-                    <h3>中在读的话还是建议老老实实的... </h3>
-                    <span>16/08/28</span></a></li>
-                <li><a href="#">
-                    <h3>努力提高自己的学历一直是奋斗的...</h3>
-                    <span>16/09/01</span></a></li>
-                <li><a href="#">
-                    <h3>如何正确选择适合自己的方法途径呢?</h3>
-                    <span>16/08/30</span></a></li>
-                <li><a href="#">
-                    <h3>中专在读：可以通过单招考试考入...</h3>
-                    <span>16/08/29</span></a></li>
-                <div class="c"></div>
-              </ul>
+                {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "RAND()" }}
+                  <dl>
+                    <dt>
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                            <img src="{{randomCover $.model.Id}}" width="108" height="71" alt="{{$item.Title}}"/>
+                        </a>
+                    </dt>
+                    <dd>
+                      <h3>{{substr $item.Title 0 16}}</h3>
+                      <span>{{substr $item.Description 0 30}}...<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">>></a></span> </dd>
+                  </dl>
+                {{end}}
+                  <ul>
+                      {{range $index, $item := spiderArticleLimit $e.Id 7 "class=" "RAND()" }}
+                        <li>
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                <h3>{{substr $item.Title 0 16}}...</h3>
+                                <span>{{date $item.UpdateTime "Y/m/d"}}</span>
+                            </a>
+                        </li>
+                      {{end}}
+                  </ul>
             </div>
             <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}" class="moretu"></a>
           </div>

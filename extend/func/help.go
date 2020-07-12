@@ -47,7 +47,7 @@ func RandomCover(model int) string {
 		names = append(names, fi.Name())
 	}
 	n := names[rand.Intn(len(names)-1)]
-	return fmt.Sprintf(`//static/spider/module/%d/%s`, model, n)
+	return fmt.Sprintf(`/static/spider/module/%d/%s`, model, n)
 }
 
 /** 解析debug为bool格式 **/

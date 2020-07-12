@@ -1,3 +1,5 @@
+.banpage{width:100%;height:250px;overflow:hidden;background-size:cover;background-repeat: no-repeat;background-position: center;}
+.banpage a,.banbank a{ display:block; width:100%; height:100%;}
 /*education start*/
 .educat,.educat2{ width:390px; height:399px; float:left;border-top:0px; background-color:#ffffff; position:relative;}
 .educat{ background:url(./bgedu.gif) no-repeat left top; }
@@ -62,9 +64,9 @@
 .newspic a:hover{ border-color:#158d91;}
 
 /*新闻推荐*/
-.reconew{ width:270px; position:absolute; top:-27px; right:0px; background-color:#f1f1f1; padding-bottom:25px;}
-.reconew .title h3{ background:url(./reconewsh2.gif) no-repeat left top; height:70px; color:#ffffff; font-size:22px; font-weight:normal; line-height:70px; text-indent:27px;}
-.recnewlist{ width:215px; height:auto; margin:0px auto;}
+.reconew{ width:320px; position:relative; background-color:#f1f1f1; margin-bottom:25px;}
+.reconew .title h3{ background:url(./reconewsh2.gif) no-repeat left top;background-size: 100%; height:70px; color:#ffffff; font-size:22px; font-weight:normal; line-height:70px; text-indent:27px;}
+.recnewlist{ width:93%; height:auto; margin:0px auto;overflow: hidden}
 .recnewlist li{ width:100%; float:left;}
 .recnewlist li a{ display:block;border-bottom:1px dashed #d2d6e0;width:197px; height:49px; line-height:48px; font-size:14px; color:#333333; background:url(./reconlia.png) no-repeat left center; padding-left:16px;}
 .recnewlist li:last-child a{ border:0px;}
@@ -72,9 +74,12 @@
 /*新闻列表页面*/
 
 /*分页*/
-.pages{ width:800px; height:auto; float:left; margin-bottom:70px;}
-.pages a{ display:block; width:52px; height:52px; color:#525252; font-size:14px; line-height:52px; text-align:center; float:left; margin-right:8px; background:url(./pagesa.png) no-repeat left center;}
-.pages a:hover{ background-position:right center;}
+.pagination { text-align: center;padding-top: 8px;color: #666; width: 100% !important;overflow: hidden; clear: both; margin: 0 0 0; }
+.pagination li{width:auto !important;display: inline;border-bottom:0;min-height: auto;border-bottom: 0;padding-bottom:0;margin: 0 5px}
+.pagination a { color: #666; padding: 5px 10px; background: #F7F7F7; display: inline-block; }
+.pagination a:hover, .pagination > b {color:#3690cf;background: #1C2327; }
+.pagination > b { padding: 5px 10px; }
+.pagination .active a{color: #FFF;background: #1C2327;}
 /*分页*/
 
 /*新闻详情页*/
@@ -83,40 +88,3 @@
 .title3 span{ display:block; width:100%; height:auto; line-height:48px; color:#999999; font-size:14px; height:35px; margin-bottom:24px;}
 .newsconent{ width:100%; height:auto; float:left; padding:42px 0px; font-size:14px; color:#333333; line-height:30px;}
 /*新闻详情页*/
-
-.banbank{ width:100%; height:160px; overflow:hidden;}
-.about{ width:1200px; height:auto; margin:0px auto; margin-top:70px; font-size:16px; line-height:30px; color:#333333; margin-bottom:60px;}
-.about h3,.about h4{ color:#333333; display:block; width:100%; font-weight:900;}
-.about h3{ font-size:30px; line-height:48px;}
-.about h4{ font-size:24px;line-height:40px;}
-
-/*vip 详情*/
-.title2 .search,.viperson,.vipertxt dl{ width:100%; height:auto; float:left; overflow:hidden;}
-.search dt{ float:left; width:500px;height:56px;}
-.search dt .inputTxt{width:486px; height:54px; border:1px solid #dbdbdb;margin:0px; color:#999999;}
-.search dd{ float:left; width:60px;height:56px;}
-.search dd .inputImg{width:60px; height:56px;border:none; background:url(../images/searchBg.jpg) no-repeat center center; margin:0px; padding:0px; margin-left:14px;}
-
-.vipform span{ display:block; width:100%; float:left; color:#999999; font-size:14px; line-height:36px; margin-bottom:26px;}
-.viperson{ height:268px;margin-top:58px;}
-.vipperimg{ width:179px; height:268px;}
-.vipertxt{ width:650px; height:194px; border:1px solid #eeeeee; border-left:0px; background-color:#f9f9f9; padding:33px 0px 39px 50px;}
-.vipertxt dl dd,.vipertxt dl dt,.vipertxt p{ float:left; font-size:14px; color:#666666; line-height:36px;}
-.vipertxt dl dd{ width:140px; margin-right:22px;}
-.vipertxt dl dt{ width:220px;}
-.vipertxt p{ line-height:34px; margin-top:6px;}
-
-.logintitle{ width:768px; height:69px; background-color:#f8f8f8; border:1px solid #e6e6e6; margin-bottom:35px; line-height:69px; color:#333333; font-size:16px; padding-left:30px;}
-.logintitle span{ font-weight:bold; color:#158d91; padding:0px 3px;}
-.downcon{ margin-top:15px; width:328px; height:67px; float:left; position:relative;}
-.ewm{ width:328px; height:auto; float:left; position:absolute; bottom:73px; display:none;}
-.down{ display:block; width:328px; height:67px; color:#ffffff; font-size:16px; line-height:67px; background:url(../images/down.png) #158d91 no-repeat 50px center; text-indent:100px; margin-bottom:6px;}
-.down:hover{ color:#ffffff;}
-
-
-
-
-
-
-
-

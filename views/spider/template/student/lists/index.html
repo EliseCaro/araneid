@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{$.cateInfo.Title}}</title>
+    <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+    <meta name="description" content="{{$.cateInfo.Description}}" />
+    <link rel="stylesheet" type="text/css" href="/static/spider/template/student/common.css?v={{$.versions}}">
+    <link rel="stylesheet" type="text/css" href="/static/spider/template/student/yahua.css?v={{$.versions}}">
+    <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+  </head>
+  <body>
+    {{template "spider/template/student/base/header.html" .}}
+    <div class="banpage" style="background-image:url({{randomCover $.model.Id}});">
+      <a title="{{$.cateInfo.Name}}" href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}"></a>
+    </div>
+    <div class="newslist mt40" style="overflow:hidden;padding-top: 0">
+      <div class="l mb40">
+        <ul class="list_news">
+          {{range $index, $elem := .pageList.List}}
+            <li style="padding-bottom: 29px;">
+              <div class="newtxt">
+                <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
+                  <h3>{{$elem.Title}} &nbsp;&nbsp;<span>{{date $elem.UpdateTime "Y/m/d"}}</span></h3>
+                  <p>{{$elem.Description}}</p>
+                </a>
+              </div>
+            </li>
+          {{end}}
+        </ul>
+        <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+      </div>
+      <div class="r">
+        {{template "spider/template/student/base/ranking.html" .}}
+        {{template "spider/template/student/base/recom.html" .}}
+      </div>
+    </div>
+    {{template "spider/template/student/base/footer.html" .}}
+  </body>
+</html>

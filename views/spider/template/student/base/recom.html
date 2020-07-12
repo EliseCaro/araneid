@@ -1,0 +1,8 @@
+<div class="reconew">
+    <div class="title"><h3>猜你喜欢</h3></div>
+    <ul class="recnewlist">
+        {{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "view DESC" }}
+            <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+        {{end}}
+    </ul>
+</div>
