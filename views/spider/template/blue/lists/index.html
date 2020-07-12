@@ -34,7 +34,7 @@
                 {{range $index, $elem := .pageList.List}}
                   <li style="width: 210px;margin-right: 15px;">
                     <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="pic">
-                      <img style="width: 100%;height: 130px" src="{{randomCover "blue" $.model.Id}}" alt="{{$elem.Title}}">
+                      <img style="width: 100%;height: 130px" src="{{randomCover $.model.Id}}" alt="{{$elem.Title}}">
                     </a>
                     <p><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></p>
                 </li>

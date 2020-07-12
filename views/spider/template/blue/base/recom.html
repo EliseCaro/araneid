@@ -5,7 +5,7 @@
             <div class="view">
                 <div class="thumb">
                     <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
-                        <img src="{{randomCover "blue" $.model.Id}}" alt="{{$item.Title}}"/>
+                        <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                     </a>
                 </div>
                 <div class="desc">

@@ -39,15 +39,15 @@ func Long2IP(intIP uint32) net.IP {
 }
 
 /** 获取随机封面图 **/
-func RandomCover(template string, model int) string {
-	path := fmt.Sprintf(`./static/spider/template/%s/image/%d`, template, model)
+func RandomCover(model int) string {
+	path := fmt.Sprintf(`./static/spider/module/%d`, model)
 	rd, _ := ioutil.ReadDir(path)
 	var names []string
 	for _, fi := range rd {
 		names = append(names, fi.Name())
 	}
 	n := names[rand.Intn(len(names)-1)]
-	return fmt.Sprintf(`/static/spider/template/%s/image/%d/%s`, template, model, n)
+	return fmt.Sprintf(`//static/spider/module/%d/%s`, model, n)
 }
 
 /** 解析debug为bool格式 **/

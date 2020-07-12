@@ -153,6 +153,6 @@ func configStrToHtml(s string) template.HTML {
 }
 
 /** 获取随机图片 **/
-func randomCover(template string, model int) string {
-	return _func.RandomCover(template, model)
+func randomCover(model int) string {
+	return _func.RandomCover(model)
 }
