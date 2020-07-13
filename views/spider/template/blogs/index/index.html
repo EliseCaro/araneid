@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{$.domain.title}}</title>
+    <meta name="keywords" content="{{$.domain.keywords}}" />
+    <meta name="description" content="{{$.domain.description}}" />
+    <link rel="stylesheet" href="/static/spider/template/blogs/plugin/layui/css/layui.css?v={{$.versions}}">
+    <link rel="stylesheet" href="/static/spider/template/blogs/common.css?v={{$.versions}}">
+</head>
+<body>
+    {{template "spider/template/blogs/base/header.html" .}}
+    <div class="main-content item-box">
+        <div class="item-left">
+            <div class="layui-row carousel-box">
+                <div class="layui-carousel" id="my-carousel" lay-filter="carouselimg">
+                    <div carousel-item>
+                        {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
+                            <div>
+                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                    <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                                </a>
+                            </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            <div class="three-pane-box layui-row layui-col-space20">
+                {{range $index, $item := spiderArticleLimit $.cids 3 "class IN " "id DESC" }}
+                    <div class="layui-col-md4">
+                        <div class="col-nei-div cursor-pointer pane-radius">
+                            <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                        </div>
+                        <div class="item-text-div bottom-radius layui-elip">
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="cursor-pointer">{{$item.Title}}</a>
+                        </div>
+                     </div>
+                {{end}}
+            </div>
+            {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "id DESC" }}
+                <div class="one-sharetype-box layui-row box-bg">
+                    <div class="layui-col-md5">
+                        <div class="item-img-box">
+                            <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                        </div>
+                    </div>
+                    <div class="oneshare-content layui-col-md7">
+                        <h3 class="font-bold2 font-size3 font-color4 layui-elip">{{$item.Title}}</h3>
+                        <div class="oneshare-msg-row layui-row font-color3 font-size1">
+                            <p>{{$item.Description}}</p>
+                        </div>
+                        <div class="look-more layui-row">
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="layui-btn layui-btn-sm pane-radius subject-color">查看更多</a>
+                        </div>
+                    </div>
+                </div>
+            {{end}}
+            <div class="zonhe-row layui-row">
+                <div class="item-title-row layui-row row-align">
+                    <div class="layui-col-md10 row-align font-size2">
+                        <div class="left-icon"></div>
+                        <span class="font-bold">近期更新</span>
+                    </div>
+                </div>
+                <div class="zonhe-ul-row layui-row">
+                    <ul>
+                        {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "id DESC" }}
+                            <li>
+                                <div class="zonhe-libox layui-row subject-second-color pane-radius">
+                                    <div class="zonheimg-box-parent layui-col-md3">
+                                        <div class="zonhe-li-imgbox pane-radius">
+                                            <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                                            <div class="lable-box">{{substr $item.Title 0 10}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="zonheimg-box-parent2 layui-col-md9">
+                                        <div class="zonhe-lititle layui-row layui-elip">
+                                            <h3><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h3>
+                                        </div>
+                                        <div class="zonhe-limsg layui-row">
+                                            <p>{{$item.Description}}</p>
+                                        </div>
+                                        <div class="zonhe-param layui-row">
+                                            发布时间：{{date $item.UpdateTime "Y-m-d"}}<span><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">查看全文</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {{end}}
+                    </ul>
+                </div>
+            </div>
+            <div class="type-module layui-row layui-col-space20">
+                {{range $i, $e := .cate}}
+                    <div class="layui-col-md6">
+                    <div class="type-module-item layui-row">
+                        <div class="item-title-row layui-row row-align">
+                            <div class="layui-col-md10 row-align font-size2">
+                                <div class="left-icon"></div>
+                                <span class="font-bold">{{$e.Name}}</span>
+                            </div>
+                            <div class="layui-col-md2 text-align-right text-underline only-pointer font-size1 font-color3">
+                                <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">更多</a>
+                            </div>
+                        </div>
+                        <div class="item-ul-row layui-row">
+                            <ul>
+                                {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
+                                    <li>
+                                        <div class="ul-li-div layui-row row-align">
+                                            <div class="layui-col-md9 layui-elip font-size2">&gt; &nbsp;<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" >{{$item.Title}}</a></div>
+                                            <div class="layui-col-md3 text-align-right font-size1 font-color3">{{date $item.UpdateTime "Y-m-d"}}</div>
+                                        </div>
+                                    </li>
+                                {{end}}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            <div class="youqing-url layui-row">
+                <div class="item-title-row layui-row row-align">
+                    <div class="layui-col-md10 row-align font-size2">
+                        <div class="left-icon"></div>
+                        <span class="font-bold">友情链接</span>
+                    </div>
+                </div>
+                <div class="url-box layui-row">
+                    {{range $i, $e := .links}}
+                        <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        <div class="item-right">
+            <div class="sharetype-list-box box-bg" style="margin-top: 0">
+                <div class="pane-title layui-row row-align">
+                    <img alt="猜你喜欢" src="/static/spider/template/blogs/lingxing.png">
+                    <span>猜你喜欢</span>
+                </div>
+                <ul>
+                    {{range $index, $item := spiderArticleLimit $.cids 30 "class IN " "RAND()" }}
+                         <li class="list-item layui-row layui-elip">
+                             <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                         </li>
+                    {{end}}
+                </ul>
+            </div>
+            <div class="sharetype-list-box box-bg">
+                <div class="pane-title layui-row row-align">
+                    <img alt="为你推荐" src="/static/spider/template/blogs/lingxing.png">
+                    <span>为你推荐</span>
+                </div>
+                <ul>
+                    {{range $index, $item := spiderArticleLimit $.cids 30 "class IN " "RAND()" }}
+                        <li class="list-item layui-row layui-elip">
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                        </li>
+                    {{end}}
+                </ul>
+            </div>
+            <div class="sharetype-list-box box-bg">
+                <div class="pane-title layui-row row-align">
+                    <img alt="热门排行" src="/static/spider/template/blogs/lingxing.png">
+                    <span>热门排行</span>
+                </div>
+                <ul>
+                    {{range $index, $item := spiderArticleLimit $.cids 28 "class IN " "view DESC" }}
+                        <li class="list-item layui-row layui-elip">
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                        </li>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {{template "spider/template/blogs/base/footer.html" .}}
+    <script src="/static/spider/template/blogs/plugin/layui/layui.js"></script>
+    <script>layui.use(['carousel','jquery','layer'], function(){layui.carousel.render({elem:'#my-carousel',width:'100%',height:'300px',anim:'fade',interval:5000});});</script>
+</body>
+</html>

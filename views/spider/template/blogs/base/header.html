@@ -1,0 +1,16 @@
+<header>
+    <div class="layui-row subject-color nav-row">
+        <div class="main-content nav-menu">
+            <div class="layui-row">
+                <div class="layui-col-md12 menu-box">
+                    <ul class="menu-ul">
+                        <a href="/" title="{{$.domain.name}}"><li>首页</li></a>
+                        {{range $i, $e := .cate}}
+                            <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}"><li>{{$e.Name}}</li></a>
+                        {{end}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

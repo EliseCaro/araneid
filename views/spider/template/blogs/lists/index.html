@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{$.cateInfo.Title}}</title>
+    <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+    <meta name="description" content="{{$.cateInfo.Description}}" />
+    <link rel="stylesheet" href="/static/spider/template/blogs/plugin/layui/css/layui.css?v={{$.versions}}">
+    <link rel="stylesheet" href="/static/spider/template/blogs/common.css?v={{$.versions}}">
+    <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+</head>
+<body>
+    {{template "spider/template/blogs/base/header.html" .}}
+    <div class="main-content item-box">
+        <div class="item-type">
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">栏目简介</div>
+                <div class="jianjie-p layui-row">{{$.cateInfo.Description}}</div>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">猜你喜欢</div>
+                <ul class="column-item-ul">
+                    {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">热门排行</div>
+                <ul class="column-item-ul">
+                    {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "view DESC" }}
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">友情链接</div>
+                <ul class="column-item-ul">
+                    {{range $i, $e := .links}}
+                         <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}"><li>{{$e.Title}}<span>前往</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+        </div>
+        <div class="item-list">
+            <ul class="article-ul">
+                {{range $index, $elem := .pageList.List}}
+                    <li>
+                        <div class="article-list-row layui-row">
+                            <div class="article-li-title layui-row">
+                                <h3 class="font-bold layui-elip"><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3>
+                            </div>
+                            <div class="article-li-msg"><p>{{$elem.Description}}</p></div>
+                            <div class="article-li-param layui-row">
+                                {{date $elem.UpdateTime "Y-m-d"}}<span>阅读数：{{$elem.View}}</span>
+                            </div>
+                        </div>
+                    </li>
+                {{end}}
+            </ul>
+            <div class="page-box layui-row">
+                <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+            </div>
+        </div>
+    </div>
+    {{template "spider/template/blogs/base/footer.html" .}}
+</body>
+</html>

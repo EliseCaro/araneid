@@ -29,7 +29,7 @@
 					<span class="label">分类：</span>
 					<span class="caty marginright20"><a title="{{$.cateInfo.Name}}" href="{{urlfor "Lists.Index" ":id" $.cateInfo.Id ":page" 0}}">{{$.cateInfo.Name}}</a></span>
 					<span class="label">浏览量：</span>
-					<span class="caty marginright20">0</span>
+					<span class="caty marginright20">{{spiderArticleView $.detail.Oid}}</span>
 				</div>
 				<div class="content"><div id="newsContent">{{str2html $.detail.Context}}</div></div>
 			</div>

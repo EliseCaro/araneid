@@ -1,0 +1,78 @@
+@charset "utf-8";
+@media only screen and (max-width: 768px) {
+    header{
+        display: none;
+    }
+    .item-type{
+        display: none;
+    }
+    .main-content{
+        width: 100%;
+    }
+    .item-list{
+        width: 100%;
+        float: none;
+        margin-top: 0px;
+    }
+    .textarea-box textarea{
+        width: 93%;
+    }
+    .article-param{
+        height: auto;
+        line-height: 26px;
+    }
+    .article-prompt{
+        height: auto;
+        line-height: 20px;
+    }
+    .article-content-box h1{
+        text-align: left;
+    }
+    .footer-box{
+        text-align: center;
+        height: auto;
+        line-height: 30px;
+    }
+}
+@media only screen and (max-width: 480px) {
+    header{
+        display: none;
+    }
+    .item-type{
+        display: none;
+    }
+    .main-content{
+        width: 100%;
+    }
+    .item-list{
+        width: 100%;
+        float: none;
+        margin-top: 0px;
+    }
+    .textarea-box textarea{
+        width: 91%;
+    }
+    .article-param{
+        height: auto;
+        line-height: 26px;
+    }
+    .article-prompt{
+        height: auto;
+        line-height: 20px;
+    }
+    .article-content-box h1{
+        text-align: left;
+    }
+    .footer-box{
+        text-align: center;
+        height: auto;
+        line-height: 30px;
+    }
+    .login-bg{
+        display: none;
+    }
+    .login-box{
+        margin-top: 50px;
+        width: 80%;
+    }
+}

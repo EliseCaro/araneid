@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{$.detail.Title}}</title>
+    <meta name="keywords" content="{{$.detail.Keywords}}" />
+    <meta name="description" content="{{$.detail.Description}}" />
+    <link rel="stylesheet" href="/static/spider/template/blogs/plugin/layui/css/layui.css?v={{$.versions}}">
+    <link rel="stylesheet" href="/static/spider/template/blogs/common.css?v={{$.versions}}">
+</head>
+<body>
+    {{template "spider/template/blogs/base/header.html" .}}
+    <div class="main-content item-box">
+        <div class="item-type">
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">文章简介</div>
+                <div class="jianjie-p layui-row">{{$.detail.Description}}</div>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">猜你喜欢</div>
+                <ul class="column-item-ul">
+                    {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">热门排行</div>
+                <ul class="column-item-ul">
+                    {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "view DESC" }}
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+            <div class="column-item layui-row">
+                <div class="column-item-title layui-row subject-color font-color1 font-bold">友情链接</div>
+                <ul class="column-item-ul">
+                    {{range $i, $e := .links}}
+                        <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}"><li>{{$e.Title}}<span>前往</span></li></a>
+                    {{end}}
+                </ul>
+            </div>
+
+        </div>
+        <div class="item-list">
+            <div class="article-content-box layui-row">
+                <h1>{{$.detail.Title}}</h1>
+                <div class="article-param layui-row">
+                    发布于：{{date $.detail.UpdateTime "Y-m-d H:i:s"}}
+                    <span>阅读数：{{spiderArticleView $.detail.Oid}}</span>
+                    <span class="hz-span layui-badge layui-bg-gray">{{$.cateInfo.Title}}</span>
+                </div>
+                <div class="news_about"><strong>简介：</strong>{{$.detail.Description}}</div>
+                <article>{{str2html $.detail.Context}}</article>
+            </div>
+        </div>
+    </div>
+    {{template "spider/template/blogs/base/footer.html" .}}
+</body>
+</html>
