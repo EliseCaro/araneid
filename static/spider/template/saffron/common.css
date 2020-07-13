@@ -1,0 +1,36 @@
+*{padding: 0px;margin: 0px;font-size: 14px;color: #000}
+a{color: #000;text-decoration: none;}
+a:hover{color: #ff6700}
+body{background: #e3e3e3!important;}
+.z{float: left;}
+.y{float: right;}
+.wp{width: 1200px;margin: auto;}
+.margintop10{margin-top: 10px;}
+.now{color: #ff6700;}
+.marginright30{margin-right: 30px;}
+.marginright20{margin-right: 20px;}
+.bnt{display: inline-block;padding: 5px 10px;background: #1c8220;border:1px solid #06640a;border-radius: 5px;color: #fff;}
+.bnt:hover{background: #06640a;color: #fff;}
+
+.header{width: 100%;background: #fff;border-bottom: 1px solid #ccc;margin-bottom: 20px;background: #fff;}
+.header .topinfobox{height: 30px;line-height: 30px;border-bottom: 1px solid #f0eeee;}
+.header .topinfobox *{font-size: 12px;}
+.header .topinfobox a{margin-left: 10px;}
+.header .contentbox{height: 60px;padding: 20px 0px;}
+.header .contentbox .logo a img{height: 60px;}
+.header .navs{width: 100%;height: 50px;line-height: 47px;background: #ff6700;}
+.header .navs ul{}
+.header .navs ul li{display: inline-block;padding: 0px 30px;line-height: 50px;height: 47px;}
+.header .navs ul li:hover{border-bottom: 3px solid #e3e3e3;}
+.header .navs ul li a{color: #fff;font-size: 16px;}
+
+.ad1200{width: 1200px;height: 80px;margin-bottom: 20px;}
+.ad1200 a img{width: 1200px;height: 80px;}
+.ader{width: 590px;height: 80px;margin-bottom: 20px;}
+.ader a img{width: 590px;height: 80px;}
+.adheadery{width: 800px;height: 60px;}
+.adheadery img{width: 800px;height: 60px;}
+
+.footer{background: #000;color: #fff;width: 100%;text-align: center;padding: 10px 0px;}
+.footer p{color: #fff;line-height: 30px;}
+.footer p a{color: #ffffff !important;}

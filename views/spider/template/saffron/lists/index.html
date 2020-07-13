@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{$.cateInfo.Title}}</title>
+    <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+    <meta name="description" content="{{$.cateInfo.Description}}" />
+    <link rel="stylesheet" href="/static/spider/template/saffron/common.css?v={{$.versions}}">
+    <link rel="stylesheet" href="/static/spider/template/saffron/caty.css?v={{$.versions}}">
+    <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+</head>
+<body>
+    {{template "spider/template/saffron/base/header.html" .}}
+    <div class="bodybox wp">
+        <div class="z leftbox">
+            <div class="zindex">
+                <a href="/" title="{{$.domain.name}}" class="re">首页</a>
+                <span class="re">/</span>
+                <a title="{{$.cateInfo.Name}}" href="{{urlfor "Lists.Index" ":id" $.cateInfo.Id ":page" 0}}">{{$.cateInfo.Name}}</a>
+            </div>
+            <div class="listbox">
+                {{range $index, $elem := .pageList.List}}
+                 <div class="item">
+                    <div class="z">
+                        <div class="subject">
+                            <b><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></b>
+                        </div>
+                        <div class="infos">
+                            <span class="label">作者：</span>
+                            <span class="author marginright30">管理员</span>
+                            <span class="label">发布时间：</span>
+                            <span class="time now marginright30">{{date $elem.UpdateTime "Y-m-d"}}</span>
+                            <span class="label">分类：</span>
+                            <span class="caty marginright30"><a title="{{$.cateInfo.Name}}" href="{{urlfor "Lists.Index" ":id" $.cateInfo.Id ":page" 0}}">{{$.cateInfo.Name}}</a></span>
+                        </div>
+                    </div>
+                    <div class="y right">
+                        <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="bnt">阅读原文>></a>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            <div class="pages">
+                <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+            </div>
+        </div>
+        <div class="y rightbox">
+            {{template "spider/template/saffron/base/ranking.html" .}}
+            {{template "spider/template/saffron/base/recom.html" .}}
+        </div>
+    </div>
+    {{template "spider/template/saffron/base/footer.html" .}}
+</body>
+</html>

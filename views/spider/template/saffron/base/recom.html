@@ -1,0 +1,10 @@
+<div class="listbox">
+    <div class="title">猜你喜欢</div>
+    <div class="list">
+        {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "RAND()" }}
+            <div class="item">
+                <span><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></span>
+            </div>
+        {{end}}
+    </div>
+</div>

@@ -1,0 +1,25 @@
+.bodybox{overflow: hidden;}
+.bodybox .leftbox{width: 800px;}
+.bodybox .leftbox .zindex{height: 30px;line-height: 30px;background: #fff;margin-bottom: 20px;padding-left: 10px;}
+.bodybox .leftbox .zindex .re{color: #999;}
+.bodybox .leftbox .detail{padding: 10px;background: #fff;}
+.bodybox .leftbox .detail .subject{height: 50px;line-height: 50px;text-align-last: center;font-size: 22px;}
+.bodybox .leftbox .detail .infos{width: 100%;height: 30px;line-height: 30px;color: #666;text-align: center;border-bottom: 1px solid #e3e0e0;}
+.bodybox .leftbox .detail .infos .label{color: #999;}
+
+.bodybox .rightbox{width: 380px;}
+.bodybox .rightbox .listbox{background: #fff;padding: 10px;margin-bottom: 20px;}
+.bodybox .rightbox .listbox .title{padding-left: 10px;border-left: 5px solid #ff6700;height: 30px;line-height: 30px;font-size: 16px;margin-bottom: 10px;}
+.bodybox .rightbox .listbox .title b{color: #ff6700;padding: 0px 5px;}
+.bodybox .rightbox .listbox .title span{color: #999;}
+.bodybox .rightbox .listbox .list{}
+.bodybox .rightbox .listbox .list .item{height: 30px;line-height: 30px;overflow: hidden;}
+.bodybox .rightbox .listbox .list .item a{color: #666;}
+.bodybox .rightbox .listbox .list .item a:hover{color: #ff6700;}
+#newsContent{
+    line-height: 25px;
+    padding: 15px 10px;
+}
+#newsContent p{
+    line-height: 25px;
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{{$.domain.title}}</title>
+	<meta name="keywords" content="{{$.domain.keywords}}" />
+	<meta name="description" content="{{$.domain.description}}" />
+	<link rel="stylesheet" href="/static/spider/template/saffron/common.css?v={{$.versions}}">
+	<link rel="stylesheet" href="/static/spider/template/saffron/index.css?v={{$.versions}}">
+	<link rel="stylesheet" href="/static/spider/template/saffron/plugins/css/style.css?v={{$.versions}}">
+</head>
+<body>
+	{{template "spider/template/saffron/base/header.html" .}}
+	<div class="bodybox wp">
+		<div class="listbox">
+			<div class="title">猜你喜欢</div>
+			<div class="article">
+				{{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "RAND()" }}
+					<div class="list">
+					<span class="z">
+						<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+					</span>
+						<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
+					</div>
+				{{end}}
+			</div>
+		</div>
+		<div class="listbox">
+			<div id="wrapper">
+				<div id="slider-wrap">
+		      	  	<ul id="slider">
+						{{range $i, $e := .cate}}
+							<li data-color="#1abc9c">
+								<a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">
+									<img src="{{randomCover $.model.Id}}" alt="{{$e.Name}}"/>
+								</a>
+							</li>
+						{{end}}
+		          	</ul>
+		          	<div class="btns" id="next"><i class="fa fa-arrow-right"></i></div>
+		          	<div class="btns" id="previous"><i class="fa fa-arrow-left"></i></div>
+		          	<div id="counter"></div>
+		          	<div id="pagination-wrap"><ul></ul></div>
+		      	</div>
+			</div>
+			<div class="title margintop10">所有分类</div>
+			<div class="catylist">
+				{{range $i, $e := .cate}}
+					{{if gt $i 1 }}
+						<div class="item">
+							<a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a>
+						</div>
+					{{end}}
+				{{end}}
+			</div>
+		</div>
+		<div class="listbox noright">
+			<div class="title">热门排行</div>
+			<div class="article">
+				{{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "view DESC" }}
+					<div class="list">
+					<span class="z">
+						<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+					</span>
+						<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
+					</div>
+				{{end}}
+			</div>
+		</div>
+		{{range $i, $e := .cate}}
+			<div class="listbox list_box_cate">
+				<div class="title">{{$e.Name}}</div>
+				<div class="article">
+					{{range $index, $item := spiderArticleLimit $e.Id 16 "class=" "id DESC" }}
+						<div class="list">
+							<span class="z">
+								<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+							</span>
+							<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
+						</div>
+					{{end}}
+				</div>
+			</div>
+		{{end}}
+		<div class="listbox noright">
+			<div class="title">友情链接</div>
+			<div class="article">
+				{{range $i, $e := .links}}
+					<div class="list">
+						<span class="z">
+							<a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{substr $e.Title 0 18}}</a>
+						</span>
+						<a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">
+							<span class="y now">查看友链</span>
+						</a>
+					</div>
+				{{end}}
+			</div>
+		</div>
+	</div>
+	{{template "spider/template/saffron/base/footer.html" .}}
+</body>
+<script type="text/javascript" src="/static/spider/template/saffron/plugins/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="/static/spider/template/saffron/plugins/js/slide.js"></script>
+</html>

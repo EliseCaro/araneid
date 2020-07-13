@@ -1,0 +1,20 @@
+.bodybox{}
+.bodybox .listbox{width: 363.9px;background: #fff;display: inline-block;margin-bottom: 20px;padding: 10px;height: 512px;overflow: hidden;}
+.bodybox .noright{margin-right: 0px!important;}
+.bodybox .listbox .title{padding-left: 10px;border-left: 5px solid #ff6700;height: 30px;line-height: 30px;font-size: 16px;margin-bottom: 10px;}
+.bodybox .listbox .title b{color: #ff6700;padding: 0px 5px;}
+.bodybox .listbox .title span{color: #999;}
+.bodybox .listbox .catylist{}
+.bodybox .listbox .catylist .item{margin-bottom: 10px;margin-right: 10px;width: 176.9px;height: 38px;float: left;}
+.bodybox .listbox .catylist a{display: inline-block;width: 176.9px;height: 38px;border: 1px solid #ccc;line-height: 38px;text-align: center;}
+.bodybox .listbox .article{overflow: hidden;}
+.bodybox .listbox .article .list{height: 30px;width: 360px;line-height: 30px;}
+.bodybox .listbox .article .list .z{width: 300px;overflow: hidden;position: absolute;z-index: 2;}
+.bodybox .listbox .article .list .y{color: #999;}
+.bodybox .listbox .article .list .now{color: #ff6700;}
+.bodybox .listbox .catylist .item:nth-child(2n+0){
+    margin-right: 0;
+}
+.list_box_cate:nth-child(3n+0){
+    margin-right: 0px!important;
+}
