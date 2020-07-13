@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{$.detail.Title}}</title>
+    <meta name="keywords" content="{{$.detail.Keywords}}" />
+    <meta name="description" content="{{$.detail.Description}}" />
+    <link href="/static/spider/template/green/inside.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+{{template "spider/template/green/base/header.html" .}}
+<div class="wap">
+    <div class="main3">
+    	<div class="left">
+            {{range $i, $e := .cate}}
+                {{if gt $i 1 }}{{if lt $i 4 }}
+                    <div class="a12">
+                        <div class="info">
+                            <div class="title">{{$e.Name}}</div>
+                            <div class="more"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">MORE+</a></div>
+                        </div>
+                        <div class="content">
+                            <ul>
+                                {{range $index, $item := spiderArticleLimit $e.Id 10 "class=" "RAND()" }}
+                                    <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                {{end}}
+                            </ul>
+                        </div>
+                    </div>
+                {{end}}{{end}}
+            {{end}}
+        </div>
+         <div class="right">
+            <div class="b11">
+                <div class="info">
+                    <div class="title">{{$.detail.Title}}</div>
+                    <div class="more"><a href="/" title="{{$.domain.name}}">返回主页 ></a> {{$.cateInfo.Name}}</div>
+                </div>
+                <div class="content">{{str2html $.detail.Context}}</div>
+            </div>
+         </div>
+    </div>
+ </div>
+{{template "spider/template/green/base/footer.html" .}}
+</body>
+</html>

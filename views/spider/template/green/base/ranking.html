@@ -1,0 +1,12 @@
+<div class="news3">
+    <div class="info">
+        <div class="title">热门排行</div>
+    </div>
+    <div class="content">
+        <ul class="ne7">
+            {{range $index, $item := spiderArticleLimit $.cids 20 "class IN " "view DESC" }}
+                <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+            {{end}}
+        </ul>
+    </div>
+</div>

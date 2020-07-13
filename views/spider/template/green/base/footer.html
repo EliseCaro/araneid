@@ -1,0 +1,9 @@
+<div class="bottom">
+    <div class="hot-word">
+        <strong>友情链接：</strong>
+        {{range $i, $e := .links}}
+            <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a>
+        {{end}}
+    </div>
+    {{str2html $.arachnid.Statistics}}
+</div>

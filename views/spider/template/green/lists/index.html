@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{{$.cateInfo.Title}}</title>
+        <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+        <meta name="description" content="{{$.cateInfo.Description}}" />
+        <link href="/static/spider/template/green/inside.css?v={{$.versions}}" rel="stylesheet" type="text/css" />
+        <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+        <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+        <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+    </head>
+    <body>
+        {{template "spider/template/green/base/header.html" .}}
+        <div class="wap">
+            <div class="main3">
+                <div class="left">
+                    {{range $i, $e := .cate}}
+                        {{if lt $i 2 }}
+                            <div class="a12">
+                                <div class="info">
+                                    <div class="title">{{$e.Name}}</div>
+                                    <div class="more"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">MORE+</a></div>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        {{range $index, $item := spiderArticleLimit $e.Id 6 "class=" "RAND()" }}
+                                           <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                        {{end}}
+                                    </ul>
+                                 </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+                <div class="right">
+                    <div class="b11">
+                        <div class="info">
+                            <div class="title">{{$.cateInfo.Name}}</div>
+                            <div class="more"><a href="/" title="{{$.domain.name}}">返回主页 ></a> {{$.cateInfo.Name}}</div>
+                        </div>
+                        <div class="content1">
+                              <ul class="newst">
+                                  {{range $index, $elem := .pageList.List}}
+                                     <li><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"><span>{{date $elem.UpdateTime "Y-m-d"}}</span>{{$elem.Title}}</a></li>
+                                  {{end}}
+                              </ul>
+                              <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+         </div>
+        {{template "spider/template/green/base/footer.html" .}}
+    </body>
+</html>

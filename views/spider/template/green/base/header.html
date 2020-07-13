@@ -1,0 +1,22 @@
+<div class="rz_bw_nav001_m">
+    <div class="nav">
+        <div class="nav_main">
+            <ul id="nav_all">
+                <li><a href="/" title="{{$.domain.name}}">首页</a></li>
+                <li class="spale">
+                    <img alt="{{$.domain.name}}" src="/static/spider/template/green/navbg2.jpg" width="2" height="61" />
+                </li>
+                {{range $i, $e := .cate}}
+                    {{if lt $i 9 }}
+                        <li>
+                            <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a>
+                        </li>
+                        <li class="spale">
+                            <img alt="{{$e.Name}}" src="/static/spider/template/green/navbg2.jpg" width="2" height="61" />
+                        </li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+    </div>
+</div>

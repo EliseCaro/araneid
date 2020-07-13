@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{{$.domain.title}}</title>
+        <meta name="keywords" content="{{$.domain.keywords}}" />
+        <meta name="description" content="{{$.domain.description}}" />
+        <link href="/static/spider/template/green/style.css?v={{$.versions}}" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        {{template "spider/template/green/base/header.html" .}}
+        <div class="wap">
+            <div class="main1">
+                <div class="left">
+                    {{range $i, $e := .cate}}
+                        {{if eq $i 0 }}
+                            <div class="a01">
+                                <div class="info">
+                                    <div class="title">{{$e.Name}}</div>
+                                    <div class="more"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">MORE+</a></div>
+                                </div>
+                                <div class="content">
+                                    {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "RAND()" }}
+                                        <div class="mnt01">
+                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                                 <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}" width="260" height="186" />
+                                            </a>
+                                        </div>
+                                    {{end}}
+                                    <div class="mnt02">
+                                        <div class="bt01">
+                                            <h1 class="w01"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></h1>
+                                            <p class="w02">{{$e.Description}}</p>
+                                        </div>
+                                        <div class="bt02">
+                                          <ul class="news1">
+                                            {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
+                                                <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+                                            {{end}}
+                                          </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                    <div class="a02">
+                        {{range $i, $e := .cate}}
+                            <div class="news2" style="margin-bottom:15px">
+                                <div class="info">
+                                    <div class="title">{{$e.Name}}</div>
+                                    <div class="more"><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">MORE+</a></div>
+                                </div>
+                                 <div class="bt03">
+                                  <ul class="ne1">
+                                      {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
+                                        <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+                                      {{end}}
+                                  </ul>
+                                 </div>
+                            </div>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="right">
+                    {{template "spider/template/green/base/ranking.html" .}}
+                    {{template "spider/template/green/base/recom.html" .}}
+                </div>
+            </div>
+        </div>
+        {{template "spider/template/green/base/footer.html" .}}
+    </body>
+</html>
