@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0">
+        <title>{{$.detail.Title}}</title>
+        <meta name="keywords" content="{{$.detail.Keywords}}" />
+        <meta name="description" content="{{$.detail.Description}}" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 769px)" href="/static/spider/template/fitment/layout.css?v={{$.versions}}" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 320px) and (max-device-width: 768px)" href="/static/spider/template/fitment/mblayout.css?v={{$.versions}}" />
+        <script src="/static/spider/template/fitment/jquery-3.5.0.min.js"></script>
+        <script src="/static/spider/template/fitment/swiper.min.js"></script>
+        <script src="/static/spider/template/fitment/application.js?v={{$.versions}}"></script>
+    </head>
+    <body>
+        {{template "spider/template/fitment/base/header.html" .}}
+        <section class="indexSection">
+        <div class="leftBar">
+            <div class="itemliHead mb0 breadnav">
+                <h4>当前位置：</h4>
+                <div class="address"> <a href="/">主页</a>>
+                    <a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Id ":page" 0}}" title="{{$.cateInfo.Name}}">{{$.cateInfo.Name}}</a>
+                </div>
+            </div>
+            <article>
+                <h2>{{$.detail.Title}}</h2>
+                <div class="arcother">
+                    日期：{{date $.detail.UpdateTime "Y-m-d H:i:s"}}&emsp;阅览：{{spiderArticleView $.detail.Oid}}
+                </div>
+                <div class="description">{{$.detail.Description}}</div>
+                <div class="content">{{str2html $.detail.Context}}</div>
+                <div class="itemlist">
+                    {{range $i, $e := .cate}}
+                        {{if lt $i 8}}
+                            <div class="itemli">
+                                <div class="itemliHead">
+                                    <h3>{{$e.Name}}</h3>
+                                    <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">更多 <em>+</em></a>
+                                </div>
+                                <div class="itemBody">
+                                    {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
+                                        <div class="itemDl">
+                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                                                <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
+                                            </a>
+                                            <dl class="dllist">
+                                                <dt>
+                                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
+                                                </dt>
+                                                <dd class="dd">
+                                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
+                                                    <span>{{$item.View}}</span>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    {{end}}
+                                </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+            </article>
+        </div>
+        <div class="rightBar">
+            {{template "spider/template/fitment/base/ranking.html" .}}
+            {{template "spider/template/fitment/base/recom.html" .}}
+        </div>
+    </section>
+        {{template "spider/template/fitment/base/footer.html" .}}
+    </body>
+</html>

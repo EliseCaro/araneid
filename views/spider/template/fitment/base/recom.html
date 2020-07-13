@@ -1,0 +1,8 @@
+<div class="itemliHead">
+    <h5>猜你喜欢</h5>
+</div>
+<ul class="tjnews">
+    {{range $index, $item := spiderArticleLimit $.cids 30 "class IN " "RAND()" }}
+        <li> <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+    {{end}}
+</ul>

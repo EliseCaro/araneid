@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0">
+        <title>{{$.domain.title}}</title>
+        <meta name="keywords" content="{{$.domain.keywords}}" />
+        <meta name="description" content="{{$.domain.description}}" />
+        <link rel="stylesheet" href="/static/spider/template/fitment/swiper.min.css">
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 769px)" href="/static/spider/template/fitment/layout.css?v={{$.versions}}" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 320px) and (max-device-width: 768px)" href="/static/spider/template/fitment/mblayout.css?v={{$.versions}}" />
+        <script src="/static/spider/template/fitment/jquery-3.5.0.min.js"></script>
+        <script src="/static/spider/template/fitment/swiper.min.js"></script>
+        <script src="/static/spider/template/fitment/application.js?v={{$.versions}}"></script>
+    </head>
+    <body>
+        {{template "spider/template/fitment/base/header.html" .}}
+        <section class="indexSection">
+            <div class="leftBar">
+                <div class="banner">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            {{range $index, $item := spiderArticleLimit $.cids 3 "class IN " "id DESC" }}
+                                 <div class="swiper-slide">
+                                     <a class="swiper-slide-href" style="background-image: url('{{randomCover $.model.Id}}')" href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"></a>
+                                 </div>
+                            {{end}}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+                </div>
+                <div class="itemlist">
+                    {{range $i, $e := .cate}}
+                     <div class="itemli">
+                        <div class="itemliHead">
+                            <h3>{{$e.Name}}</h3>
+                            <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">更多 <em>+</em></a>
+                        </div>
+                        <div class="itemBody">
+                            {{range $index, $item := spiderArticleLimit $e.Id 2 "class=" "RAND()" }}
+                                <div class="itemDl">
+                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                                        <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
+                                    </a>
+                                    <dl class="dllist">
+                                        <dt>
+                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
+                                        </dt>
+                                        <dd class="dd">
+                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
+                                            <span>{{$item.View}}</span>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="hotNewslist">
+                    <div class="itemliHead">
+                        <h3>最新发布</h3>
+                    </div>
+                    {{range $index, $item := spiderArticleLimit $.cids 6 "class IN " "id DESC" }}
+                        <div class="itemDl">
+                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                            <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
+                        </a>
+                        <dl class="dllist">
+                            <dt><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a></dt>
+                            <dd class="des">
+                                <p>{{$item.Description}}</p>
+                            </dd>
+                            <dd class="dd">
+                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看更多</a>
+                                <span>{{$item.View}}</span>
+                            </dd>
+                        </dl>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            <div class="rightBar">
+                {{template "spider/template/fitment/base/ranking.html" .}}
+                {{template "spider/template/fitment/base/recom.html" .}}
+            </div>
+        </section>
+        <div class="flinks">
+            友情链接：
+            {{range $i, $e := .links}}
+                <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a>
+            {{end}}
+        </div>
+        {{template "spider/template/fitment/base/footer.html" .}}
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0">
+        <title>{{$.cateInfo.Title}}</title>
+        <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+        <meta name="description" content="{{$.cateInfo.Description}}" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 769px)" href="/static/spider/template/fitment/layout.css?v={{$.versions}}" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width: 320px) and (max-device-width: 768px)" href="/static/spider/template/fitment/mblayout.css?v={{$.versions}}" />
+        <script src="/static/spider/template/fitment/jquery-3.5.0.min.js"></script>
+        <script src="/static/spider/template/fitment/swiper.min.js"></script>
+        <script src="/static/spider/template/fitment/application.js?v={{$.versions}}"></script>
+        <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+        <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+    </head>
+    <body>
+    {{template "spider/template/fitment/base/header.html" .}}
+    <section class="indexSection">
+        <div class="leftBar">
+            <div class="itemliHead mb0 breadnav">
+                <h4>当前位置：</h4>
+                <div class="address">
+                    <a href="/">主页</a>>
+                    <a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Id ":page" 0}}" title="{{$.cateInfo.Name}}">{{$.cateInfo.Name}}</a>
+                </div>
+            </div>
+            <div class="hotNewslist listArticle">
+                {{range $index, $elem := .pageList.List}}
+                 <div class="itemDl">
+                    <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"  class="imgLeftbox">
+                        <img src="{{randomCover $.model.Id}}" alt="{{$elem.Title}}">
+                    </a>
+                    <dl class="dllist">
+                        <dt>
+                            <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="title">{{$elem.Title}}</a>
+                        </dt>
+                        <dd class="des">
+                            <p>{{$elem.Description}}</p>
+                        </dd>
+                        <dd class="dd">
+                            <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="tag">查看详情</a>
+                            <div class="arcinfo">
+                                点击：{{$elem.View}}次 &emsp;&emsp;发布：{{date $elem.UpdateTime "Y-m-d"}}
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                {{end}}
+                <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+            </div>
+        </div>
+        <div class="rightBar">
+            {{template "spider/template/fitment/base/ranking.html" .}}
+            {{template "spider/template/fitment/base/recom.html" .}}
+        </div>
+    </section>
+    {{template "spider/template/fitment/base/footer.html" .}}
+    </body>
+</html>
