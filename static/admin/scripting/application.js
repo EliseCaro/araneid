@@ -142,6 +142,7 @@ const application = {
         },
         requestBack:function (message,status,urls) {
             application.cms.loader("hide");
+            layer.closeAll();
             const requestStatus = application.cms.requestStatus;
             const option = {
                  title : (status === true) ? requestStatus.successTitle : requestStatus.errorTitle,
