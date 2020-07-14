@@ -27,7 +27,13 @@ const application = {
              if(typeof(One) !== "undefined" && typeof(One) !== undefined){
                  One.loader(type)
              }
+
          },
+        layerClose:function(){
+            if(typeof(layer) !== "undefined" && typeof(layer) !== undefined){
+                parent === self ? layer.closeAll() : parent.layer.closeAll();
+            }
+        },
          alert:function (option,func) {
              parent === self ? swal(option) : parent.swal(option);
              setTimeout(function(){
@@ -142,7 +148,7 @@ const application = {
         },
         requestBack:function (message,status,urls) {
             application.cms.loader("hide");
-            layer.closeAll();
+            application.cms.layerClose();
             const requestStatus = application.cms.requestStatus;
             const option = {
                  title : (status === true) ? requestStatus.successTitle : requestStatus.errorTitle,
