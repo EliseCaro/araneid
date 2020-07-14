@@ -116,6 +116,37 @@ func (c *Users) Edit() {
 	c.Data["avatar"] = c.adjunctService.FindId(_info.Avatar)
 }
 
+// @router /users/profile [get,post]
+func (c *Users) Profile() {
+	item, _ := c.usersService.Find(c.UserInfo.Id)
+	if c.IsAjax() {
+		oldImage := item.Avatar
+		if err := c.ParseForm(&item); err != nil {
+			c.Fail(&controllers.ResultJson{Message: "解析错误: " + error.Error(err)})
+		}
+		if pwd := c.GetString("password", ""); pwd != "" {
+			verify := c.GetString("verify_password", "")
+			if verify != pwd {
+				c.Fail(&controllers.ResultJson{Message: "密码双重验证失败～"})
+			}
+			hash, _ := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
+			item.Password = string(hash)
+		}
+		isExtend := c.usersService.IsExtendUsername(item.Username, item.Id)
+		if isExtend == true {
+			c.Fail(&controllers.ResultJson{Message: "该用户名已经存在！！"})
+		}
+		if _, err := orm.NewOrm().Update(&item); err == nil {
+			_ = c.adjunctService.Inc(item.Avatar, oldImage)
+			c.Succeed(&controllers.ResultJson{Message: "修改资料成功啦！"})
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "修改资料失败，请稍后再试！"})
+		}
+	}
+	c.Data["info"] = item
+	c.Data["avatar"] = c.adjunctService.FindId(item.Avatar)
+}
+
 // @router /users/status [post]
 func (c *Users) Status() {
 	status, _ := c.GetInt8(":status", 0)
