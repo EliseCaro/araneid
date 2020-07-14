@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+    <title>{{$.cateInfo.Title}}</title>
+    <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+    <meta name="description" content="{{$.cateInfo.Description}}" />
+    <link rel="stylesheet" href="/static/spider/template/science/info.css?v={{$.versions}}" />
+    <script src="/static/spider/template/article/jquery-1.8.3.min.js?v={{$.versions}}" ></script>
+    <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+    <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+    <style>
+        #nav li a.on1 { background-position:center 30px }
+    </style>
+</head>
+<body>
+    {{template "spider/template/science/base/header.html" .}}
+    <div class="w" id="main">
+        <div id="info-left" class="bor">
+            <h3 class="title wei">您的位置：<a href='/' title="{{$.domain.name}}">首页</a> > {{$.cateInfo.Name}}</h3>
+            <div id="list-description">
+                <p>{{$.cateInfo.Description}}</p>
+            </div>
+            <ul id="list">
+                {{range $index, $elem := .pageList.List}}
+                     <li>
+                         <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
+                             {{$elem.Title}}
+                         </a>
+                         <span>(被访问 {{$elem.View}} 次)</span>
+                     </li>
+                {{end}}
+            </ul>
+            <div class="pages">
+                <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+            </div>
+        </div>
+        <div id="info-right">
+            <div class="a pb5x"></div>
+            {{template "spider/template/science/base/ranking.html" .}}
+        </div>
+    </div>
+    {{template "spider/template/science/base/footer.html" .}}
+</body>
+</html>

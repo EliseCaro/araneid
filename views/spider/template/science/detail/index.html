@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>{{$.detail.Title}}</title>
+    <meta name="keywords" content="{{$.detail.Keywords}}" />
+    <meta name="description" content="{{$.detail.Description}}" />
+    <link rel="stylesheet" href="/static/spider/template/science/info.css?v={{$.versions}}" />
+    <style type="text/css">
+         #nav li a.on1 { background-position:center 30px }
+    </style>
+</head>
+<body>
+    {{template "spider/template/science/base/header.html" .}}
+    <div class="w" id="main">
+        <div id="info-left" class="bor">
+            <div id="Current">您的位置：<a href=''>首页</a> > <a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Name}}">{{$.cateInfo.Name}}</a> > </div>
+            <h1 class="title">{{$.detail.Title}}</h1>
+            <div id="Article"><p><strong>{{$.detail.Title}}</strong></p>{{str2html $.detail.Context}}</div>
+            <div class="up-down">
+                {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+                    <p>上一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+                {{end}}
+                {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+                    <p>下一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+                {{end}}
+            </div>
+        </div>
+        <div id="info-right">
+            <div class="a pb5x"></div>
+            {{template "spider/template/science/base/ranking.html" .}}
+            <div class="a ptb5x"></div>
+            {{template "spider/template/science/base/recom.html" .}}
+        </div>
+    </div>
+    {{template "spider/template/science/base/footer.html" .}}
+</body>
+</html>
