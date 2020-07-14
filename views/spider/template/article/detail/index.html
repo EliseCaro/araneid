@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{$.detail.Title}}</title>
+  <meta name="keywords" content="{{$.detail.Keywords}}" />
+  <meta name="description" content="{{$.detail.Description}}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/spider/template/article/base.css?v={{$.versions}}" rel="stylesheet">
+  <link href="/static/spider/template/article/m.css?v={{$.versions}}" rel="stylesheet">
+  <script src="/static/spider/template/article/jquery-1.8.3.min.js?v={{$.versions}}" ></script>
+  <script src="/static/spider/template/article/comm.js?v={{$.versions}}"></script>
+  <!--[if lt IE 9]>
+  <script src="/static/spider/template/article/modernizr.js?v={{$.versions}}"></script>
+  <![endif]-->
+</head>
+<body>
+  {{template "spider/template/article/base/header.html" .}}
+  <article>
+    <div class="lbox">
+      <div class="content_box whitebg">
+        <h2 class="htitle">
+          <span class="con_nav">您现在的位置是：
+            <a href="/" title="{{$.domain.name}}">网站首页</a>>
+            <a title="{{$.cateInfo.Name}}" href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}">{{$.cateInfo.Name}}</a>
+          </span>{{$.cateInfo.Name}}
+        </h2>
+        <h1 class="con_tilte">{{$.detail.Title}}</h1>
+        <p class="bloginfo">
+          <span>{{date $.detail.UpdateTime "Y-m-d"}}</span>
+          <span>{{spiderArticleView $.detail.Oid}}人已围观</span>
+        </p>
+        <p class="con_info"><b>简介</b>{{$.detail.Description}}</p>
+        <div class="con_text">
+          {{str2html $.detail.Context}}
+          <div class="nextinfo">
+            {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+              <p>上一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+            {{end}}
+            {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
+              <p>下一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+            {{end}}
+          </div>
+        </div>
+      </div>
+      <div class="whitebg">
+        <h2 class="htitle">相关文章</h2>
+        <ul class="otherlink">
+          {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "RAND()" }}
+              <li>
+                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+          {{end}}
+        </ul>
+      </div>
+    </div>
+    <div class="rbox">
+      {{template "spider/template/article/base/paihang.html" .}}
+      {{template "spider/template/article/base/wenzi.html" .}}
+      {{template "spider/template/article/base/whitebg.html" .}}
+    </div>
+  </article>
+  {{template "spider/template/article/base/footer.html" .}}
+</body>
+</html>

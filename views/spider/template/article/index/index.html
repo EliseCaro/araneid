@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{$.domain.title}}</title>
+  <meta name="keywords" content="{{$.domain.keywords}}" />
+  <meta name="description" content="{{$.domain.description}}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/spider/template/article/base.css?v={{$.versions}}" rel="stylesheet">
+  <link href="/static/spider/template/article/m.css?v={{$.versions}}" rel="stylesheet">
+  <script src="/static/spider/template/article/jquery-1.8.3.min.js?v={{$.versions}}" ></script>
+  <script src="/static/spider/template/article/comm.js?v={{$.versions}}"></script>
+  <!--[if lt IE 9]>
+  <script src="/static/spider/template/article/modernizr.js?v={{$.versions}}"></script>
+  <![endif]-->
+</head>
+<body>
+  {{template "spider/template/article/base/header.html" .}}
+  <article>
+    <div class="lbox">
+      <div class="banbox">
+        <div class="banner">
+          <div id="banner" class="fader">
+            {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
+              <li class="slide" >
+                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                  <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                </a>
+              </li>
+            {{end}}
+            <div class="fader_controls">
+              <div class="page prev" data-target="prev"></div>
+              <div class="page next" data-target="next"></div>
+              <ul class="pager_list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="headline">
+        <ul>
+          {{range $index, $item := spiderArticleLimit $.cids 2 "class IN " "id DESC" }}
+            <li>
+              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                <span>{{$item.Title}}</span>
+              </a>
+            </li>
+          {{end}}
+        </ul>
+      </div>
+      <div class="clearblank"></div>
+      <div class="tab_box whitebg">
+        <div class="tab_buttons">
+          <ul>
+            {{range $i, $e := .cate}}
+              {{if lt $i 6 }}<li class="{{if eq $i 0}}newscurrent{{end}}">{{$e.Name}}</li>{{end}}
+            {{end}}
+          </ul>
+        </div>
+        <div class="newstab">
+          {{range $i, $e := .cate}}
+            {{if lt $i 6 }}
+              <div class="newsitem">
+                <div class="newspic">
+                  <ul>
+                      {{range $index, $item := spiderArticleLimit $e.Id 2 "class=" "RAND()" }}
+                          <li>
+                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                              <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
+                              <span>{{$item.Title}}</span>
+                            </a>
+                          </li>
+                      {{end}}
+                  </ul>
+                </div>
+                <ul class="newslist">
+                  {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
+                    <li>
+                      <i></i>
+                      <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                      <p>{{$item.Description}}</p>
+                    </li>
+                  {{end}}
+                </ul>
+            </div>
+            {{end}}
+          {{end}}
+        </div>
+      </div>
+      <div class="zhuanti whitebg">
+        <h2 class="htitle">随机推荐</h2>
+        <ul>
+          {{range $index, $item := spiderArticleLimit $.cids 6 "class IN " "id DESC" }}
+            <li>
+              <i class="ztpic">
+                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/></a>
+              </i>
+              <b>{{$item.Title}}</b>
+              <span>{{$item.Description}}</span>
+              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="readmore">文章阅读</a>
+            </li>
+          {{end}}
+       </ul>
+      </div>
+      <div class="whitebg bloglist">
+        <h2 class="htitle">最新内容</h2>
+        <ul>
+          {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "id DESC" }}
+            <li>
+              <h3 class="blogtitle">
+                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+              </h3>
+              <p class="blogtext">{{$item.Description}}</p>
+              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
+              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
+            </li>
+          {{end}}
+        </ul>
+      </div>
+    </div>
+    <div class="rbox">
+      {{template "spider/template/article/base/paihang.html" .}}
+      {{template "spider/template/article/base/tuijian.html" .}}
+      {{template "spider/template/article/base/wenzi.html" .}}
+      {{template "spider/template/article/base/whitebg.html" .}}
+    </div>
+  </article>
+  {{template "spider/template/article/base/footer.html" .}}
+</body>
+</html>

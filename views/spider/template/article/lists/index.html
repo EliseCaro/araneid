@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{$.cateInfo.Title}}</title>
+  <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+  <meta name="description" content="{{$.cateInfo.Description}}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/spider/template/article/base.css?v={{$.versions}}" rel="stylesheet">
+  <link href="/static/spider/template/article/m.css?v={{$.versions}}" rel="stylesheet">
+  <script src="/static/spider/template/article/jquery-1.8.3.min.js?v={{$.versions}}" ></script>
+  <script src="/static/spider/template/article/comm.js?v={{$.versions}}"></script>
+  <!--[if lt IE 9]>
+  <script src="/static/spider/template/article/modernizr.js?v={{$.versions}}"></script>
+  <![endif]-->
+  <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+  <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+</head>
+<body>
+  {{template "spider/template/article/base/header.html" .}}
+  <article>
+    <div class="lbox">
+      <div class="whitebg lanmu">
+        <img src="{{randomCover $.model.Id}}" alt="{{$.cateInfo.Name}}"/>
+        <h1>{{$.cateInfo.Name}}</h1>
+        <p>{{substr $.cateInfo.Description 0 90}}...</p>
+      </div>
+      <div class="whitebg bloglist">
+        <h2 class="htitle">最新内容</h2>
+        <ul>
+          {{range $index, $item := .pageList.List}}
+            <li>
+              <h3 class="blogtitle">
+                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+              </h3>
+              <p class="blogtext">{{$item.Description}}</p>
+              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
+              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
+            </li>
+          {{end}}
+        </ul>
+        <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+      </div>
+    </div>
+    <div class="rbox">
+      {{template "spider/template/article/base/paihang.html" .}}
+      {{template "spider/template/article/base/wenzi.html" .}}
+      {{template "spider/template/article/base/whitebg.html" .}}
+    </div>
+  </article>
+  {{template "spider/template/article/base/footer.html" .}}
+</body>
+</html>
