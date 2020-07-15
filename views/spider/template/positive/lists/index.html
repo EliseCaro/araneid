@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+ <title>{{$.cateInfo.Title}}</title>
+ <meta name="keywords" content="{{$.cateInfo.Keywords}}" />
+ <meta name="description" content="{{$.cateInfo.Description}}" />
+ <link rel="stylesheet" rev="stylesheet" href="/static/spider/template/positive/Qeeke6.css?v={{$.versions}}" type="text/css" media="screen" />
+ <script src="/static/spider/template/black/jquery.min.js?v={{$.versions}}"></script>
+ <script src="/static/spider/template/black/paginator.min.js?v={{$.versions}}"></script>
+ <script src="/static/spider/template/black/common.min.js?v={{$.versions}}"></script>
+</head>
+<body>
+ <div id="Container">
+  {{template "spider/template/positive/base/header.html" .}}
+  <div id="MainBody">
+   <div id="MainBodyTop"></div>
+   <div id="content">
+    <div class="left_box">
+     您当前位置：
+     <a href="/" title="{{$.domain.name}}">首页</a> &raquo;
+     <a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Title}}">{{$.cateInfo.Name}}</a>
+    </div>
+    <div class="Post">
+     {{range $index, $elem := .pageList.List}}
+       <div class="PostHead">
+         <div class="post_date">
+           <div class="post_month">Oct</div>
+           <div class="post_day">{{date $elem.UpdateTime "d"}}</div>
+         </div>
+         <span><h3><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3></span>
+       </div>
+       <div class="PostContent1">{{$elem.Description}}</div>
+     {{end}}
+     <div class="pager">
+       <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>
+     </div>
+    </div>
+   </div>
+   <div id="SideBar">
+    {{template "spider/template/positive/base/ranking.html" .}}
+    {{template "spider/template/positive/base/recom.html" .}}
+   </div>
+  </div>
+  {{template "spider/template/positive/base/footer.html" .}}
+ </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="zh-CN">
+<head>
+    {{str2html $.domain.headCode}}
+    <title>{{$.domain.title}}</title>
+    <meta name="keywords" content="{{$.domain.keywords}}" />
+    <meta name="description" content="{{$.domain.description}}" />
+    <link rel="stylesheet" rev="stylesheet" href="/static/spider/template/positive/Qeeke6.css?v={{$.versions}}" type="text/css" media="screen" />
+</head>
+<body>
+    <div id="Container">
+        {{template "spider/template/positive/base/header.html" .}}
+        <div id="MainBody">
+            <div id="content">
+                <div class="Post">
+                    {{range $i, $e := .cate}}
+                        {{if eq $i 0}}
+                            <div class="cmbox">
+                                <div class="lz13Title">
+                                    <h2><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></h2>
+                                    <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}" class="more">更多&raquo;</a>
+                                </div>
+                                <ul class="cmList2">
+                                    {{range $index, $item := spiderArticleLimit $e.Id 10 "class=" "RAND()" }}
+                                        <li>
+                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                                        </li>
+                                    {{end}}
+                                </ul>
+                            </div>
+                        {{end}}
+                    {{end}}
+                    {{range $i, $e := .cate}}
+                        <div class="cmboxleft">
+                            <div class="cmTitle">
+                                <h2><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></h2>
+                                <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}" class="more">更多&raquo;</a>
+                            </div>
+                            <ul class="cmList">
+                                {{range $index, $item := spiderArticleLimit $e.Id 8 "class=" "id DESC" }}
+                                    <li>
+                                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+                                    </li>
+                                {{end}}
+                            </ul>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+            <div id="SideBar">
+                <div class="right_box">
+                    {{template "spider/template/positive/base/ranking.html" .}}
+                    {{template "spider/template/positive/base/recom.html" .}}
+                </div>
+            </div>
+        </div>
+        {{template "spider/template/positive/base/footer.html" .}}
+    </div>
+</body>
+</html>

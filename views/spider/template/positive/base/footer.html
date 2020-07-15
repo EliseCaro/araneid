@@ -1,0 +1,8 @@
+<div class="dibu">
+    <center>
+        {{range $i, $e := .links}}
+            <a target="_blank" title="{{$e.Title}}" href="{{$e.Urls}}">{{$e.Title}}</a>
+        {{end}}
+        <br />{{str2html $.arachnid.Statistics}}
+    </center>
+</div>
