@@ -94,7 +94,11 @@ func (c *Sign) Clear() {
 	path := c.GetMustString("file", "清理类型非法！")
 	config := beego.AppConfig.String(path)
 	if err := os.RemoveAll(config); err == nil {
-		c.Succeed(&controllers.ResultJson{Message: "文件已经全部删除～"})
+		if path == "sessionproviderconfig" {
+			c.Succeed(&controllers.ResultJson{Message: "会话以全部清空；请重新登录", Url: beego.URLFor("Admin.Index")})
+		} else {
+			c.Succeed(&controllers.ResultJson{Message: "文件已经全部删除～"})
+		}
 	} else {
 		c.Fail(&controllers.ResultJson{Message: "清理失败！失败原因:" + err.Error()})
 	}
