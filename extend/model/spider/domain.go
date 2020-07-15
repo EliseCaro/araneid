@@ -13,6 +13,7 @@ type Domain struct {
 	Domain      string    `orm:"column(domain);size(32);type(char);default();description(域名)" json:"domain" form:"domain" validate:"required" label:"域名"`
 	Arachnid    int       `orm:"column(arachnid);type(int);default(0);description(所属项目)" json:"arachnid" form:"arachnid" validate:"required" label:"所属项目"`
 	Keywords    string    `orm:"column(keywords);size(200);type(char);default();description(关键字)" json:"keywords" form:"keywords" validate:"required" label:"关键字"`
+	HeadCode    string    `orm:"column(head_code);size(255);type(char);default();description(头部代码)" json:"head_code" form:"head_code"`
 	Description string    `orm:"column(description);size(255);type(char);default();description(描述)" json:"description" form:"description" validate:"required" label:"描述"`
 	Template    string    `orm:"column(template);size(32);type(char);default();description(挂载模板)" json:"template" form:"template" validate:"required" label:"挂载模板"`
 	Status      int8      `orm:"column(status);type(tinyint);default(0);description(启用状态)" json:"status" form:"status"`

@@ -25,22 +25,27 @@
                         <div class="help-block pt-1 pb-1 font-size-minimum">百度推送Token；<code>留空则不推送；</code></div>
                     </div>
                 </div>
-                <div class="form-group row font-size-sm pl-2">
+                <div class="form-group row font-size-sm mb-2">
                     <label class="col-form-label font-weight-normal pr-0 pl-2" for="title">站点标题</label>
-                    <div class="col-sm-10">
-                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Title}}" id="title" type="text" name="title" placeholder="站点标题"/>
-                        <div class="help-block pt-1 pb-1 font-size-minimum">站点标题：<code>修改后在不重建缓存前将永久保留；</code></div>
+                    <div class="col-sm-4 mr-4 pl-3">
+                        <input class="form-control form-control-alt font-size-sm" value="{{$.info.Title}}" id="title" type="text" name="title" placeholder="站点标题">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">请填写站点标题；<code>必填；</code></div>
                     </div>
-                </div>
-                <div class="form-group row font-size-sm mb-0 pl-2">
-                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="template">挂载模板</label>
-                    <div class="col-sm-10">
-                        <select class="form-control form-control-alt font-size-sm" name="template" id="template">
+                    <label class="col-form-label font-weight-normal pl-3" for="template">挂载模板</label>
+                    <div class="col-sm-4">
+                        <select class="form-control form-control-alt font-size-sm" name="" id="">
                             {{range $index, $item := $.templates}}
-                                 <option {{if eq $.info.Template $item.Name}} selected {{end}} value="{{$item.Name}}">{{$item.Title}}</option>
+                                <option {{if eq $.info.Template $item.Name}} selected {{end}} value="{{$item.Name}}">{{$item.Title}}</option>
                             {{end}}
                         </select>
-                        <div class="help-block pt-1 pb-1 font-size-minimum">挂载模板：<code>修改后在不重建缓存前将永久保留；</code></div>
+                        <div class="help-block pt-1 pb-1 font-size-minimum"> 请选择挂载模板；<code>必填；</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="head_code">头部代码</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="head_code" name="head_code" rows="3" placeholder="头部代码">{{$.info.HeadCode}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">头部代码：<code>用于百度验证之类的meta标签；</code></div>
                     </div>
                 </div>
             </div>
