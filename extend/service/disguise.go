@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/spider"
@@ -106,7 +107,6 @@ func (service *DefaultDisguiseService) baiduTranslation(s string) ([]interface{}
 		"q": {s}, "from": {"auto"}, "to": {"auto"}, "appid": {appId},
 		"sign": {service.md5Value(appId + s + salt + secret)}, "salt": {salt},
 	})
-	beego.Error(result)
 	if result["error_code"] != nil && result["error_code"].(string) == "54003" || result["error_code"] != nil && result["error_code"].(string) == "54005" {
 		return service.baiduTranslation(s)
 	}
@@ -193,7 +193,7 @@ func (service *DefaultDisguiseService) handleManageBeginKeyword(disguise int, mo
 		var response *nlp.KeywordsExtractionResponse
 		request := nlp.NewKeywordsExtractionRequest()
 		_ = request.FromJsonString(service.jsonFormString(map[string]string{
-			"Text": service.contextFiltration(module.Context),
+			"Text": beego.Substr(service.contextFiltration(module.Context), 0, 10000),
 		}))
 		response, message = client.KeywordsExtraction(request)
 		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
@@ -251,6 +251,9 @@ func (service *DefaultDisguiseService) resemblanceTags(s *string, disguise int) 
 /** 开始处理 **/
 func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *spider.HandleModule) (*spider.HandleModule, error) {
 	keyword, message := service.handleManageBeginKeyword(disguise, module)
+	if message != nil {
+		logs.Error("提取关键字失败！失败原因：%s", message)
+	}
 	config, _ := service.Find(disguise)
 	module.Title = service.robotTitleManage(module.Title, disguise)
 	if config.Keyword == 1 {
@@ -277,6 +280,8 @@ func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.Han
 		response, message = client.AutoSummarization(request)
 		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
 			module.Description = *response.Response.Summary
+		} else {
+			logs.Error("提取描述失败！失败原因：%s", message)
 		}
 	}
 	object, _ := service.Find(disguise)
