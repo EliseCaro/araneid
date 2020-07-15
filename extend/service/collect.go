@@ -579,7 +579,7 @@ func (service *DefaultCollectService) pushStart(id, uid int) {
 				service.PushDetailAPI(service.pushDetail(id))
 				time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
 			} else {
-				logs.Warn("[%s]停止了发布任务器！已成功退出！", detail.Name, error.Error(err))
+				logs.Warn("[%s]停止了发布任务器！已成功退出！", detail.Name)
 				break
 			}
 		}
