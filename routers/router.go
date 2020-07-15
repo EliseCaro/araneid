@@ -15,11 +15,8 @@ func init() {
 	beego.Router("/", &index.Index{}, "get:Index")
 	beego.AddNamespace(
 		beego.NewNamespace("/index", beego.NSInclude(
-			&index.Index{},
-			&index.Spider{},
-			&index.Lists{},
-			&index.Detail{},
-			&index.Robot{},
+			&index.Index{}, &index.Spider{}, &index.Lists{},
+			&index.Detail{}, &index.Robot{},
 		)),
 	)
 
