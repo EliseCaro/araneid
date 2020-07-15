@@ -95,7 +95,9 @@ func (service *DefaultDomainService) modelIndexRandom(number, model, arachnid in
 		result = append(result, service.modelLinksRange(model, count, domain)...)
 	}
 	indexes := new(DefaultIndexesService).UsageOneIndexes(arachnid)
-	result = append(result, &map[string]string{"title": indexes.Title, "urls": indexes.Urls})
+	if indexes.Title != "" {
+		result = append(result, &map[string]string{"title": indexes.Title, "urls": indexes.Urls})
+	}
 	bytes, _ := json.Marshal(result)
 	return string(bytes)
 }
