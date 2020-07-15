@@ -33,9 +33,9 @@
                     </div>
                     <label class="col-form-label font-weight-normal pl-3" for="template">挂载模板</label>
                     <div class="col-sm-4">
-                        <select class="form-control form-control-alt font-size-sm" name="" id="">
+                        <select class="form-control form-control-alt font-size-sm" name="template" id="template">
                             {{range $index, $item := $.templates}}
-                                <option {{if eq $.info.Template $item.Name}} selected {{end}} value="{{$item.Name}}">{{$item.Title}}</option>
+                                <option {{if eq $.info.Template $item.Name}} selected {{end}} value="{{$item.Name}}">{{$item.Name}} - {{$item.Title}}</option>
                             {{end}}
                         </select>
                         <div class="help-block pt-1 pb-1 font-size-minimum"> 请选择挂载模板；<code>必填；</code></div>

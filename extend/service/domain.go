@@ -198,6 +198,13 @@ func (service *DefaultDomainService) extArticleCategory(domain int) spider.Categ
 	return maps
 }
 
+/** 获取是否存在文章 **/
+func (service *DefaultDomainService) extArticleDetail(domain int) spider.Detail {
+	var maps spider.Detail
+	_ = orm.NewOrm().QueryTable(new(spider.Detail)).Filter("domain", domain).One(&maps)
+	return maps
+}
+
 /************后台控制器*******************8/
 
 /** 更新状态 **/
@@ -219,13 +226,13 @@ func (service *DefaultDomainService) StatusArray(array []int, status int8) (e er
 func (service *DefaultDomainService) DeleteArray(array []int) (message error) {
 	_ = orm.NewOrm().Begin()
 	for _, v := range array {
-		if service.extArticleCategory(v).Id == 0 {
+		if service.extArticleCategory(v).Id == 0 && service.extArticleDetail(v).Id == 0 {
 			if _, message = orm.NewOrm().Delete(&spider.Domain{Id: v}); message != nil {
 				_ = orm.NewOrm().Rollback()
 				break
 			}
 		} else {
-			message = errors.New("该项目下还有分类缓存池；请先删除缓存池！")
+			message = errors.New("该项目下还有分类缓存池或文章缓存池！")
 			break
 		}
 	}
