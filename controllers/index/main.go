@@ -82,7 +82,7 @@ func (c *Main) mainCheckDomain(prefix, main string) (bool, string, string) {
 		return c.indexCheck()
 	} else {
 		c.spiderExtend = false
-		if adminSwitch, _ := beego.AppConfig.Int("web_site_switch"); adminSwitch == 0 {
+		if adminSwitch, _ := beego.AppConfig.Int("system_site_switch"); adminSwitch == 0 {
 			return false, "站点关闭", "站点维护中或者管理员关闭站点，请稍后查看或联系管理员～"
 		} else {
 			return true, "success!!", "success!!"
