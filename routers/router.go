@@ -19,6 +19,7 @@ func init() {
 			&index.Spider{},
 			&index.Lists{},
 			&index.Detail{},
+			&index.Robot{},
 		)),
 	)
 

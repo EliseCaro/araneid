@@ -33,6 +33,13 @@ func (service *DefaultDisguiseService) Find(id int) (spider.Disguise, error) {
 	return item, orm.NewOrm().Read(&item)
 }
 
+/** 获取输出模型 **/
+func (service *DefaultDisguiseService) KeyOne(k, s string) *spider.Disguise {
+	var items *spider.Disguise
+	_ = orm.NewOrm().QueryTable(new(spider.Disguise)).Filter("api_key", k).Filter("api_secret", s).One(&items)
+	return items
+}
+
 /** 获取所有分组 **/
 func (service *DefaultDisguiseService) Groups() []*spider.Disguise {
 	var items []*spider.Disguise
