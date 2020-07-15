@@ -299,7 +299,8 @@ func (service *DefaultCollectService) extractMatchingField(m *collect.Matching, 
 		}
 	}
 	if m.Eliminate != "" { // 剔除规定字符
-		stringHtml = service.eliminateTrim(stringHtml, []string{m.Eliminate})
+		eliminate := strings.Split(m.Eliminate, "|")
+		stringHtml = service.eliminateTrim(stringHtml, eliminate)
 	}
 	return stringHtml
 }
