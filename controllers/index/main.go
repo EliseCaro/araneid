@@ -68,7 +68,7 @@ func (c *Main) assignVolt() {
 	c.Data["cids"] = new(service.DefaultDomainService).CateForIds(cate)
 	c.Data["links"] = links
 	c.Data["model"] = c.Model
-	c.Data["domain"] = map[string]string{"name": c.DomainCache.Name, "title": c.DomainCache.Title, "keywords": c.DomainCache.Keywords, "description": c.DomainCache.Description}
+	c.Data["domain"] = map[string]string{"name": c.DomainCache.Name, "title": c.DomainCache.Title, "keywords": c.DomainCache.Keywords, "description": c.DomainCache.Description, "headCode": c.DomainCache.HeadCode}
 	c.Data["arachnid"], _ = new(service.DefaultArachnidService).Find(c.DomainCache.Arachnid)
 }
 
