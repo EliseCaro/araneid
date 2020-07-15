@@ -172,7 +172,7 @@ func (service *DefaultDictionariesService) StartPush(uid int) {
 				service.PushDetailAPI(service.pushDetail())
 				time.Sleep(time.Duration(pushTime*60*60) * time.Second)
 			} else {
-				logs.Warn("[%s]停止了发布任务器！已成功退出！", "查字词典", error.Error(err))
+				logs.Warn("[%s]停止了发布任务器！已成功退出！", "查字词典")
 				break
 			}
 		}
