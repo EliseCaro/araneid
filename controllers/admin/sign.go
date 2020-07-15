@@ -1,6 +1,5 @@
 package admin
 
-import "C"
 import (
 	"fmt"
 	"github.com/astaxie/beego"
