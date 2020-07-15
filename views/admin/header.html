@@ -1,4 +1,3 @@
-<!-- 右边侧滑动 -->
 <aside id="side-overlay" class="font-size-sm">
     <div class="content-header border-bottom">
         <a class="img-link mr-1" href="javascript:void(0)">
@@ -11,63 +10,40 @@
             <i class="fa fa-fw fa-times text-danger"></i>
         </a>
     </div>
-    <div class="content-side">
-        <div class="block block-transparent pull-x pull-t">
-            <ul class="nav nav-tabs nav-tabs-alt nav-justified" data-toggle="tabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#so-backlog"><i class="fa fa-fw fa-coffee text-gray mr-1"></i>  待办事项</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#so-setting"><i class="fa fa-fw fa-chart-line text-gray mr-1"></i> 系统设置</a>
-                </li>
-            </ul>
-            <div class="block-content tab-content overflow-hidden">
-                <div class="tab-pane pull-x fade fade-left show active" id="so-backlog" role="tabpanel">
-                    <div class="block mb-0">
-                        <div class="block-header block-header-default">
-                            <h3 class="block-title">基本设置</h3>
-                            <div class="block-options">
-                                <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle"></button>
-                            </div>
-                        </div>
-                        <div class="block-content">
-                            <form action="javascript:void(0);" method="POST" onsubmit="return false;">
-                                <div class="form-group">
-                                    <div class="custom-control custom-switch mb-1">
-                                        <input type="checkbox" class="custom-control-input" id="so-settings-check2" name="so-settings-check2" checked>
-                                        <label class="custom-control-label" for="so-settings-check2">开启或者关闭缓存</label>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+    <div class="content-side p-0">
+        <div class="block js-ecom-div-filters d-none d-xl-block">
+
+            <div class="block-header block-header-default border-bottom ">
+                <h3 class="block-title font-size-sm font-weight-normal" style="line-height: 1.75rem;"><i class="si si-settings text-muted"></i> 访问权限</h3>
+                <div class="block-options">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" data-action="{{urlfor "Config.Index"}}" class="custom-control-input" id="site_switch" name="site_switch" {{if eq 1 $.site_switch}} checked="checked" {{end}}>
+                        <label class="custom-control-label" for="site_switch"></label>
                     </div>
                 </div>
-                <div class="tab-pane pull-x fade fade-right" id="so-setting" role="tabpanel">
-                    <div class="block mb-0">
-                        <div class="block-header block-header-default">
-                            <h3 class="block-title">基本设置</h3>
-                            <div class="block-options">
-                                <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle"></button>
-                            </div>
-                        </div>
-                        <div class="block-content">
-                            <form action="javascript:void(0);" method="POST" onsubmit="return false;">
-                                <div class="form-group">
-                                    <div class="custom-control custom-switch mb-1">
-                                        <input type="checkbox" class="custom-control-input" id="so-settings-check1" name="so-settings-check1" checked>
-                                        <label class="custom-control-label" for="so-settings-check1">开启或者关闭系统</label>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+            </div>
+
+            <div class="block-header block-header-default border-bottom ">
+                <h3 class="block-title font-size-sm font-weight-normal" style="line-height: 1.75rem;"><i class="fa fa-trash-alt"></i> 日志文件</h3>
+                <div class="block-options">
+                    <button type="button" class="btn btn-sm btn-alt-danger delete_cache" data-action="{{urlfor "Sign.Clear"}}" data-file="logs_path"><i class="fa fa-trash-alt"></i> 清理</button>
+                </div>
+            </div>
+            <div class="block-header block-header-default border-bottom ">
+                <h3 class="block-title font-size-sm font-weight-normal" style="line-height: 1.75rem;"><i class="fa fa-trash-alt"></i> 缓存文件</h3>
+                <div class="block-options">
+                    <button type="button" class="btn btn-sm btn-alt-danger delete_cache" data-action="{{urlfor "Sign.Clear"}}" data-file="cache_path"><i class="fa fa-trash-alt"></i> 清理</button>
+                </div>
+            </div>
+            <div class="block-header block-header-default border-bottom ">
+                <h3 class="block-title font-size-sm font-weight-normal" style="line-height: 1.75rem;"><i class="fa fa-trash-alt"></i> 会话文件</h3>
+                <div class="block-options">
+                    <button type="button" class="btn btn-sm btn-alt-danger delete_cache" data-action="{{urlfor "Sign.Clear"}}" data-file="sessionproviderconfig"><i class="fa fa-trash-alt"></i> 清理</button>
                 </div>
             </div>
         </div>
     </div>
 </aside>
-<!-- 右边侧滑动结束 -->
-<!-- 开始左侧内容 -->
 <nav id="sidebar" aria-label="Main Navigation">
     <div class="content-header bg-white-5">
         <a class="font-w600 text-dual" href="{{urlfor "Admin.Index"}}">
@@ -140,8 +116,6 @@
         </ul>
     </div>
 </nav>
-<!-- 结束左侧内容 -->
-<!-- Header -->
 <header id="page-header">
     <div class="content-header pl-3 pr-3">
         <div class="d-flex align-items-center">
@@ -152,10 +126,7 @@
                 <a href="{{$elem.UrlValue}}" class="{{if eq $.breadcrumb_menus.Vertex $elem.Id }} btn-alt-primary {{else}} btn-dual {{end}} btn mr-2 font-weight-normal">{{$elem.Title}}</a>
             {{end}}
         </div>
-        <!-- END Left Section -->
-        <!-- Right Section -->
         <div class="d-flex align-items-center">
-            <!-- User Dropdown -->
             <div class="dropdown d-inline-block ml-2">
                 <button type="button" class="btn btn-dual" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded" src="{{.users.Avatar | fileBuyPath}}" alt="{{$.users.Nickname}}" style="width: 18px;">
@@ -176,9 +147,6 @@
                     </a>
                 </div>
             </div>
-            <!-- END User Dropdown -->
-
-            <!-- 消息中心 -->
             <div class="dropdown d-inline-block ml-2">
                 <button type="button" class="btn btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="si si-bell"></i>
@@ -208,44 +176,9 @@
                     </div>
                 </div>
             </div>
-            <!-- 结束我的消息 -->
-            <!-- Toggle Side Overlay -->
             <button type="button" class="btn btn-dual ml-2" data-toggle="layout" data-action="side_overlay_toggle">
                 <i class="fa fa-fw fa-list-ul fa-flip-horizontal"></i>
             </button>
-            <!-- END Toggle Side Overlay -->
-        </div>
-        <!-- END Right Section -->
-    </div>
-    <!-- END Header Content -->
-
-    <!-- Header Search -->
-    <div id="page-header-search" class="overlay-header bg-white">
-        <div class="content-header">
-            <form class="w-100" action="be_pages_generic_search.html" method="POST">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-                        <button type="button" class="btn btn-danger" data-toggle="layout" data-action="header_search_off">
-                            <i class="fa fa-fw fa-times-circle"></i>
-                        </button>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Search or hit ESC.." id="page-header-search-input" name="page-header-search-input">
-                </div>
-            </form>
         </div>
     </div>
-    <!-- END Header Search -->
-
-    <!-- Header Loader -->
-    <!-- Please check out the Loaders page under Components category to see examples of showing/hiding it -->
-    <div id="page-header-loader" class="overlay-header bg-white">
-        <div class="content-header">
-            <div class="w-100 text-center">
-                <i class="fa fa-fw fa-circle-notch fa-spin"></i>
-            </div>
-        </div>
-    </div>
-    <!-- END Header Loader -->
 </header>
-<!-- END Header -->

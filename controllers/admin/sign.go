@@ -7,6 +7,7 @@ import (
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/service"
+	"os"
 	"strconv"
 	"time"
 )
@@ -86,4 +87,15 @@ func (c *Sign) Chart() {
 		Message: beego.Date(time.Now(), "H:i:s"),
 		Data:    c.adminService.DashboardInitialized(),
 	})
+}
+
+// @router /sign/clear [post]
+func (c *Sign) Clear() {
+	path := c.GetMustString("file", "清理类型非法！")
+	config := beego.AppConfig.String(path)
+	if err := os.RemoveAll(config); err == nil {
+		c.Succeed(&controllers.ResultJson{Message: "文件已经全部删除～"})
+	} else {
+		c.Fail(&controllers.ResultJson{Message: "清理失败！失败原因:" + err.Error()})
+	}
 }

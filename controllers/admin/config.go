@@ -7,6 +7,7 @@ import (
 	_func "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/config"
 	"github.com/go-playground/validator"
+	"strconv"
 )
 
 type Config struct {
@@ -17,8 +18,13 @@ type Config struct {
 func (c *Config) Index() {
 	if c.IsAjax() {
 		items := make(map[string]string)
+		header := 0
 		for k, v := range c.Ctx.Request.PostForm {
-			items[k] = v[0]
+			if k != "header" {
+				items[k] = v[0]
+			} else {
+				header, _ = strconv.Atoi(v[0])
+			}
 		}
 		if err := c.configService.SaveConfig(items); err != nil {
 			c.Fail(&controllers.ResultJson{Message: error.Error(err)})
@@ -26,10 +32,11 @@ func (c *Config) Index() {
 			for k, v := range _func.CacheConfig() {
 				_ = beego.AppConfig.Set(k, v)
 			}
-			c.Succeed(&controllers.ResultJson{
-				Message: "配置已更新成功～",
-				Url:     beego.URLFor("Config.Index"),
-			})
+			urls := ""
+			if header == 0 {
+				urls = beego.URLFor("Config.Index")
+			}
+			c.Succeed(&controllers.ResultJson{Message: "配置已更新成功～", Url: urls})
 		}
 	}
 	c.Data["class"] = c.configService.ClassBuild()

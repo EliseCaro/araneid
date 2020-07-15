@@ -125,7 +125,16 @@ const application = {
             $("body").on("click",".jump_urls",function(){
                 window.location.href = $(this).data("action");
             });
-            // 更多绑定项
+            /** 站点开关 **/
+            $("#site_switch").click(function () {
+                const value  = ($(this).is(":checked") === true) ? 1 : 0
+                application.ajax.post($(this).data("action"),{site_switch:value,header:1});
+            })
+            /** 临时文件清理 **/
+            $(".delete_cache").click(function () {
+                const tags  = $(this).data("file")
+                application.ajax.post($(this).data("action"),{file:tags});
+            })
         }
     },
     ajax:{
@@ -148,7 +157,6 @@ const application = {
         },
         requestBack:function (message,status,urls) {
             application.cms.loader("hide");
-            application.cms.layerClose();
             const requestStatus = application.cms.requestStatus;
             const option = {
                  title : (status === true) ? requestStatus.successTitle : requestStatus.errorTitle,
@@ -159,6 +167,8 @@ const application = {
             application.cms.alert(option,function () {
                  if (urls) {
                      parent === self ? window.location.href = urls : parent.window.location.href = urls;
+                 }else {
+                     status && application.cms.layerClose();
                  }
             });
         },
