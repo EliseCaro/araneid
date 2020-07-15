@@ -34,8 +34,8 @@ func (service *DefaultDisguiseService) Find(id int) (spider.Disguise, error) {
 }
 
 /** 获取输出模型 **/
-func (service *DefaultDisguiseService) KeyOne(k, s string) *spider.Disguise {
-	var items *spider.Disguise
+func (service *DefaultDisguiseService) KeyOne(k, s string) spider.Disguise {
+	var items spider.Disguise
 	_ = orm.NewOrm().QueryTable(new(spider.Disguise)).Filter("api_key", k).Filter("api_secret", s).One(&items)
 	return items
 }
@@ -106,7 +106,8 @@ func (service *DefaultDisguiseService) baiduTranslation(s string) ([]interface{}
 		"q": {s}, "from": {"auto"}, "to": {"auto"}, "appid": {appId},
 		"sign": {service.md5Value(appId + s + salt + secret)}, "salt": {salt},
 	})
-	if result["error_code"] != nil && result["error_code"].(string) == "54003" {
+	beego.Error(result)
+	if result["error_code"] != nil && result["error_code"].(string) == "54003" || result["error_code"] != nil && result["error_code"].(string) == "54005" {
 		return service.baiduTranslation(s)
 	}
 	if result["error_code"] != nil {
@@ -271,8 +272,7 @@ func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.Han
 		request := nlp.NewAutoSummarizationRequest()
 		text := fmt.Sprintf(`%s。%s`,
 			service.contextFiltration(module.Description),
-			service.contextFiltration(module.Context),
-		)
+			service.contextFiltration(module.Context))
 		_ = request.FromJsonString(service.jsonFormString(map[string]string{"Text": beego.Substr(text, 0, 2000)}))
 		response, message = client.AutoSummarization(request)
 		if _, ok := message.(*tencent.TencentCloudSDKError); ok == false && message == nil {
