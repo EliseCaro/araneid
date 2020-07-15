@@ -1,0 +1,41 @@
+<script src="/static/admin/plugins/wizard/bs4/jquery.bootstrap.wizard.min.js"></script>
+<script src="/static/admin/plugins/jquery_file_upload/jquery.uploadfile.min.js?v={{$.versions}}"></script>
+<script src="/static/admin/plugins/jquery_file_upload/module_upload.js?v={{$.versions}}"></script>
+<style>
+    .ajax-file-upload-container{display: none}
+    .ajax-upload-dragdrop{width: 100% !important;}
+    .ajax-file-upload .text-center{height: 246px;}
+    .ajax-file-upload .text-center p{margin-top: 52px;}
+</style>
+<script>
+    $(document).ready(function() {
+        $('.js-wizard-simple').bootstrapWizard({
+            nextSelector: '[data-wizard="next"]',
+            previousSelector: '[data-wizard="prev"]',
+            finishSelector: '[data-wizard="finish"]',
+            onTabShow: (tab, nav, index) => {
+                let percent = ((index + 1) / nav.find('li').length) * 100;
+                let progress = nav.parents('.block').find('[data-wizard="progress"] > .progress-bar');
+                if (progress.length) {
+                    progress.css({width: percent + 1 + '%'});
+                }
+            }
+        });
+        $('.upload_custom').uploadFile({
+            url:application.cms.uploadFileSingle,
+            uploadStr:'<div class="text-center py-4"><p><i class="fa fa-4x fa-cloud-upload-alt text-gray"></i></p><h4 class="mb-0 text-gray success_title">选择插件ZIP文件</h4></div>',
+            dragDropStr:false, maxFileCount:1, showCancel:false,
+            showAbort:false, showDone:false, showDelete:true,
+            showStatusAfterSuccess:false, showError:false,
+            showFileSize:false, showPreview:false, fileName:"files",
+            onSuccess:function(files,data,xhr,pd){
+                if(data && data.status === true){
+                    $('.upload_custom').parent().children("input[type='hidden']").val(data.data.id);
+                    $(".success_title").html(data.data.name)
+                }else {
+                    module_upload.option.upload_success(data,pd,"single");
+                }
+            },
+        });
+    })
+</script>

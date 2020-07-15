@@ -1,0 +1,62 @@
+<div class="js-wizard-simple block block overflow-hidden">
+    <div class="progress rounded-0" data-wizard="progress" style="height: 6px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-alt nav-justified" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal active" href="#base" data-toggle="tab">信息</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-0 font-weight-normal" href="#extend" data-toggle="tab">文件</a>
+        </li>
+    </ul>
+    <form action="{{urlfor "Addons.Edit" ":id" $.info.Id}}" class="ajax_from" method="post">
+        <div class="block-content block-content-full tab-content px-md-5 pr-0" style="margin-left: 6px;">
+            <div class="fade fade-left tab-pane active show" id="base" role="tabpanel">
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="title">插件名称</label>
+                    <div class="col-sm-4 mr-4">
+                        <input class="form-control" type="text" id="title" value="{{$.info.Title}}" name="title" placeholder="插件名称">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">插件名称；<code>必填</code></div>
+                    </div>
+                    <label class="col-form-label font-weight-normal" for="version">插件版本</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" id="version" value="{{$.info.Version}}" name="version" placeholder="插件版本">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">插件版本；<code>必填</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-2">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" for="author">插件作者</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" id="author" value="{{$.info.Author}}" name="author" placeholder="插件作者">
+                        <div class="help-block pt-1 pb-1 font-size-minimum">插件开发者；<code>必填</code></div>
+                    </div>
+                </div>
+                <div class="form-group row font-size-sm mb-0">
+                    <label class="col-form-label font-weight-normal pr-0 pl-2" style="line-height: 77px;" for="description">功能简介</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control form-control-alt font-size-sm" id="description" name="description" rows="3" placeholder="功能简介">{{$.info.Description}}</textarea>
+                        <div class="help-block pt-1 pb-1 font-size-minimum">插件功能简介...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade fade-left tab-pane pr-4" id="extend" role="tabpanel">
+                <div class="block mb-0">
+                    <div class="block-content upload_custom block-content-full ribbon ribbon-primary ribbon-bookmark p-0"></div>
+                    <input type="hidden" name="file" id="file" value="{{$.info.File}}">
+                </div>
+            </div>
+        </div>
+        <div class="block-content block-content-sm block-content-full bg-body-light rounded-bottom fixed-bottom">
+            <div class="row">
+                <div class="col-6">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="prev"><i class="fa fa-angle-left mr-1"></i> 上一步</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button type="button" class="btn btn-secondary btn-sm font-weight-normal" data-wizard="next">下一步 <i class="fa fa-angle-right ml-1"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm font-weight-normal d-none" data-wizard="finish"><i class="fa fa-check mr-1"></i> 提交</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
