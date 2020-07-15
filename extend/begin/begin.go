@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	_func "github.com/beatrice950201/araneid/extend/func"
+	"github.com/beatrice950201/araneid/extend/model/addons"
 	"github.com/beatrice950201/araneid/extend/model/attachment"
 	"github.com/beatrice950201/araneid/extend/model/automatic"
 	"github.com/beatrice950201/araneid/extend/model/collect"
@@ -56,7 +57,7 @@ func coreDbBegin() {
 		new(spider.Keyword), new(spider.Article), new(inform.Context), new(collect.Result), new(spider.Indexes),
 		new(collect.Collect), new(spider.Disguise), new(spider.Template), new(spider.Arachnid), new(spider.Category),
 		new(automatic.Automatic), new(attachment.Attachment), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
-		new(spider.Journal), new(index.Advantage), new(index.News), new(index.Team), new(index.Message),
+		new(spider.Journal), new(index.Advantage), new(index.News), new(index.Team), new(index.Message), new(addons.Addons),
 	)
 	_ = orm.RunSyncdb("default", false, _func.AnalysisDebug())
 }
