@@ -14,7 +14,8 @@ const admin_index = {
         },
         initializedAjax:function (callback,init) {
             application.ajax.post($(".chart_box").data("action"),{
-                hideLoader:!init,
+                //hideLoader:!init,
+                hideLoader:true,
                 init:init
             },function (result) {
                 if (result.status === true) {
