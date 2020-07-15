@@ -13,7 +13,7 @@ type Collect struct {
 	Translate  int8      `orm:"column(translate);type(tinyint);default(0);description(简繁体转换)" json:"translate" form:"translate"`
 	Download   int8      `orm:"column(download);type(tinyint);default(0);description(开启附件下载)" json:"download" form:"download"`
 	Matching   string    `orm:"column(matching);type(text);default();description(字段匹配)"  json:"matching" form:"matching" validate:"required" label:"字段匹配"`
-	PushTime   float64   `orm:"column(push_time);default(0);description(发布间隔时间)" json:"push_time" form:"push_time" validate:"required,min=1" label:"发布间隔时间"`
+	PushTime   float64   `orm:"column(push_time);default(0);description(发布间隔时间)" json:"push_time" form:"push_time" validate:"required,min=0.001" label:"发布间隔时间"`
 	SourceRule string    `orm:"column(source_rule);size(100);type(char);default();description(采集规则)" json:"source_rule" form:"source_rule" validate:"required" label:"采集规则"`
 	CreateTime time.Time `orm:"auto_now_add;type(datetime);description(创建时间)" json:"create_time"`
 	UpdateTime time.Time `orm:"auto_now;type(datetime);description(更新时间)" json:"update_time"`

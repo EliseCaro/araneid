@@ -488,6 +488,13 @@ func (service *DefaultCollectService) acquireCollectStatus(id int, field string)
 	return item.Status
 }
 
+/** 获取发布器状态 todo 是否需要改为redis **/
+func (service *DefaultCollectService) acquirePushStatus(id int, field string) int8 {
+	var item collect.Collect
+	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field)
+	return item.PushStatus
+}
+
 /** 采集分支 **/
 func (service *DefaultCollectService) collectStatus(id int, status int8, uid int) {
 	if status == 1 {
@@ -568,7 +575,7 @@ func (service *DefaultCollectService) pushStart(id, uid int) {
 	} else {
 		service.createLogsInformPushStatus("开始发布数据", uid, detail.Id, detail.Name)
 		for {
-			if service.acquireCollectStatus(id, "Status") == 1 {
+			if service.acquirePushStatus(id, "PushStatus") == 1 {
 				service.PushDetailAPI(service.pushDetail(id))
 				time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
 			} else {
