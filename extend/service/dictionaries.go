@@ -165,7 +165,7 @@ func (service *DefaultDictionariesService) StartPush(uid int) {
 		logs.Warn("启动[%s]发布器失败！失败原因:%s", "查字词典", error.Error(err))
 	} else {
 		config := service.ConfigMaps()
-		pushTime, _ := strconv.ParseInt(config["push_time"].(string), 10, 64)
+		pushTime, _ := strconv.ParseFloat(config["push_time"].(string), 64)
 		service.createLogsInformStatusPush("查字词典发布任务启动", uid)
 		for {
 			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 1 {
