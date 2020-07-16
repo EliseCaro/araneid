@@ -209,6 +209,7 @@ func (service *DefaultCollectService) collectInstance(interval, depth int, domai
 	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: 3, RandomDelay: time.Duration(interval) * time.Second})
 	collector.WithTransport(&http.Transport{DisableKeepAlives: true})
 	collector.OnRequest(func(r *colly.Request) { r.Headers.Set("User-Agent", table.RandomString()) })
+	collector.SetRequestTimeout(120 * time.Second)
 	return collector
 }
 
@@ -451,8 +452,7 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 	matching = append(matching, &collect.Matching{
 		Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0,
 	})
-	collector := service.collectInstance(5, 1, service.queueUrlDomain(url), true)
-	collector.SetRequestTimeout(40 * time.Second)
+	collector := service.collectInstance(int(detail.Interval), 1, service.queueUrlDomain(url), true)
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		result := make(map[string]string)
 		var message error
@@ -489,7 +489,7 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 /** 获取采集器状态 todo 是否需要改为redis **/
 func (service *DefaultCollectService) acquireCollectStatus(id int, field string) int8 {
 	var item collect.Collect
-	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field)
+	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field, "Id")
 	if item.Id <= 0 {
 		return service.acquireCollectStatus(id, field)
 	}
@@ -499,7 +499,7 @@ func (service *DefaultCollectService) acquireCollectStatus(id int, field string)
 /** 获取发布器状态 todo 是否需要改为redis **/
 func (service *DefaultCollectService) acquirePushStatus(id int, field string) int8 {
 	var item collect.Collect
-	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field)
+	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field, "Id")
 	if item.Id <= 0 {
 		return service.acquirePushStatus(id, field)
 	}
