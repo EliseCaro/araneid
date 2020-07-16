@@ -366,8 +366,7 @@ func (service *DefaultDictionariesService) createLogsInformStatus(status string,
 		您可以<a target="_blank" href="%s">查看爬取结果</a>;`,
 		nowTime, status, beego.URLFor("Dictionaries.Cate"),
 	)
-	inform := DefaultInformService{}
-	inform.SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
 }
 
 /** 发送发布分类状态通知 **/
@@ -379,8 +378,7 @@ func (service *DefaultDictionariesService) createLogsInformStatusPush(status str
 		您可以<a target="_blank" href="%s">查看发布结果</a>;`,
 		nowTime, status, beego.URLFor("Dictionaries.Cate"),
 	)
-	inform := DefaultInformService{}
-	inform.SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, 0, 0, 2, htmlInfo)
 }
 
 /** 创建一条分类结果数据 */

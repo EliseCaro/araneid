@@ -341,8 +341,7 @@ func (service *DefaultCollectService) createLogsInform(status, receiver, objectI
 			name, nowTime, message, url,
 		)
 	}
-	inform := DefaultInformService{}
-	inform.SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
 }
 
 /** 发送采集爬虫状态通知 **/
@@ -353,8 +352,7 @@ func (service *DefaultCollectService) createLogsInformStatus(status string, rece
 		名为<a href="javascript:void(0);">%s</a>的采集器;在%s的时候%s；
 		您可以<a target="_blank" href="%s">查看爬取结果</a>;`, name, nowTime, status, beego.URLFor("Collector.Index", ":id", objectId),
 	)
-	inform := DefaultInformService{}
-	inform.SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
 }
 
 /** 发送发布器状态通知 **/
@@ -365,8 +363,7 @@ func (service *DefaultCollectService) createLogsInformPushStatus(status string, 
 		名为<a href="javascript:void(0);">%s</a>的发布器;在%s的时候%s；
 		您可以<a target="_blank" href="%s">查看发布结果</a>;`, name, nowTime, status, beego.URLFor("Collector.Index", ":id", objectId),
 	)
-	inform := DefaultInformService{}
-	inform.SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
 }
 
 /** todo 伪原创 **/
