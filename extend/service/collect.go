@@ -206,7 +206,7 @@ func (service *DefaultCollectService) collectInstance(interval, depth int, domai
 		colly.UserAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"),
 		colly.MaxDepth(depth),
 	)
-	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: interval})
+	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: 3, RandomDelay: time.Duration(interval) * time.Second})
 	collector.WithTransport(&http.Transport{DisableKeepAlives: true})
 	collector.OnRequest(func(r *colly.Request) { r.Headers.Set("User-Agent", table.RandomString()) })
 	return collector
@@ -452,6 +452,7 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 		Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0,
 	})
 	collector := service.collectInstance(5, 1, service.queueUrlDomain(url), true)
+	collector.SetRequestTimeout(40 * time.Second)
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		result := make(map[string]string)
 		var message error
@@ -478,6 +479,9 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 			//service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
 		}
 	})
+	collector.OnError(func(r *colly.Response, err error) {
+		logs.Error("采集数据错误：错误原因为：%s", err.Error())
+	})
 	_ = collector.Visit(url)
 	collector.Wait()
 }
@@ -486,6 +490,9 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 func (service *DefaultCollectService) acquireCollectStatus(id int, field string) int8 {
 	var item collect.Collect
 	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field)
+	if item.Id <= 0 {
+		return service.acquireCollectStatus(id, field)
+	}
 	return item.Status
 }
 
@@ -493,6 +500,9 @@ func (service *DefaultCollectService) acquireCollectStatus(id int, field string)
 func (service *DefaultCollectService) acquirePushStatus(id int, field string) int8 {
 	var item collect.Collect
 	_ = orm.NewOrm().QueryTable(new(collect.Collect)).Filter("id", id).One(&item, field)
+	if item.Id <= 0 {
+		return service.acquirePushStatus(id, field)
+	}
 	return item.PushStatus
 }
 
