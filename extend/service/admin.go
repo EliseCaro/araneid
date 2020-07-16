@@ -9,6 +9,7 @@ import (
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -129,6 +130,12 @@ func (service *DefaultAdminService) DiskDashboard() []*DiskStatus {
 			result = append(result, item)
 		}
 	}
+	sort.Slice(result, func(i, j int) bool {
+		if result[i].Total > result[j].Total {
+			return true
+		}
+		return false
+	})
 	return result
 }
 
