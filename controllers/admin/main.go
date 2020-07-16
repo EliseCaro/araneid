@@ -66,7 +66,7 @@ func (c *Main) NestPrepare() {
 	if app, ok := c.AppController.(NextPreparer); ok {
 		app.NextPrepare()
 	}
-	c.Data["site_switch"], _ = beego.AppConfig.Int("web_site_switch")
+	c.Data["site_switch"], _ = beego.AppConfig.Int("system_site_switch")
 }
 
 /** 设置控制器信息 **/
