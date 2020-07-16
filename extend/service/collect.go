@@ -124,7 +124,7 @@ func (service *DefaultCollectService) DeleteArray(array []int) (e error) {
 func (service *DefaultCollectService) ExtractUrls(role string, source []string) []map[string]string {
 	var result []map[string]string
 	domain := new(DefaultCollectService).queueUrlDomain(source[0])
-	collector := service.collectInstance(5, 2, domain, true)
+	collector := service.collectInstance(1, 2, domain, true)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		matchText := service.eliminateTrim(e.Text, []string{" ", "\n"})
 		if service.checkSourceRule(role, e.Attr("href")) && matchText != "" && service.inMapHref(e.Attr("href"), result) == false {
@@ -144,7 +144,7 @@ func (service *DefaultCollectService) ExtractUrls(role string, source []string) 
 /** 根据地址跟字段规则解析一条详情 **/
 func (service *DefaultCollectService) ExtractDocumentMatching(url string, matching []*collect.Matching) (map[string]string, error) {
 	domain := new(DefaultCollectService).queueUrlDomain(url)
-	collector := service.collectInstance(5, 1, domain, true)
+	collector := service.collectInstance(1, 1, domain, true)
 	result := make(map[string]string)
 	var message error
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
