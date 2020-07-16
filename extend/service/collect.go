@@ -463,17 +463,9 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 		}
 		if message == nil {
 			resultField := service.fieldHandle(result, detail)
-			message = service.createOneResult(result["meta_title"], url, detail.Id, resultField)
-			if message != nil {
-				service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
-			} else {
-				// todo 因为采集数据过多，停用采集成功通知
-				//service.createLogsInform(1, uid, detail.Id, detail.Name, result["meta_title"], url)
-			}
+			go service.createOneResult(result["meta_title"], url, detail.Id, resultField)
 		} else {
-			// todo 采集过程字段空值被过滤的太多，停用采集通知
 			logs.Error("在"+url+"中没有采集到全部数据：具体原因为：", error.Error(message))
-			//service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(message), url)
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
