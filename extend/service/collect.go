@@ -551,10 +551,10 @@ func (service *DefaultCollectService) collectStart(id, uid int) {
 	if _, err := orm.NewOrm().Update(&collect.Collect{Id: id, Status: 1}, "Status"); err != nil {
 		logs.Warn("启动[%s]采集器失败！失败原因:%s", detail.Name, error.Error(err))
 	} else {
+		service.createLogsInformStatus("开始爬取", uid, detail.Id, detail.Name)
 		for _, v := range source {
 			_ = collector.Visit(v)
 		}
-		service.createLogsInformStatus("开始爬取", uid, detail.Id, detail.Name)
 		collector.Wait()
 	}
 	defer func() { service.collectStop(id, uid, "爬取任务完成") }()
