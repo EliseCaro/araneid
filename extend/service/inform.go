@@ -8,6 +8,7 @@ import (
 	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/inform"
 	"github.com/go-playground/validator"
+	"time"
 )
 
 type DefaultInformService struct{}
@@ -104,6 +105,14 @@ func (service *DefaultInformService) SendSocketInform(receiver []int, objectId, 
 	} else {
 		logs.Warn("创建通知表数据失败！失败原因:%s", error.Error(message))
 	}
+}
+
+/** 发送临时通知通知到socket上 **/
+func (service *DefaultInformService) SendSocketInformTemp(receiver int, context string) {
+	SocketInstanceGet().InformHandle(inform.Message{
+		Id: 0, Statue: 0, Receiver: receiver, Context: context,
+		StringTime: beego.Date(time.Now(), "Y-m-d H:i:s"),
+	})
 }
 
 /** 标记已读 **/

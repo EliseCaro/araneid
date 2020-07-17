@@ -65,15 +65,16 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-lg-6">
                                 <div class="form-group row font-size-sm">
-                                    <label class="col-sm-2 col-form-label font-weight-normal" for="interval">最大并发</label>
+                                    <label class="col-sm-2 col-form-label font-weight-normal" for="interval">随机等待</label>
                                     <div class="col-sm-10">
                                         <div class="input-group">
-                                            <input class="form-control" type="number" id="interval" value="{{$.info.Interval}}" name="interval" placeholder="请输入最大并发次数">
-                                            <div class="input-group-append"><span class="input-group-text font-size-sm">次</span></div>
+                                            <input class="form-control" type="number" id="interval" value="{{$.info.Interval}}" name="interval" placeholder="随机等待">
+                                            <div class="input-group-append"><span class="input-group-text font-size-sm">秒</span></div>
                                         </div>
-                                        <div class="help-block pt-1 pb-1 font-size-minimum">控制抓取的频率；<code>不给对方网站带来压力和资源消耗</code></div>
+                                        <div class="help-block pt-1 pb-1 font-size-minimum">随机等待时长；<code>避免给把对方网站爬瘫痪</code></div>
                                     </div>
                                 </div>
                             </div>

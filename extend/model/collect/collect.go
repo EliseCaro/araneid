@@ -9,7 +9,7 @@ type Collect struct {
 	Domain     string    `orm:"column(domain);size(150);type(char);default();description(发布接口地址)" json:"domain" form:"domain" validate:"required" label:"发布接口"`
 	Remark     string    `orm:"column(remark);size(200);type(char);default();description(爬虫备注)" json:"remark" form:"remark" validate:"required" label:"爬虫备注"`
 	Source     string    `orm:"column(source);type(text);default();description(采集源队列)" json:"source" form:"source" validate:"required" label:"采集源队列"`
-	Interval   int8      `orm:"column(interval);type(tinyint);default(5);description(最大并发次数)" json:"interval" form:"interval" validate:"required,min=1" label:"最大并发次数"`
+	Interval   int8      `orm:"column(interval);type(tinyint);default(30);description(随机等待)" json:"interval" form:"interval" validate:"required" label:"随机等待"`
 	Translate  int8      `orm:"column(translate);type(tinyint);default(0);description(简繁体转换)" json:"translate" form:"translate"`
 	Download   int8      `orm:"column(download);type(tinyint);default(0);description(开启附件下载)" json:"download" form:"download"`
 	Matching   string    `orm:"column(matching);type(text);default();description(字段匹配)"  json:"matching" form:"matching" validate:"required" label:"字段匹配"`

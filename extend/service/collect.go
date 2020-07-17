@@ -124,7 +124,7 @@ func (service *DefaultCollectService) DeleteArray(array []int) (e error) {
 func (service *DefaultCollectService) ExtractUrls(role string, source []string) []map[string]string {
 	var result []map[string]string
 	domain := new(DefaultCollectService).queueUrlDomain(source[0])
-	collector := service.collectInstance(1, 2, domain, true)
+	collector := service.collectInstance(0, 2, domain, true)
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		matchText := service.eliminateTrim(e.Text, []string{" ", "\n"})
 		if service.checkSourceRule(role, e.Attr("href")) && matchText != "" && service.inMapHref(e.Attr("href"), result) == false {
@@ -144,11 +144,10 @@ func (service *DefaultCollectService) ExtractUrls(role string, source []string) 
 /** 根据地址跟字段规则解析一条详情 **/
 func (service *DefaultCollectService) ExtractDocumentMatching(url string, matching []*collect.Matching) (map[string]string, error) {
 	domain := new(DefaultCollectService).queueUrlDomain(url)
-	collector := service.collectInstance(1, 1, domain, true)
+	collector := service.collectInstance(0, 1, domain, true)
 	result := make(map[string]string)
 	var message error
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
-		matching = append(matching, &collect.Matching{Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0})
 		for _, v := range matching {
 			if value := service.extractMatchingField(v, e); value != "" {
 				result[v.Field] = value
@@ -157,6 +156,14 @@ func (service *DefaultCollectService) ExtractDocumentMatching(url string, matchi
 				break
 			}
 		}
+		if _, ok := result["title"]; ok == true {
+			result["meta_title"] = result["title"]
+		} else {
+			message = errors.New("字段匹配不齐全；已被强制过滤！")
+		}
+	})
+	collector.OnError(func(r *colly.Response, err error) {
+		logs.Error("采集数据错误：错误原因为：%s", err.Error())
 	})
 	_ = collector.Visit(url)
 	collector.Wait()
@@ -198,14 +205,16 @@ func (service *DefaultCollectService) checkSourceRule(rule, url string) bool {
 	return regexp.MustCompile(rule).MatchString(url)
 }
 
-/** 实例化采集器容器 todo 开启代理跟Redis储存 **/
+/** 实例化采集器容器 **/
 func (service *DefaultCollectService) collectInstance(interval, depth int, domain string, async bool) *colly.Collector {
 	collector := colly.NewCollector(
-		colly.Debugger(&debug.LogDebugger{Output: logs.GetLogger().Writer()}),
 		colly.Async(async),
 		colly.UserAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"),
 		colly.MaxDepth(depth),
 	)
+	if table.AnalysisDebug() {
+		collector.SetDebugger(&debug.LogDebugger{Output: logs.GetLogger().Writer()})
+	}
 	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: 3, RandomDelay: time.Duration(interval) * time.Second})
 	collector.WithTransport(&http.Transport{DisableKeepAlives: true})
 	collector.OnRequest(func(r *colly.Request) { r.Headers.Set("User-Agent", table.RandomString()) })
@@ -307,24 +316,26 @@ func (service *DefaultCollectService) extractMatchingField(m *collect.Matching, 
 }
 
 /** 创建一条结果数据 */
-func (service *DefaultCollectService) createOneResult(title, source string, collectId int, result map[string]string) (err error) {
+func (service *DefaultCollectService) createOneResult(title, source string, collectId int, result map[string]string, callback func(error)) {
 	str, _ := json.Marshal(result)
 	verify := DefaultBaseVerify{}
+	var err error
 	item := &collect.Result{Title: title, Source: source, Result: string(str), Collect: collectId, Status: 0}
 	if message := verify.Begin().Struct(item); message != nil {
-		return errors.New(verify.Translate(message.(validator.ValidationErrors)))
-	}
-	if one := service.oneResultLink(item.Source); one.Id > 0 {
-		item.Id = one.Id
-		_, err = orm.NewOrm().Update(item)
+		callback(errors.New(verify.Translate(message.(validator.ValidationErrors))))
 	} else {
-		_, err = orm.NewOrm().Insert(item)
+		if one := service.oneResultLink(item.Source); one.Id > 0 {
+			item.Id = one.Id
+			_, err = orm.NewOrm().Update(item)
+		} else {
+			_, err = orm.NewOrm().Insert(item)
+		}
+		callback(err)
 	}
-	return err
 }
 
 /** 发送采集爬虫通知 **/
-func (service *DefaultCollectService) createLogsInform(status, receiver, objectId int, name, message, url string) {
+func (service *DefaultCollectService) createLogsInform(status, receiver int, name, message, url string) {
 	var htmlInfo string
 	nowTime := beego.Date(time.Now(), "m月d日 H:i")
 	if status == 1 {
@@ -341,7 +352,7 @@ func (service *DefaultCollectService) createLogsInform(status, receiver, objectI
 			name, nowTime, message, url,
 		)
 	}
-	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	new(DefaultInformService).SendSocketInformTemp(receiver, htmlInfo)
 }
 
 /** 发送采集爬虫状态通知 **/
@@ -352,7 +363,7 @@ func (service *DefaultCollectService) createLogsInformStatus(status string, rece
 		名为<a href="javascript:void(0);">%s</a>的采集器;在%s的时候%s；
 		您可以<a target="_blank" href="%s">查看爬取结果</a>;`, name, nowTime, status, beego.URLFor("Collector.Index", ":id", objectId),
 	)
-	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
 }
 
 /** 发送发布器状态通知 **/
@@ -363,7 +374,7 @@ func (service *DefaultCollectService) createLogsInformPushStatus(status string, 
 		名为<a href="javascript:void(0);">%s</a>的发布器;在%s的时候%s；
 		您可以<a target="_blank" href="%s">查看发布结果</a>;`, name, nowTime, status, beego.URLFor("Collector.Index", ":id", objectId),
 	)
-	go new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
+	new(DefaultInformService).SendSocketInform([]int{receiver}, objectId, 0, 1, htmlInfo)
 }
 
 /** todo 伪原创 **/
@@ -446,9 +457,6 @@ func (service *DefaultCollectService) download(url string) string {
 /** 处理一条url进入库  **/
 func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, detail collect.DetailCollect) {
 	matching := detail.MatchingJson
-	matching = append(matching, &collect.Matching{
-		Field: "meta_title", Selector: "head > title", Filtration: 1, Form: 0,
-	})
 	collector := service.collectInstance(int(detail.Interval), 1, service.queueUrlDomain(url), true)
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		result := make(map[string]string)
@@ -461,15 +469,26 @@ func (service *DefaultCollectService) handleSourceRuleBody(url string, uid int, 
 				break
 			}
 		}
+		if _, ok := result["title"]; ok == true {
+			result["meta_title"] = result["title"]
+		} else {
+			message = errors.New("未找到字段【title】已被强制过滤！")
+		}
 		if message == nil {
 			resultField := service.fieldHandle(result, detail)
-			go service.createOneResult(result["meta_title"], url, detail.Id, resultField)
+			go service.createOneResult(result["meta_title"], url, detail.Id, resultField, func(e error) {
+				if e != nil {
+					service.createLogsInform(0, uid, detail.Name, error.Error(message), url)
+				} else {
+					service.createLogsInform(1, uid, detail.Name, result["meta_title"], url)
+				}
+			})
 		} else {
-			logs.Error("在"+url+"中没有采集到全部数据：具体原因为：", error.Error(message))
+			service.createLogsInform(0, uid, detail.Name, "在"+url+"中没有采集到全部数据：具体原因为："+error.Error(message), e.Request.URL.String())
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
-		logs.Error("采集数据错误：错误原因为：%s", err.Error())
+		service.createLogsInform(0, uid, detail.Name, error.Error(err), r.Request.URL.String())
 	})
 	_ = collector.Visit(url)
 	collector.Wait()
@@ -526,7 +545,7 @@ func (service *DefaultCollectService) collectStart(id, uid int) {
 	})
 	collector.OnError(func(r *colly.Response, err error) {
 		if service.checkSourceRule(detail.SourceRule, r.Request.URL.String()) {
-			service.createLogsInform(0, uid, detail.Id, detail.Name, error.Error(err), r.Request.URL.String())
+			service.createLogsInform(0, uid, detail.Name, error.Error(err), r.Request.URL.String())
 		}
 	})
 	if _, err := orm.NewOrm().Update(&collect.Collect{Id: id, Status: 1}, "Status"); err != nil {
