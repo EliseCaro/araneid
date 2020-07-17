@@ -159,7 +159,7 @@ func (service *DefaultInformService) HeaderItems() map[string]interface{} {
 	qb.Select(prefix+"admin_inform.id", prefix+"admin_inform.statue", prefix+"admin_inform_context.context", prefix+"admin_inform_context.create_time").
 		From(prefix + "admin_inform").
 		InnerJoin(prefix + "admin_inform_context").
-		On(prefix + "admin_inform.context_id = " + prefix + "admin_inform_context.id").Where(prefix + "admin_inform.statue = ?").OrderBy(prefix + "admin_inform.id DESC").Limit(5)
+		On(prefix + "admin_inform.context_id = " + prefix + "admin_inform_context.id").Where(prefix + "admin_inform.statue = ?").OrderBy(prefix + "admin_inform.id DESC").Limit(3)
 	_, _ = orm.NewOrm().Raw(qb.String(), 0).QueryRows(&items)
 	count, _ := orm.NewOrm().QueryTable(new(inform.Inform)).Filter("statue", 0).Count()
 	for _, v := range items {
