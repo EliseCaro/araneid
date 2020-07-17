@@ -74,9 +74,6 @@ func (service *DefaultTemplateService) ReadConfig(path string) *spider.TemplateC
 		result.Name = con.String("name")
 		result.Class, _ = con.Int("class")
 	}
-	if result.Cover != "" {
-		result.Cover = service.ImageToBase64(result.Cover)
-	}
 	return result
 }
 
