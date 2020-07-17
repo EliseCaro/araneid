@@ -352,6 +352,8 @@ func (service *DefaultCollectService) createLogsInform(status, receiver int, nam
 			name, nowTime, message, url,
 		)
 	}
+	htmlInfo = service.eliminateTrim(htmlInfo, []string{"\n"})
+	htmlInfo = service.deleteExtraSpace(htmlInfo)
 	new(DefaultInformService).SendSocketInformTemp(receiver, htmlInfo)
 }
 
