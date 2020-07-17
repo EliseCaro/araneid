@@ -132,22 +132,28 @@ func (service *DefaultDictionariesService) Start(uid int) {
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile("https://www.chazidian.com/ci_([a-z]+)_([0-9]+)/$").MatchString(e.Request.URL.String()) {
-			if id, message := service.collectOnResultCate(e); message != nil {
-				service.createLogsInformStatus("查字词典分类采集到一条非法数据；<a href='"+e.Request.URL.String()+"'>查看原文</a>;非法原因："+error.Error(message)+";", uid)
-			} else {
-				service.collectVisitDetailHref(id, e)
-			}
+			go service.collectOnResultCate(e, func(i int64, err error) {
+				if err != nil {
+					new(DefaultCollectService).createLogsInform(0, uid, "查字词典分类", error.Error(err), e.Request.URL.String())
+				} else {
+					service.collectVisitDetailHref(i, e)
+				}
+			})
 		}
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile(`https://www.chazidian.com/([a-z]+)_([a-z]+)_(.*?)/\?dict=([0-9]+)$`).MatchString(e.Request.URL.String()) {
-			if _, message := service.collectOnResultDetail(e); message != nil {
-				service.createLogsInformStatus("查字词典详情采集到一条非法数据；<a href='"+e.Request.URL.String()+"'>查看原文</a>;非法原因："+error.Error(message)+";", uid)
-			}
+			go service.collectOnResultDetail(e, func(i int64, err error) {
+				if err != nil {
+					new(DefaultCollectService).createLogsInform(0, uid, "查字词典详情", error.Error(err), e.Request.URL.String())
+				} else {
+					//  采集成功详情 ！！！
+				}
+			})
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
-		service.createLogsInformStatus("查字词典在采集过程中出现一次失败的采集；<a href='"+r.Request.URL.String()+"'>查看原文</a>;错误原因："+error.Error(err)+";已经跳过错误继续采集；", uid)
+		new(DefaultCollectService).createLogsInform(0, uid, "查字词典", error.Error(err), r.Request.URL.String())
 	})
 	if _, err := orm.NewOrm().Update(&dictionaries.DictConfig{Id: 5, Value: "1"}, "Value"); err != nil {
 		logs.Warn("启动查字词典采集器失败！失败原因:%s", error.Error(err))
@@ -437,7 +443,7 @@ func (service *DefaultDictionariesService) pushDetailAPIResult(id int, status in
 }
 
 /** 采集分类结果解析创建分类 **/
-func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElement) (int64, error) {
+func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElement, callback func(int64, error)) {
 	object := DefaultCollectService{}
 	result := map[string]string{
 		"title":   object.eliminateTrim(e.DOM.Find("head > title").Text(), []string{" - 查字典"}),
@@ -447,7 +453,8 @@ func (service *DefaultDictionariesService) collectOnResultCate(e *colly.HTMLElem
 	}
 	result["keyword"], _ = e.DOM.Find("head > meta[name=keywords]").Attr("content")
 	result["describe"], _ = e.DOM.Find("head > meta[name=description]").Attr("content")
-	return service.createOneResultDict(result, e.Request.URL.String(), 0)
+	index, err := service.createOneResultDict(result, e.Request.URL.String(), 0)
+	callback(index, err)
 }
 
 /** 创建一条数据库记录 **/
@@ -512,7 +519,7 @@ func (service *DefaultDictionariesService) deleteExtraSpace(s string) string {
 }
 
 /** 采集结果创建详情数据 **/
-func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLElement) (int64, error) {
+func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLElement, callback func(int64, error)) {
 	var (
 		parent     = e.Request.URL.Query()["dict"]
 		reagent, _ = strconv.Atoi(parent[0])
@@ -526,7 +533,8 @@ func (service *DefaultDictionariesService) collectOnResultDetail(e *colly.HTMLEl
 	result["context"], _ = e.DOM.Find(".content > div:last-child").Html()
 	result["keyword"], _ = e.DOM.Find("head > meta[name=keywords]").Attr("content")
 	result["describe"], _ = e.DOM.Find("head > meta[name=description]").Attr("content")
-	return service.createOneResultDict(result, e.Request.URL.String(), reagent)
+	index, err := service.createOneResultDict(result, e.Request.URL.String(), reagent)
+	callback(index, err)
 }
 
 /** 匹配创建所有详情链接 **/
