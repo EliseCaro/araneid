@@ -23,7 +23,7 @@ const socket_begin = {
                 html += '<div style="cursor: pointer;" class="text-dark media py-2 pr-3 '+ className +'" data-area="380px,240px" href="/admin/inform/check?:id='+ data.id +'&:popup=1">'
                 html += '<div class="mr-2 ml-3"><i class="fa fa-fw fa-eye text-amethyst-dark"></i></div>'
                 html += '<div class="media-body pr-2">'
-                html += '<div class="font-weight-normal font-size-sm">'+ data.context + suffix +'</div>'
+                html += '<div class="font-weight-normal font-size-sm overflow-hidden" style="max-width:251px;">'+ data.context + suffix +'</div>'
                 html += '<small class="text-muted">'+ data.string_time +'</small>';
                 html += '</div></div></li>';
             if (length >= 3) {
