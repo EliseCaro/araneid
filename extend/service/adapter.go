@@ -130,7 +130,7 @@ func (service *DefaultAdapterService) ExtractUrlsContext(urls string, f func(t s
 		describe string
 	)
 	domain := new(DefaultCollectService).queueUrlDomain(urls)
-	collector := new(DefaultCollectService).collectInstance(5, 1, domain, true)
+	collector := new(DefaultCollectService).collectInstance(0, 1, domain, true)
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		title = e.DOM.Find("head > title").Text()
 		keyword, _ = e.DOM.Find("head > meta[name=keywords]").Attr("content")
