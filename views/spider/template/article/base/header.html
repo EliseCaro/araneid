@@ -6,7 +6,7 @@
         <nav>
             <ul id="starlist">
                 {{range $i, $e := .cate}}
-                    {{if lt $i 9 }}<li><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></li> {{end}}
+                    {{if lt $i 8 }}<li><a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a></li> {{end}}
                 {{end}}
             </ul>
         </nav>

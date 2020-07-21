@@ -59,7 +59,7 @@ func (service *DefaultJournalService) HotDomain() []*map[string]interface{} {
 	var result []*map[string]interface{}
 	var maps []orm.Params
 	var prefix = beego.AppConfig.String("db_prefix")
-	sql := fmt.Sprintf(`SELECT domain,COUNT(id) AS num FROM %sspider_journal GROUP BY domain ORDER BY num DESC LIMIT 10`, prefix)
+	sql := fmt.Sprintf(`SELECT domain,COUNT(id) AS num FROM %sspider_journal GROUP BY domain ORDER BY num DESC LIMIT 4`, prefix)
 	_, _ = orm.NewOrm().Raw(sql).Values(&maps)
 	for _, item := range maps {
 		if domain := new(DefaultDomainService).OneDomain(item["domain"].(string)); domain.Name != "" {

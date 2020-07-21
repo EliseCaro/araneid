@@ -92,8 +92,9 @@ func (service *DefaultAutomaticService) baiduAutomatic(domain, token, urls strin
 	if err == nil {
 		if body, message := ioutil.ReadAll(resp.Body); message == nil {
 			message = json.Unmarshal(body, &result)
-			if result["success"] != nil && result["success"].(int64) == 1 {
-				service.CreateLogs(domain, token, urls, strconv.Itoa(result["remain"].(int)), 1)
+			if result["success"] != nil && result["success"].(float64) == 1 {
+				staring := strconv.FormatFloat(result["remain"].(float64), 'E', -1, 64)
+				service.CreateLogs(domain, token, urls, staring, 1)
 			} else {
 				service.CreateLogs(domain, token, urls, result["message"].(string), 0)
 			}
