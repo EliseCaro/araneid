@@ -59,6 +59,29 @@ func (service *DefaultDomainService) getDomain(d, p string) string {
 	return domain
 }
 
+/** 批量纠正关键词描述 **/
+func (service *DefaultDomainService) TestAllDomainDesc() {
+	var domain []*spider.Domain
+	_, _ = orm.NewOrm().QueryTable(new(spider.Domain)).All(&domain)
+	for _, v := range domain {
+		prefix := ""
+		domainString := strings.Split(v.Domain, ".")
+		if len(domainString) == 2 || len(domainString) == 3 {
+			if len(domainString) == 2 {
+				prefix = ""
+			} else {
+				prefix = domainString[0]
+			}
+		}
+		arachnidInfo, _ := new(DefaultArachnidService).Find(v.Arachnid)
+		matchModel, _ := new(DefaultMatchService).Find(arachnidInfo.Matching)
+		v.Title = service.domainTagsRandom(arachnidInfo.Models, arachnidInfo.Id, prefix, matchModel.IndexTitle)
+		v.Keywords = service.domainTagsRandom(arachnidInfo.Models, arachnidInfo.Id, prefix, matchModel.IndexKeyword)
+		v.Description = service.domainTagsRandom(arachnidInfo.Models, arachnidInfo.Id, prefix, matchModel.IndexDescription)
+		_, _ = orm.NewOrm().Update(&spider.Domain{Id: v.Id, Title: v.Title, Keywords: v.Keywords, Description: v.Description}, "Title", "Keywords", "Description")
+	}
+}
+
 /** 重制一个域名数据 **/
 func (service *DefaultDomainService) InitializedDomain(model, arachnid int, prefix, domain string) *spider.Domain {
 	arachnidInfo, _ := new(DefaultArachnidService).Find(arachnid)
@@ -192,7 +215,7 @@ func (service *DefaultDomainService) replaceRandomKeyword(arachnid int, str stri
 /** 替换标签 #站点名# **/
 func (service *DefaultDomainService) replaceSiteName(model int, prefix, str string) string {
 	siteName := service.domainNameRandom(model, prefix)
-	if strings.Index(str, "#站点名#") > 0 {
+	if ok, _ := regexp.Match(`#(.*?)#`, []byte(str)); ok {
 		re, _ := regexp.Compile(`#站点名#`)
 		siteName = re.ReplaceAllString(str, siteName)
 	}

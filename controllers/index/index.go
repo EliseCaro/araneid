@@ -23,6 +23,12 @@ func (c *Index) Index() {
 	}
 }
 
+// @router /index/test [get]
+func (c *Index) Test() {
+	c.domainService.TestAllDomainDesc()
+	c.Fail(&controllers.ResultJson{Message: "解析错误: "})
+}
+
 // @router /index/message [post]
 func (c *Index) Message() {
 	if c.IsAjax() {
