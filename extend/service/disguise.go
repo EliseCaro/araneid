@@ -17,11 +17,10 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	nlp "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/nlp/v20190408"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
-	"time"
 )
 
 type DefaultDisguiseService struct{}
@@ -97,37 +96,18 @@ func (service *DefaultDisguiseService) Dec(id int) error {
 }
 
 /***************************自然语言算法处理中心 *****************************************8/
-/** 获取百度翻译结果 **/
-func (service *DefaultDisguiseService) baiduTranslation(s string) ([]interface{}, string, string) {
-	salt := strconv.FormatInt(time.Now().Unix(), 10)
-	appId := beego.AppConfig.String("baidu_translation_id")
-	secret := beego.AppConfig.String("baidu_translation_sign")
-	domain := beego.AppConfig.String("baidu_translation_url")
-	result, _ := service.requestPostForm(domain, url.Values{
-		"q": {s}, "from": {"auto"}, "to": {"auto"}, "appid": {appId},
-		"sign": {service.md5Value(appId + s + salt + secret)}, "salt": {salt},
-	})
-	if result["error_code"] != nil && result["error_code"].(string) == "54003" || result["error_code"] != nil && result["error_code"].(string) == "54005" {
-		return service.baiduTranslation(s)
-	}
-	if result["error_code"] != nil {
-		return []interface{}{}, "", ""
-	} else {
-		return result["trans_result"].([]interface{}), result["from"].(string), result["to"].(string)
-	}
-}
-
 /** 作为等价交换手段 **/
-func (service *DefaultDisguiseService) modifierContext(s string) string {
-	translation, _, to := service.baiduTranslation(s)
-	var result string
-	for _, v := range translation {
-		result = v.(map[string]interface{})["dst"].(string)
+func (service *DefaultDisguiseService) modifierContext(s string, keyword []*nlp.Keyword) string {
+	for _, v := range keyword {
+		if thesaurus := new(DefaultRobotService).OneString(v.Word); thesaurus.Id > 0 && thesaurus.Resemblance != "" {
+			maps := strings.Split(thesaurus.Resemblance, ",")
+			item := maps[rand.Intn(len(maps)-1)]
+			s = strings.ReplaceAll(s, *v.Word, fmt.Sprintf(`%s`, item))
+		} else {
+			logs.Error(fmt.Sprintf(`%s的同义词在数据库未找到～`, *v.Word))
+		}
 	}
-	if result != "" && to != "zh" {
-		return service.modifierContext(result)
-	}
-	return result
+	return s
 }
 
 /** 公用请求函数 **/
@@ -168,7 +148,9 @@ func (service *DefaultDisguiseService) jsonFormString(maps map[string]string) st
 
 /** 将文本过滤成纯文本 **/
 func (service *DefaultDisguiseService) contextFiltration(s string) string {
-	return strings.Replace(beego.HTML2str(s), "\n", "", -1)
+	s = strings.Replace(beego.HTML2str(s), "\n", "", -1)
+	s = strings.Replace(s, "　", "", -1)
+	return s
 }
 
 /** 根据机器ID获取一个腾讯实例 **/
@@ -215,20 +197,24 @@ func (service *DefaultDisguiseService) robotKeywordManage(keyword []*nlp.Keyword
 			result += *v.Word + ","
 		}
 	}
+	for _, v := range keyword {
+		service.setRobotKeywordManage(v.Word, disguise)
+	}
 	return strings.Trim(result, ",")
 }
 
 /*** 从训练模型提取不到关键词；需要写入; **/
-func (service *DefaultDisguiseService) setRobotKeywordManage(keyword *string, disguise int) string {
-	maps, message := service.resemblanceTags(keyword, disguise)
-	if message == nil || len(maps) > 0 {
-		maps = new(DefaultRobotService).Insert(*keyword, maps)
+func (service *DefaultDisguiseService) setRobotKeywordManage(keyword *string, disguise int) {
+	if new(DefaultRobotService).OneString(keyword).Id <= 0 {
+		maps, message := service.resemblanceTags(keyword, disguise)
+		if message == nil || len(maps) > 0 {
+			maps = new(DefaultRobotService).Insert(*keyword, maps)
+		}
+		var result []string
+		for _, value := range maps {
+			result = append(result, *value)
+		}
 	}
-	var result []string
-	for _, value := range maps {
-		result = append(result, *value)
-	}
-	return strings.Join(result, ",")
 }
 
 /*** 获得同义词; **/
@@ -255,21 +241,21 @@ func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *s
 		logs.Error("提取关键字失败！失败原因：%s", message)
 	}
 	config, _ := service.Find(disguise)
-	module.Title = service.robotTitleManage(module.Title, disguise)
 	if config.Keyword == 1 {
 		module.Keywords = service.robotKeywordManage(keyword, disguise)
 	}
 	if config.Description == 1 {
-		module.Description = service.robotDescriptionManage(module, disguise)
+		module.Description = service.robotDescriptionManage(module, disguise, keyword)
 	}
 	if config.Context == 1 {
-		module.Context = service.robotContextManage(module.Context, disguise)
+		module.Context = service.robotContextManage(module.Context, disguise, keyword)
 	}
+	module.Title = service.robotTitleManage(module.Title, disguise, keyword)
 	return module, message
 }
 
 /** 提取文档描述 todo 同义词替换未做 **/
-func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.HandleModule, disguise int) string {
+func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.HandleModule, disguise int, keyword []*nlp.Keyword) string {
 	if client, message := service.nlpInstance(disguise); message == nil {
 		var response *nlp.AutoSummarizationResponse
 		request := nlp.NewAutoSummarizationRequest()
@@ -286,17 +272,17 @@ func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.Han
 	}
 	object, _ := service.Find(disguise)
 	if object.Modifier == 1 { //  等价交换手段
-		module.Description = service.modifierContext(module.Description)
+		module.Description = service.modifierContext(module.Description, keyword)
 	}
 	return module.Description
 }
 
 /** 提取内容；重建结构 todo 同义词替换未做 ***/
-func (service *DefaultDisguiseService) robotContextManage(s string, d int) string {
+func (service *DefaultDisguiseService) robotContextManage(s string, d int, keyword []*nlp.Keyword) string {
 	object, _ := service.Find(d)
 	s = service.contextFiltration(s)
 	if object.Modifier == 1 {
-		s = service.modifierContext(s)
+		s = service.modifierContext(s, keyword)
 	}
 	justify := strings.Split(s, "。")
 	news := "<p class='justify'>"
@@ -311,11 +297,11 @@ func (service *DefaultDisguiseService) robotContextManage(s string, d int) strin
 }
 
 /** 文档标题处理 todo 同义词替换未做 ***/
-func (service *DefaultDisguiseService) robotTitleManage(s string, d int) string {
+func (service *DefaultDisguiseService) robotTitleManage(s string, d int, keyword []*nlp.Keyword) string {
 	object, _ := service.Find(d)
 	s = service.contextFiltration(s)
 	if object.Modifier == 1 {
-		s = service.modifierContext(s)
+		s = service.modifierContext(s, keyword)
 	}
 	return s
 }
