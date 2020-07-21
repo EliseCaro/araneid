@@ -7,7 +7,7 @@
                     <img alt="{{$.domain.name}}" src="/static/spider/template/green/navbg2.jpg" width="2" height="61" />
                 </li>
                 {{range $i, $e := .cate}}
-                    {{if lt $i 9 }}
+                    {{if lt $i 8 }}
                         <li>
                             <a title="{{$e.Name}}" href="{{urlfor "Lists.Index" ":id" $e.Id ":page" 0}}">{{$e.Name}}</a>
                         </li>

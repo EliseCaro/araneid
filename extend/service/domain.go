@@ -98,9 +98,12 @@ func (service *DefaultDomainService) modelIndexRandom(number, model, arachnid in
 	for _, domain := range maps {
 		result = append(result, service.modelLinksRange(model, count, domain)...)
 	}
-	for i, domain := range result {
-		if i <= number {
+	for _, domain := range result {
+		page := *domain
+		if len(resMaps) <= number && false == service.inArrayString(page["title"], resMaps) {
 			resMaps = append(resMaps, domain)
+		} else {
+			logs.Error("创建站点友情链接重复关键词：" + page["title"])
 		}
 	}
 	indexes := new(DefaultIndexesService).UsageOneIndexes(arachnid) // 只挂一条索引
@@ -111,6 +114,17 @@ func (service *DefaultDomainService) modelIndexRandom(number, model, arachnid in
 	return string(bytes)
 }
 
+/** 判断数组是否存在某个值 **/
+func (service *DefaultDomainService) inArrayString(need string, needArr []*map[string]string) bool {
+	for _, v := range needArr {
+		page := *v
+		if _, ok := page["title"]; ok == true && need == page["title"] {
+			return true
+		}
+	}
+	return false
+}
+
 /** 获取一组友情链接 **/
 func (service *DefaultDomainService) modelLinksRange(model, count int, domain string) []*map[string]string {
 	var prefix = beego.AppConfig.String("db_prefix")
@@ -119,7 +133,8 @@ func (service *DefaultDomainService) modelLinksRange(model, count int, domain st
 	sql := fmt.Sprintf(`SELECT title,tags FROM %sspider_prefix WHERE model=? ORDER BY RAND() LIMIT %d`, prefix, count)
 	_, _ = orm.NewOrm().Raw(sql, model).QueryRows(&items)
 	for _, item := range items {
-		result = append(result, service.webSiteLinks(model, item.Tags, domain, item.Title))
+		item := service.webSiteLinks(model, item.Tags, domain, item.Title)
+		result = append(result, item)
 	}
 	return result
 }
@@ -128,7 +143,6 @@ func (service *DefaultDomainService) modelLinksRange(model, count int, domain st
 func (service *DefaultDomainService) webSiteLinks(model int, prefix, str, name string) *map[string]string {
 	var maps = make(map[string]string)
 	var domain spider.Domain
-	beego.Warn(str, prefix)
 	var main = service.getDomain(str, prefix)
 	if _ = orm.NewOrm().QueryTable(new(spider.Domain)).Filter("domain", main).One(&domain); domain.Id > 0 {
 		maps["title"] = domain.Name
@@ -178,8 +192,11 @@ func (service *DefaultDomainService) replaceRandomKeyword(arachnid int, str stri
 /** 替换标签 #站点名# **/
 func (service *DefaultDomainService) replaceSiteName(model int, prefix, str string) string {
 	siteName := service.domainNameRandom(model, prefix)
-	re, _ := regexp.Compile(`#站点名#`)
-	return re.ReplaceAllString(str, siteName)
+	if strings.Index(str, "#站点名#") > 0 {
+		re, _ := regexp.Compile(`#站点名#`)
+		siteName = re.ReplaceAllString(str, siteName)
+	}
+	return siteName
 }
 
 /** 获取分类返回json字符串;按照挂载次数从低到高获取;todo 分类加数否需要后台控制 **/
@@ -193,11 +210,20 @@ func (service *DefaultDomainService) modelCateRandom(model int) string {
 	return string(result)
 }
 
-/** 获取站点名称；todo 考虑从后台控制是否匹配随机关键字 **/
+/** 获取站点名称;直接从后台获取随机栏目 **/
 func (service *DefaultDomainService) domainNameRandom(model int, prefix string) string {
-	var maps spider.Prefix
-	_ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", model).Filter("tags", prefix).One(&maps)
-	return maps.Title
+	count, _ := orm.NewOrm().QueryTable(new(spider.Class)).Filter("model", model).Count()
+	if count > 0 {
+		var item spider.Class
+		var dbPrefix = beego.AppConfig.String("db_prefix")
+		sql := fmt.Sprintf(`SELECT * FROM %sspider_class WHERE model=%d ORDER BY RAND() LIMIT 1`, dbPrefix, model)
+		_ = orm.NewOrm().Raw(sql).QueryRow(&item)
+		return item.Name
+	} else {
+		var maps spider.Prefix
+		_ = orm.NewOrm().QueryTable(new(spider.Prefix)).Filter("model", model).Filter("tags", prefix).One(&maps)
+		return maps.Title
+	}
 }
 
 /** 获取是否存在分类池 **/
