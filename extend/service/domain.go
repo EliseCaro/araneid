@@ -90,15 +90,24 @@ func (service *DefaultDomainService) InitializedDomain(model, arachnid int, pref
 func (service *DefaultDomainService) modelIndexRandom(number, model, arachnid int, textarea string) string {
 	maps := _func.ParseAttrConfigArray(textarea)
 	count := int(math.Floor(float64(number / len(maps))))
+	if count == 0 {
+		count = 1
+	}
 	var result []*map[string]string
+	var resMaps []*map[string]string
 	for _, domain := range maps {
 		result = append(result, service.modelLinksRange(model, count, domain)...)
 	}
-	indexes := new(DefaultIndexesService).UsageOneIndexes(arachnid)
-	if indexes.Title != "" {
-		result = append(result, &map[string]string{"title": indexes.Title, "urls": indexes.Urls})
+	for i, domain := range result {
+		if i <= number {
+			resMaps = append(resMaps, domain)
+		}
 	}
-	bytes, _ := json.Marshal(result)
+	indexes := new(DefaultIndexesService).UsageOneIndexes(arachnid) // 只挂一条索引
+	if indexes.Title != "" {
+		resMaps = append(resMaps, &map[string]string{"title": indexes.Title, "urls": indexes.Urls})
+	}
+	bytes, _ := json.Marshal(resMaps)
 	return string(bytes)
 }
 
