@@ -17,7 +17,6 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	nlp "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/nlp/v20190408"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -101,8 +100,8 @@ func (service *DefaultDisguiseService) modifierContext(s string, keyword []*nlp.
 	for _, v := range keyword {
 		if thesaurus := new(DefaultRobotService).OneString(v.Word); thesaurus.Id > 0 && thesaurus.Resemblance != "" {
 			maps := strings.Split(thesaurus.Resemblance, ",")
-			item := maps[rand.Intn(len(maps)-1)]
-			s = strings.ReplaceAll(s, *v.Word, fmt.Sprintf(`%s`, item))
+			//item := maps[rand.Intn(len(maps)-1)] 第一个比较相似
+			s = strings.ReplaceAll(s, *v.Word, fmt.Sprintf(`%s`, maps[0]))
 		} else {
 			logs.Error(fmt.Sprintf(`%s的同义词在数据库未找到～`, *v.Word))
 		}
@@ -205,7 +204,7 @@ func (service *DefaultDisguiseService) robotKeywordManage(keyword []*nlp.Keyword
 
 /*** 从训练模型提取不到关键词；需要写入; **/
 func (service *DefaultDisguiseService) setRobotKeywordManage(keyword *string, disguise int) {
-	if new(DefaultRobotService).OneString(keyword).Id <= 0 {
+	if new(DefaultRobotService).OneString(keyword).Id <= 0 && *keyword != "" {
 		maps, message := service.resemblanceTags(keyword, disguise)
 		if message == nil || len(maps) > 0 {
 			maps = new(DefaultRobotService).Insert(*keyword, maps)
