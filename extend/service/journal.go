@@ -106,6 +106,9 @@ func (service *DefaultJournalService) CachedHandleAnalysisClass(items []*spider.
 			}
 		}
 	}
+	if _, ok := result["Googlebot"]; ok == true && len(result) >= 5 {
+		delete(result, "Googlebot")
+	}
 	return result
 }
 
