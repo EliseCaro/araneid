@@ -21,7 +21,7 @@
                         <div class="content">
                             <ul>
                                 {{range $index, $item := spiderArticleLimit $e.Id 10 "class=" "RAND()" }}
-                                    <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                    <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
                                 {{end}}
                             </ul>
                         </div>

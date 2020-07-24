@@ -19,10 +19,10 @@
             <div id="Article"><p><strong>{{$.detail.Title}}</strong></p>{{str2html $.detail.Context}}</div>
             <div class="up-down">
                 {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
-                    <p>上一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+                    <p>上一篇：<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
                 {{end}}
                 {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
-                    <p>下一篇：<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
+                    <p>下一篇：<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></p>
                 {{end}}
             </div>
         </div>

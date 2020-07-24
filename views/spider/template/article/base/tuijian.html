@@ -2,7 +2,7 @@
     <h2 class="htitle">热门推荐</h2>
     {{range $index, $item := spiderArticleLimit $.cids 1 "class IN " "RAND()" }}
         <section class="topnews imgscale">
-            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                 <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                 <span>{{$item.Title}}</span>
             </a>
@@ -11,7 +11,7 @@
     <ul>
         {{range $index, $item := spiderArticleLimit $.cids 20 "class IN " "RAND()" }}
             <li>
-                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                     <i> <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/></i>
                     <p>{{$item.Title}}</p>
                 </a>

@@ -34,8 +34,8 @@
                 <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
               </h3>
               <p class="blogtext">{{$item.Description}}</p>
-              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
-              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
+              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
+              <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
             </li>
           {{end}}
         </ul>

@@ -21,19 +21,19 @@
                 {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "RAND()" }}
                   <dl>
                     <dt>
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                             <img src="{{randomCover $.model.Id}}" width="108" height="71" alt="{{$item.Title}}"/>
                         </a>
                     </dt>
                     <dd>
                       <h3>{{substr $item.Title 0 16}}</h3>
-                      <span>{{substr $item.Description 0 30}}...<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">>></a></span> </dd>
+                      <span>{{substr $item.Description 0 30}}...<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">>></a></span> </dd>
                   </dl>
                 {{end}}
                   <ul>
                       {{range $index, $item := spiderArticleLimit $e.Id 7 "class=" "RAND()" }}
                         <li>
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                                 <h3>{{substr $item.Title 0 16}}...</h3>
                                 <span>{{date $item.UpdateTime "Y/m/d"}}</span>
                             </a>

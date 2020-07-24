@@ -24,7 +24,7 @@
           <div id="banner" class="fader">
             {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
               <li class="slide" >
-                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                   <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                 </a>
               </li>
@@ -41,7 +41,7 @@
         <ul>
           {{range $index, $item := spiderArticleLimit $.cids 2 "class IN " "id DESC" }}
             <li>
-              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+              <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                 <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                 <span>{{$item.Title}}</span>
               </a>
@@ -66,7 +66,7 @@
                   <ul>
                       {{range $index, $item := spiderArticleLimit $e.Id 2 "class=" "RAND()" }}
                           <li>
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                               <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                               <span>{{$item.Title}}</span>
                             </a>
@@ -78,7 +78,7 @@
                   {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
                     <li>
                       <i></i>
-                      <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                      <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
                       <p>{{$item.Description}}</p>
                     </li>
                   {{end}}
@@ -94,11 +94,11 @@
           {{range $index, $item := spiderArticleLimit $.cids 6 "class IN " "id DESC" }}
             <li>
               <i class="ztpic">
-                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/></a>
+                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/></a>
               </i>
               <b>{{$item.Title}}</b>
               <span>{{$item.Description}}</span>
-              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="readmore">文章阅读</a>
+              <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="readmore">文章阅读</a>
             </li>
           {{end}}
        </ul>
@@ -109,11 +109,11 @@
           {{range $index, $item := spiderArticleLimit $.cids 10 "class IN " "id DESC" }}
             <li>
               <h3 class="blogtitle">
-                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
               </h3>
               <p class="blogtext">{{$item.Description}}</p>
-              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
-              <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
+              <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>
+              <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="viewmore">阅读更多</a>
             </li>
           {{end}}
         </ul>
