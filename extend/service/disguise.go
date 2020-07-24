@@ -243,19 +243,16 @@ func (service *DefaultDisguiseService) handleManageBegin(disguise int, module *s
 	if config.Keyword == 1 {
 		module.Keywords = service.robotKeywordManage(keyword, disguise)
 	}
-	if config.Description == 1 {
-		module.Description = service.robotDescriptionManage(module, disguise, keyword)
-	}
-	if config.Context == 1 {
-		module.Context = service.robotContextManage(module.Context, disguise, keyword)
-	}
+	module.Description = service.robotDescriptionManage(module, disguise, keyword)
+	module.Context = service.robotContextManage(module.Context, disguise, keyword)
 	module.Title = service.robotTitleManage(module.Title, disguise, keyword)
 	return module, message
 }
 
-/** 提取文档描述 todo 同义词替换未做 **/
+/** 提取文档描述 **/
 func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.HandleModule, disguise int, keyword []*nlp.Keyword) string {
-	if client, message := service.nlpInstance(disguise); message == nil {
+	object, _ := service.Find(disguise)
+	if client, message := service.nlpInstance(disguise); message == nil && object.Description == 1 {
 		var response *nlp.AutoSummarizationResponse
 		request := nlp.NewAutoSummarizationRequest()
 		text := fmt.Sprintf(`%s。%s`,
@@ -269,11 +266,10 @@ func (service *DefaultDisguiseService) robotDescriptionManage(module *spider.Han
 			logs.Error("提取描述失败！失败原因：%s", message)
 		}
 	}
-	object, _ := service.Find(disguise)
 	if object.Modifier == 1 { //  等价交换手段
 		module.Description = service.modifierContext(module.Description, keyword)
 	}
-	return module.Description
+	return service.contextFiltration(module.Description)
 }
 
 /** 提取内容；重建结构 todo 同义词替换未做 ***/
@@ -283,16 +279,18 @@ func (service *DefaultDisguiseService) robotContextManage(s string, d int, keywo
 	if object.Modifier == 1 {
 		s = service.modifierContext(s, keyword)
 	}
-	justify := strings.Split(s, "。")
-	news := "<p class='justify'>"
-	for k, value := range justify {
-		if k%2 == 0 {
-			news += value + "。</p>"
-		} else {
-			news += "<p>" + value
+	if object.Context == 1 {
+		justify := strings.Split(s, "。")
+		s = "<p class='justify'>"
+		for k, value := range justify {
+			if k%2 == 0 {
+				s += value + "。</p>"
+			} else {
+				s += "<p>" + value
+			}
 		}
 	}
-	return news
+	return s
 }
 
 /** 文档标题处理 todo 同义词替换未做 ***/
