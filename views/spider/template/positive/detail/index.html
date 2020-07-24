@@ -16,7 +16,7 @@
                     您当前位置：
                     <a href="/" title="{{$.domain.name}}">首页</a> &raquo;
                     <a href="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" title="{{$.cateInfo.Title}}">{{$.cateInfo.Name}}</a> &raquo;
-                    <a href="{{urlfor "Detail.Index" ":id" $.detail.Oid}}" title="{{$.detail.Title}}">{{$.detail.Title}}</a>
+                    <a href="{{urlfor "Contx.Index" ":id" $.detail.Oid}}" title="{{$.detail.Title}}">{{$.detail.Title}}</a>
                 </div>
                 <div id="node-8890" class="Post">
                     <div class="PostHead">
@@ -24,7 +24,7 @@
                             <div class="post_month">Oct</div>
                             <div class="post_day">{{date $.detail.UpdateTime "d"}}</div>
                         </div>
-                        <span><h3><a href="{{urlfor "Detail.Index" ":id" $.detail.Oid}}" title="{{$.detail.Title}}">{{$.detail.Title}}</a></h3></span>
+                        <span><h3><a href="{{urlfor "Contx.Index" ":id" $.detail.Oid}}" title="{{$.detail.Title}}">{{$.detail.Title}}</a></h3></span>
                     </div>
                     <div class="PostContent">{{str2html $.detail.Context}}</div>
                     <div style="width:640px; padding: 15px 0; overflow: hidden;">
@@ -32,7 +32,7 @@
                             <div class="cmTitle"><h4>你可能感兴趣:</h4></div>
                             <ul class="xiangguan">
                                 {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
-                                    <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                    <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
                                 {{end}}
                             </ul>
                         </div>
@@ -40,7 +40,7 @@
                             <div class="cmTitle"><h4>为你推荐:</h4></div>
                             <ul class="xiangguan">
                                 {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
-                                    <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                    <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
                                 {{end}}
                             </ul>
                         </div>

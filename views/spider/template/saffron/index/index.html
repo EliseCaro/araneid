@@ -19,7 +19,7 @@
 				{{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "RAND()" }}
 					<div class="list">
 					<span class="z">
-						<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+						<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
 					</span>
 						<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
 					</div>
@@ -61,7 +61,7 @@
 				{{range $index, $item := spiderArticleLimit $.cids 16 "class IN " "view DESC" }}
 					<div class="list">
 					<span class="z">
-						<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+						<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
 					</span>
 						<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
 					</div>
@@ -75,7 +75,7 @@
 					{{range $index, $item := spiderArticleLimit $e.Id 16 "class=" "id DESC" }}
 						<div class="list">
 							<span class="z">
-								<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+								<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
 							</span>
 							<span class="y now">{{date $item.UpdateTime "Y-m-d"}}</span>
 						</div>

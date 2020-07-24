@@ -5,7 +5,7 @@
     <div class="content">
         <ul class="ne7">
             {{range $index, $item := spiderArticleLimit $.cids 21 "class IN " "RAND()" }}
-                <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+                <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
             {{end}}
         </ul>
     </div>

@@ -21,7 +21,7 @@
           {{range $index, $elem := .pageList.List}}
             <li style="padding-bottom: 29px;">
               <div class="newtxt">
-                <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
+                <a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
                   <h3>{{$elem.Title}} &nbsp;&nbsp;<span>{{date $elem.UpdateTime "Y/m/d"}}</span></h3>
                   <p>{{$elem.Description}}</p>
                 </a>

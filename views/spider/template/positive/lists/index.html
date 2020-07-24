@@ -27,7 +27,7 @@
            <div class="post_month">Oct</div>
            <div class="post_day">{{date $elem.UpdateTime "d"}}</div>
          </div>
-         <span><h3><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3></span>
+         <span><h3><a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3></span>
        </div>
        <div class="PostContent1">{{$elem.Description}}</div>
      {{end}}

@@ -24,7 +24,7 @@
                                 <div class="content">
                                     <ul>
                                         {{range $index, $item := spiderArticleLimit $e.Id 6 "class=" "RAND()" }}
-                                           <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+                                           <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
                                         {{end}}
                                     </ul>
                                  </div>
@@ -41,7 +41,7 @@
                         <div class="content1">
                               <ul class="newst">
                                   {{range $index, $elem := .pageList.List}}
-                                     <li><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"><span>{{date $elem.UpdateTime "Y-m-d"}}</span>{{$elem.Title}}</a></li>
+                                     <li><a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"><span>{{date $elem.UpdateTime "Y-m-d"}}</span>{{$elem.Title}}</a></li>
                                   {{end}}
                               </ul>
                               <ul data-total="{{.pageList.TotalPage}}" data-on="{{.pageList.PageNo}}" data-url="{{urlfor "Lists.Index" ":id" $.cateInfo.Cid ":page" 0}}" class="pagelist"></ul>

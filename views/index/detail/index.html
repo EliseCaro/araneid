@@ -39,7 +39,7 @@
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">
-                        <a href="{{urlfor "Detail.Index" ":id" $.info.Id}}" title="{{$.info.Title}}">{{$.info.Title}}</a>
+                        <a href="{{urlfor "Contx.Index" ":id" $.info.Id}}" title="{{$.info.Title}}">{{$.info.Title}}</a>
                     </h3>
                     <ul class="list-items">
                         <li class="card-dot-active"><span class="la la-user"></span> 系统管理员</li>
@@ -60,7 +60,7 @@
                                 </div>
                                 <div class="card-content">
                                     <h3 class="card-title">
-                                        <a title="{{$e.Title}}" href="{{urlfor "Detail.Index" ":id" $e.Id}}">{{$e.Title}}</a>
+                                        <a title="{{$e.Title}}" href="{{urlfor "Contx.Index" ":id" $e.Id}}">{{$e.Title}}</a>
                                     </h3>
                                     <ul class="list-items">
                                         <li class="card-dot-active">
@@ -68,7 +68,7 @@
                                         </li>
                                         <li><span class="la la-calendar"></span> {{date $e.UpdateTime "Y年m月d日"}}</li>
                                     </ul>
-                                    <a title="{{$e.Title}}" href="{{urlfor "Detail.Index" ":id" $e.Id}}" class="template-btn btn-layout-small">查看详情</a>
+                                    <a title="{{$e.Title}}" href="{{urlfor "Contx.Index" ":id" $e.Id}}" class="template-btn btn-layout-small">查看详情</a>
                                 </div>
                             </div>
                         </div>

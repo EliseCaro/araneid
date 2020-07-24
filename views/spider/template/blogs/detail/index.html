@@ -22,7 +22,7 @@
                 <div class="column-item-title layui-row subject-color font-color1 font-bold">猜你喜欢</div>
                 <ul class="column-item-ul">
                     {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
                     {{end}}
                 </ul>
             </div>
@@ -31,7 +31,7 @@
                 <div class="column-item-title layui-row subject-color font-color1 font-bold">热门排行</div>
                 <ul class="column-item-ul">
                     {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "view DESC" }}
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
                     {{end}}
                 </ul>
             </div>

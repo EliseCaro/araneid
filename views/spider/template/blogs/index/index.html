@@ -18,7 +18,7 @@
                     <div carousel-item>
                         {{range $index, $item := spiderArticleLimit $.cids 4 "class IN " "id DESC" }}
                             <div>
-                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                                     <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                                 </a>
                             </div>
@@ -33,7 +33,7 @@
                             <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}"/>
                         </div>
                         <div class="item-text-div bottom-radius layui-elip">
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="cursor-pointer">{{$item.Title}}</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="cursor-pointer">{{$item.Title}}</a>
                         </div>
                      </div>
                 {{end}}
@@ -51,7 +51,7 @@
                             <p>{{$item.Description}}</p>
                         </div>
                         <div class="look-more layui-row">
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="layui-btn layui-btn-sm pane-radius subject-color">查看更多</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="layui-btn layui-btn-sm pane-radius subject-color">查看更多</a>
                         </div>
                     </div>
                 </div>
@@ -76,13 +76,13 @@
                                     </div>
                                     <div class="zonheimg-box-parent2 layui-col-md9">
                                         <div class="zonhe-lititle layui-row layui-elip">
-                                            <h3><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h3>
+                                            <h3><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></h3>
                                         </div>
                                         <div class="zonhe-limsg layui-row">
                                             <p>{{$item.Description}}</p>
                                         </div>
                                         <div class="zonhe-param layui-row">
-                                            发布时间：{{date $item.UpdateTime "Y-m-d"}}<span><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">查看全文</a></span>
+                                            发布时间：{{date $item.UpdateTime "Y-m-d"}}<span><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">查看全文</a></span>
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                                 {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
                                     <li>
                                         <div class="ul-li-div layui-row row-align">
-                                            <div class="layui-col-md9 layui-elip font-size2">&gt; &nbsp;<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" >{{$item.Title}}</a></div>
+                                            <div class="layui-col-md9 layui-elip font-size2">&gt; &nbsp;<a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" >{{$item.Title}}</a></div>
                                             <div class="layui-col-md3 text-align-right font-size1 font-color3">{{date $item.UpdateTime "Y-m-d"}}</div>
                                         </div>
                                     </li>
@@ -143,7 +143,7 @@
                 <ul>
                     {{range $index, $item := spiderArticleLimit $.cids 30 "class IN " "RAND()" }}
                          <li class="list-item layui-row layui-elip">
-                             <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                             <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
                          </li>
                     {{end}}
                 </ul>
@@ -156,7 +156,7 @@
                 <ul>
                     {{range $index, $item := spiderArticleLimit $.cids 30 "class IN " "RAND()" }}
                         <li class="list-item layui-row layui-elip">
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
                         </li>
                     {{end}}
                 </ul>
@@ -169,7 +169,7 @@
                 <ul>
                     {{range $index, $item := spiderArticleLimit $.cids 28 "class IN " "view DESC" }}
                         <li class="list-item layui-row layui-elip">
-                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
                         </li>
                     {{end}}
                 </ul>

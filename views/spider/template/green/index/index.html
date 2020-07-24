@@ -23,7 +23,7 @@
                                 <div class="content">
                                     {{range $index, $item := spiderArticleLimit $e.Id 1 "class=" "RAND()" }}
                                         <div class="mnt01">
-                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">
+                                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">
                                                  <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}" width="260" height="186" />
                                             </a>
                                         </div>
@@ -36,7 +36,7 @@
                                         <div class="bt02">
                                           <ul class="news1">
                                             {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
-                                                <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+                                                <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
                                             {{end}}
                                           </ul>
                                         </div>
@@ -55,7 +55,7 @@
                                  <div class="bt03">
                                   <ul class="ne1">
                                       {{range $index, $item := spiderArticleLimit $e.Id 5 "class=" "RAND()" }}
-                                        <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
+                                        <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><span>{{date $item.UpdateTime "Y-m-d"}}</span>{{$item.Title}}</a></li>
                                       {{end}}
                                   </ul>
                                  </div>

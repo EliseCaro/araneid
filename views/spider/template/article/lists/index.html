@@ -31,7 +31,7 @@
           {{range $index, $item := .pageList.List}}
             <li>
               <h3 class="blogtitle">
-                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
               </h3>
               <p class="blogtext">{{$item.Description}}</p>
               <p class="bloginfo"><span>{{date $item.UpdateTime "Y-m-d"}}</span><span>【<a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">阅读{{$item.View}}次</a>】</span></p>

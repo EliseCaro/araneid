@@ -22,7 +22,7 @@
       <div class="blogs">
         {{range $index, $elem := .pageList.List}}
           <div class="bloglist">
-            <h2><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h2>
+            <h2><a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h2>
             <p>{{$elem.Description}}</p>
           </div>
         {{end}}

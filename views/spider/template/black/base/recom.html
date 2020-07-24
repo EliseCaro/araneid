@@ -2,7 +2,7 @@
     <h2>站长推荐</h2>
     <ul>
         {{range $index, $item := spiderArticleLimit $.cids 20 "class IN " "RAND()" }}
-            <li><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
+            <li><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a></li>
         {{end}}
     </ul>
 </div>

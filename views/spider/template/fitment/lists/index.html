@@ -28,18 +28,18 @@
             <div class="hotNewslist listArticle">
                 {{range $index, $elem := .pageList.List}}
                  <div class="itemDl">
-                    <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"  class="imgLeftbox">
+                    <a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}"  class="imgLeftbox">
                         <img src="{{randomCover $.model.Id}}" alt="{{$elem.Title}}">
                     </a>
                     <dl class="dllist">
                         <dt>
-                            <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="title">{{$elem.Title}}</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="title">{{$elem.Title}}</a>
                         </dt>
                         <dd class="des">
                             <p>{{$elem.Description}}</p>
                         </dd>
                         <dd class="dd">
-                            <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="tag">查看详情</a>
+                            <a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}" class="tag">查看详情</a>
                             <div class="arcinfo">
                                 点击：{{$elem.View}}次 &emsp;&emsp;发布：{{date $elem.UpdateTime "Y-m-d"}}
                             </div>

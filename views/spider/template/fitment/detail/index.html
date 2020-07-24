@@ -40,15 +40,15 @@
                                 <div class="itemBody">
                                     {{range $index, $item := spiderArticleLimit $e.Id 4 "class=" "RAND()" }}
                                         <div class="itemDl">
-                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
                                                 <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
                                             </a>
                                             <dl class="dllist">
                                                 <dt>
-                                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
+                                                    <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
                                                 </dt>
                                                 <dd class="dd">
-                                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
+                                                    <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
                                                     <span>{{$item.View}}</span>
                                                 </dd>
                                             </dl>

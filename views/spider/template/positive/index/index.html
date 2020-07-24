@@ -23,7 +23,7 @@
                                 <ul class="cmList2">
                                     {{range $index, $item := spiderArticleLimit $e.Id 10 "class=" "RAND()" }}
                                         <li>
-                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
+                                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{$item.Title}}</a>
                                         </li>
                                     {{end}}
                                 </ul>
@@ -39,7 +39,7 @@
                             <ul class="cmList">
                                 {{range $index, $item := spiderArticleLimit $e.Id 8 "class=" "id DESC" }}
                                     <li>
-                                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
+                                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}">{{substr $item.Title 0 18}}</a>
                                     </li>
                                 {{end}}
                             </ul>

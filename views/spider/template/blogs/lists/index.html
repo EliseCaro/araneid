@@ -24,7 +24,7 @@
                 <div class="column-item-title layui-row subject-color font-color1 font-bold">猜你喜欢</div>
                 <ul class="column-item-ul">
                     {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "RAND()" }}
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
                     {{end}}
                 </ul>
             </div>
@@ -33,7 +33,7 @@
                 <div class="column-item-title layui-row subject-color font-color1 font-bold">热门排行</div>
                 <ul class="column-item-ul">
                     {{range $index, $item := spiderArticleLimit $.cids 8 "class IN " "view DESC" }}
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"><li>{{substr $item.Title 0 18}}<span>详情</span></li></a>
                     {{end}}
                 </ul>
             </div>
@@ -54,7 +54,7 @@
                     <li>
                         <div class="article-list-row layui-row">
                             <div class="article-li-title layui-row">
-                                <h3 class="font-bold layui-elip"><a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3>
+                                <h3 class="font-bold layui-elip"><a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">{{$elem.Title}}</a></h3>
                             </div>
                             <div class="article-li-msg"><p>{{$elem.Description}}</p></div>
                             <div class="article-li-param layui-row">

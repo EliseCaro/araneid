@@ -24,7 +24,7 @@
             <ul id="list">
                 {{range $index, $elem := .pageList.List}}
                      <li>
-                         <a href="{{urlfor "Detail.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
+                         <a href="{{urlfor "Contx.Index" ":id" $elem.Id}}" title="{{$elem.Title}}">
                              {{$elem.Title}}
                          </a>
                          <span>(被访问 {{$elem.View}} 次)</span>

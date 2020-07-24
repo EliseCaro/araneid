@@ -38,12 +38,12 @@
                                 <img src="{{$e.Cover | fileBuyPath}}" alt="{{$e.Title}}">
                             </div>
                             <div class="card-content">
-                                <h3 class="card-title"><a href="{{urlfor "Detail.Index" ":id" $e.Id}}" title="{{$e.Title}}">{{$e.Title}}</a></h3>
+                                <h3 class="card-title"><a href="{{urlfor "Contx.Index" ":id" $e.Id}}" title="{{$e.Title}}">{{$e.Title}}</a></h3>
                                 <ul class="list-items">
                                     <li class="card-dot-active"><span class="la la-user"></span> 系统管理员</li>
                                     <li><span class="la la-calendar"></span> {{date $e.UpdateTime "Y年m月d日"}}</li>
                                 </ul>
-                                <a href="{{urlfor "Detail.Index" ":id" $e.Id}}" title="{{$e.Title}}" class="template-btn btn-layout-small">查看详情</a>
+                                <a href="{{urlfor "Contx.Index" ":id" $e.Id}}" title="{{$e.Title}}" class="template-btn btn-layout-small">查看详情</a>
                             </div>
                         </div>
                     </div>

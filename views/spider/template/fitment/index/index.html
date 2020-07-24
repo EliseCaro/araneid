@@ -23,7 +23,7 @@
                         <div class="swiper-wrapper">
                             {{range $index, $item := spiderArticleLimit $.cids 3 "class IN " "id DESC" }}
                                  <div class="swiper-slide">
-                                     <a class="swiper-slide-href" style="background-image: url('{{randomCover $.model.Id}}')" href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}"></a>
+                                     <a class="swiper-slide-href" style="background-image: url('{{randomCover $.model.Id}}')" href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}"></a>
                                  </div>
                             {{end}}
                         </div>
@@ -42,15 +42,15 @@
                         <div class="itemBody">
                             {{range $index, $item := spiderArticleLimit $e.Id 2 "class=" "RAND()" }}
                                 <div class="itemDl">
-                                    <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                                    <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
                                         <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
                                     </a>
                                     <dl class="dllist">
                                         <dt>
-                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
+                                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a>
                                         </dt>
                                         <dd class="dd">
-                                            <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
+                                            <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看详情</a>
                                             <span>{{$item.View}}</span>
                                         </dd>
                                     </dl>
@@ -66,16 +66,16 @@
                     </div>
                     {{range $index, $item := spiderArticleLimit $.cids 6 "class IN " "id DESC" }}
                         <div class="itemDl">
-                        <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
+                        <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="imgLeftbox">
                             <img src="{{randomCover $.model.Id}}" alt="{{$item.Title}}">
                         </a>
                         <dl class="dllist">
-                            <dt><a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a></dt>
+                            <dt><a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="title">{{$item.Title}}</a></dt>
                             <dd class="des">
                                 <p>{{$item.Description}}</p>
                             </dd>
                             <dd class="dd">
-                                <a href="{{urlfor "Detail.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看更多</a>
+                                <a href="{{urlfor "Contx.Index" ":id" $item.Id}}" title="{{$item.Title}}" class="tag">查看更多</a>
                                 <span>{{$item.View}}</span>
                             </dd>
                         </dl>
