@@ -394,8 +394,8 @@ func (service *DefaultDictionariesService) createOneResult(item *dictionaries.Di
 		return 0, errors.New(verify.Translate(message.(validator.ValidationErrors)))
 	}
 	if one := service.oneResultLink(item.Source); one.Id > 0 {
-		item.Id = one.Id
-		_, err = orm.NewOrm().Update(item)
+		//item.Id = one.Id
+		//_, err = orm.NewOrm().Update(item) // 存在则不做处理！保证远行安全
 		id = int64(one.Id)
 	} else {
 		id, err = orm.NewOrm().Insert(item)
