@@ -47,6 +47,7 @@ type Main struct {
 	adminService        service.DefaultAdminService
 	automaticService    service.DefaultAutomaticService
 	journalService      service.DefaultJournalService
+	movieService        service.DefaultMovieService
 }
 
 /** 准备下一级构造函数 **/

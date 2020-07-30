@@ -15,6 +15,7 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/index"
 	"github.com/beatrice950201/araneid/extend/model/inform"
 	"github.com/beatrice950201/araneid/extend/model/menus"
+	"github.com/beatrice950201/araneid/extend/model/movie"
 	"github.com/beatrice950201/araneid/extend/model/roles"
 	"github.com/beatrice950201/araneid/extend/model/spider"
 	"github.com/beatrice950201/araneid/extend/model/users"
@@ -58,6 +59,7 @@ func coreDbBegin() {
 		new(collect.Collect), new(spider.Disguise), new(spider.Template), new(spider.Arachnid), new(spider.Category),
 		new(automatic.Automatic), new(attachment.Attachment), new(dictionaries.DictConfig), new(dictionaries.Dictionaries),
 		new(spider.Journal), new(index.Advantage), new(index.News), new(index.Team), new(index.Message), new(addons.Addons),
+		new(movie.ConfigMovie), new(movie.EpisodeMovie), new(movie.Movie),
 	)
 	_ = orm.RunSyncdb("default", false, _func.AnalysisDebug())
 }
