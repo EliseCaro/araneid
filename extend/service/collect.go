@@ -14,6 +14,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
 	"github.com/gocolly/colly/debug"
+	"github.com/gocolly/redisstorage"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -214,6 +215,23 @@ func (service *DefaultCollectService) collectInstance(interval, depth int, domai
 	)
 	if table.AnalysisDebug() {
 		collector.SetDebugger(&debug.LogDebugger{Output: logs.GetLogger().Writer()})
+	}
+	if beego.AppConfig.String("redis_address") != "" {
+		prefix := "collect"
+		if domain != "" {
+			prefix = domain
+		}
+		storage := &redisstorage.Storage{
+			Address:  beego.AppConfig.String("redis_address"),
+			Password: beego.AppConfig.String("redis_password"),
+			DB:       0, Prefix: prefix,
+		}
+		if e := collector.SetStorage(storage); e != nil {
+			logs.Error("采集器启动redis链接失败！请检查配置；失败原因：" + e.Error())
+		} else {
+			_ = storage.Clear()
+			logs.Error("采集器启动redis链接转换完成；")
+		}
 	}
 	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: 3, RandomDelay: time.Duration(interval) * time.Second})
 	collector.WithTransport(&http.Transport{DisableKeepAlives: true})
