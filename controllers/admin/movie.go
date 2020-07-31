@@ -9,7 +9,43 @@ import (
 )
 
 /** 剧情采集 **/
-type Movie struct{ Main }
+type Movie struct {
+	Main
+	configPrefix map[string]string
+}
+
+/** 构造函数  **/
+func (c *Movie) NextPrepare() {
+	c.configPrefix = map[string]string{
+		"interval":    "最大并发",
+		"push_time":   "发布间隔",
+		"send_domain": "推送接口",
+	}
+}
+
+// @router /movie/config [get,post]
+func (c *Movie) Config() {
+	if c.IsAjax() {
+		var massage error
+		_ = orm.NewOrm().Begin()
+		for k, v := range c.configPrefix {
+			value := c.GetMustString(k, v+"不能为空！")
+			field := c.movieService.ConfigByName(k)
+			field.Value = value
+			if _, massage = orm.NewOrm().Update(&field); massage != nil {
+				_ = orm.NewOrm().Rollback()
+				break
+			}
+		}
+		if massage == nil {
+			_ = orm.NewOrm().Commit()
+			c.Succeed(&controllers.ResultJson{Message: "修改配置成功，重启爬虫生效！", Url: beego.URLFor("Movie.Index")})
+		} else {
+			c.Fail(&controllers.ResultJson{Message: "修改失败，错误原因: " + error.Error(massage)})
+		}
+	}
+	c.Data["config"] = c.movieService.ConfigMaps()
+}
 
 // @router /movie/index [get,post]
 func (c *Movie) Index() {

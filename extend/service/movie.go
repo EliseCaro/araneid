@@ -20,6 +20,13 @@ import (
 
 type DefaultMovieService struct{}
 
+/** 根据name获取一条数据 **/
+func (service *DefaultMovieService) ConfigByName(name string) movie.ConfigMovie {
+	var item movie.ConfigMovie
+	_ = orm.NewOrm().QueryTable(new(movie.ConfigMovie)).Filter("name", name).One(&item)
+	return item
+}
+
 /** 获取爬虫配置解析成map **/
 func (service *DefaultMovieService) ConfigMaps() map[string]interface{} {
 	var item []*movie.ConfigMovie
@@ -41,58 +48,153 @@ func (service *DefaultMovieService) oneResultLink(url string) movie.Movie {
 	return item
 }
 
-/** 作品名称提取 **/
+/** 根据链接获取一条详情结果数据 **/
+func (service *DefaultMovieService) oneResultLinkDetail(url string) movie.EpisodeMovie {
+	var item movie.EpisodeMovie
+	_ = orm.NewOrm().QueryTable(new(movie.EpisodeMovie)).Filter("source", url).One(&item)
+	return item
+}
+
+/** 获取一条 **/
+func (service *DefaultMovieService) One(id int) movie.Movie {
+	var item movie.Movie
+	_ = orm.NewOrm().QueryTable(new(movie.Movie)).Filter("id", id).One(&item)
+	return item
+}
+
+/** 编码转换 **/
+func (service *DefaultMovieService) coverGBKToUTF8(src string) string {
+	return mahonia.NewDecoder("gbk").ConvertString(src)
+}
+
+/** 解析通知错误 **/
+func (service *DefaultMovieService) analysisMessage(title string, err error) (int, string) {
+	if err != nil {
+		return 0, err.Error()
+	} else {
+		return 1, title
+	}
+}
+
+/******************************************************电影作品提取 ****************************************/
+/******************************************************电影作品提取 ****************************************/
+
+/** 解析基本值 **/
+func (service *DefaultMovieService) collectOnResultMovie(e *colly.HTMLElement) *movie.Movie {
+	return &movie.Movie{
+		Name:        service.collectOnResultMovieName(e),
+		Short:       service.collectOnResultMovieShort(e),
+		Actor:       service.collectOnResultMovieActor(e),
+		Director:    service.collectOnResultMovieDirector(e),
+		Year:        service.collectOnResultMovieYear(e),
+		District:    service.collectOnResultMovieDistrict(e),
+		Genre:       service.collectOnResultMovieGenre(e),
+		Cover:       service.collectOnResultMovieCover(e),
+		Context:     service.collectOnResultMovieContext(e),
+		ActorCtx:    service.collectOnResultMovieActorCtx(e),
+		Title:       service.collectOnResultMovieTitle(e),
+		Keywords:    service.collectOnResultMovieKeywords(e),
+		Description: service.collectOnResultMovieDescription(e),
+		Source:      e.Request.URL.String(),
+		ClassType:   0,
+	}
+}
+
+/** 名称提取 **/
 func (service *DefaultMovieService) collectOnResultMovieName(e *colly.HTMLElement) string {
 	str := e.ChildText(".Main3 > .m_T3 > h1")
 	str = service.coverGBKToUTF8(str)
 	str = new(DefaultCollectService).eliminateTrim(str, []string{"剧情介绍"})
-	return str
+	maps := strings.Split(str, "（")
+	if strings.Index(str, "(") >= 0 {
+		maps = strings.Split(str, "(")
+	}
+	return maps[0]
 }
 
-/** 主演提取返回json字符串 **/
+/** 提取短标题 **/
+func (service *DefaultMovieService) collectOnResultMovieShort(e *colly.HTMLElement) string {
+	var short string
+	str := e.ChildText(".Main3 > .m_T3 > h1")
+	str = service.coverGBKToUTF8(str)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"剧情介绍"})
+	maps := strings.Split(str, "（")
+	if strings.Index(str, "(") >= 0 {
+		maps = strings.Split(str, "(")
+	}
+	if len(maps) > 1 {
+		short = strings.Trim(strings.Trim(maps[1], ")"), "）")
+	}
+	return short
+}
+
+/** 主演提取 **/
 func (service *DefaultMovieService) collectOnResultMovieActor(e *colly.HTMLElement) string {
 	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(1)")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"主                演："})
-	maps := strings.Split(str, " ")
-	result, _ := json.Marshal(maps)
-	return string(result)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"演：", "主", "/"})
+	str = new(DefaultCollectService).deleteExtraSpace(str)
+	var maps []string
+	var result string
+	if strings.Index(str, ",") >= 0 {
+		maps = strings.Split(str, ",")
+	} else {
+		maps = strings.Split(str, " ")
+	}
+	if len(maps) > 0 {
+		res, _ := json.Marshal(maps)
+		result = string(res)
+	}
+	return result
 }
 
-/** 作品导演提取 **/
+/** 导演提取 **/
 func (service *DefaultMovieService) collectOnResultMovieDirector(e *colly.HTMLElement) string {
-	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(3) span:nth-child(1)")
+	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(2) span:nth-child(2)")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"导                演："})
-	return str
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"导", "演："})
+	return new(DefaultCollectService).deleteExtraSpace(str)
 }
 
-/** 作品年份提取 **/
+/** 年份提取 **/
 func (service *DefaultMovieService) collectOnResultMovieYear(e *colly.HTMLElement) string {
 	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(4) span:nth-child(1)")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"年                份："})
-	return str
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"份：", "年"})
+	return new(DefaultCollectService).deleteExtraSpace(str)
 }
 
-/** 作品地区提取 **/
+/** 地区提取 **/
 func (service *DefaultMovieService) collectOnResultMovieDistrict(e *colly.HTMLElement) string {
 	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(4) span:nth-child(2)")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"地                区："})
-	maps := strings.Split(str, " ")
+	str = new(DefaultCollectService).eliminateTrim(str, []string{" 区：", "/", "地 "})
+	maps := strings.Split(new(DefaultCollectService).deleteExtraSpace(str), " ")
 	result, _ := json.Marshal(maps)
 	return string(result)
 }
 
 /** 提取类型 **/
 func (service *DefaultMovieService) collectOnResultMovieGenre(e *colly.HTMLElement) string {
-	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(7)")
+	str := e.ChildText(".g-box7 > .box > .txt > p:nth-child(6)")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"类                型："})
-	maps := strings.Split(str, " ")
-	result, _ := json.Marshal(maps)
-	return string(result)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"型：", "类"})
+	str = new(DefaultCollectService).deleteExtraSpace(str)
+	var maps []string
+	var result string
+	if strings.Index(str, ",") >= 0 {
+		maps = strings.Split(str, ",")
+	} else {
+		maps = strings.Split(str, " ")
+	}
+	if strings.Index(str, "/") >= 0 {
+		maps = strings.Split(str, "/")
+	}
+	if len(maps) > 0 {
+		res, _ := json.Marshal(maps)
+		result = string(res)
+	}
+	return result
 }
 
 /** 提取封面 **/
@@ -114,19 +216,39 @@ func (service *DefaultMovieService) collectOnResultMovieCover(e *colly.HTMLEleme
 func (service *DefaultMovieService) collectOnResultMovieContext(e *colly.HTMLElement) string {
 	str := e.ChildText(".m_Left3 > .m_jq")
 	str = service.coverGBKToUTF8(str)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
 	return str
 }
 
-/** 提取演员详情 **/
+/** 演员详情 **/
 func (service *DefaultMovieService) collectOnResultMovieActorCtx(e *colly.HTMLElement) string {
-	return ""
+	var content string
+	var urls string
+	e.ForEach(".Main3 > .m_T3 > .Sub > ul > li", func(_ int, el *colly.HTMLElement) {
+		if service.coverGBKToUTF8(el.ChildText("a[href]")) == "演员表" {
+			urls = el.ChildAttr("a[href]", "href")
+		}
+	})
+	if urls != "" {
+		collector := new(DefaultCollectService).collectInstance(0, 1, "www.juqingba.cn", true)
+		collector.OnHTML("html", func(e *colly.HTMLElement) {
+			str := e.ChildText(".m_Left3 > .m_jq")
+			str = service.coverGBKToUTF8(str)
+			re, _ := regexp.Compile("\\<table[\\S\\s]+?\\</table\\>")
+			str = re.ReplaceAllString(str, "")
+			content = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
+		})
+		_ = collector.Visit(urls)
+		collector.Wait()
+	}
+	return content
 }
 
 /** 提取标题 **/
 func (service *DefaultMovieService) collectOnResultMovieTitle(e *colly.HTMLElement) string {
 	str := e.ChildText("head > title")
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"_剧情吧"})
 	str = service.coverGBKToUTF8(str)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"_剧情吧"})
 	return str
 }
 
@@ -144,30 +266,6 @@ func (service *DefaultMovieService) collectOnResultMovieDescription(e *colly.HTM
 	return str
 }
 
-/** 编码转换 **/
-func (service *DefaultMovieService) coverGBKToUTF8(src string) string {
-	return mahonia.NewDecoder("gbk").ConvertString(src)
-}
-
-/** 解析一部作品基本值 **/
-func (service *DefaultMovieService) collectOnResultMovie(e *colly.HTMLElement) *movie.Movie {
-	return &movie.Movie{
-		Name:        service.collectOnResultMovieName(e),
-		Actor:       service.collectOnResultMovieActor(e),
-		Director:    service.collectOnResultMovieDirector(e),
-		Year:        service.collectOnResultMovieYear(e),
-		District:    service.collectOnResultMovieDistrict(e),
-		Genre:       service.collectOnResultMovieGenre(e),
-		Cover:       service.collectOnResultMovieCover(e),
-		Context:     service.collectOnResultMovieContext(e),
-		ActorCtx:    service.collectOnResultMovieActorCtx(e),
-		Title:       service.collectOnResultMovieTitle(e),
-		Keywords:    service.collectOnResultMovieKeywords(e),
-		Description: service.collectOnResultMovieDescription(e),
-		Source:      e.Request.URL.String(),
-	}
-}
-
 /** 入库一条数据 **/
 func (service *DefaultMovieService) collectOnResultMovieInsert(res *movie.Movie, callback func(int64, error)) {
 	if message := new(DefaultBaseVerify).Begin().Struct(res); message != nil {
@@ -176,9 +274,78 @@ func (service *DefaultMovieService) collectOnResultMovieInsert(res *movie.Movie,
 	if one := service.oneResultLink(res.Source); one.Id <= 0 {
 		callback(orm.NewOrm().Insert(res))
 	} else {
-		callback(int64(one.Id), nil)
+		res.Id = one.Id
+		res.Status = 0
+		_, err := orm.NewOrm().Update(res)
+		callback(int64(one.Id), err)
 	}
 }
+
+/************************* 剧集提取 *****************************/
+
+/** 提取剧情链接加入ID提取 **/
+func (service *DefaultMovieService) collectOnResultMovieExtractEpisode(e *colly.HTMLElement, id int64) {
+	e.ForEach(".m_Left3 > .m_Box15 a[href]", func(_ int, el *colly.HTMLElement) {
+		hrefUrls := el.Attr("href")
+		if regexp.MustCompile(`https://www.juqingba.cn/zjuqing/(.*?).html$`).MatchString(hrefUrls) {
+			hrefUrls = hrefUrls + "?sindhu=" + strconv.FormatInt(id, 10)
+			_ = e.Request.Visit(hrefUrls)
+		}
+	})
+}
+
+/** 提取详情短标题 **/
+func (service *DefaultMovieService) collectOnResultMovieDetailShort(e *colly.HTMLElement) string {
+	urls := e.Request.URL.String()
+	if strings.Index(urls, "_") >= 0 && len(strings.Split(urls, "_")) > 1 {
+		str := strings.Split(urls, "_")[1]
+		return strings.Split(str, ".")[0]
+	} else {
+		return "1"
+	}
+}
+
+/** 提取详情内容 **/
+func (service *DefaultMovieService) collectOnResultMovieContextShort(e *colly.HTMLElement) string {
+	str, _ := e.DOM.Find(".m_jq > .ndfj").Html()
+	str = service.coverGBKToUTF8(str)
+	str = beego.HTML2str(str)
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
+	return str
+}
+
+/** 提取一条剧情 **/
+func (service *DefaultMovieService) collectOnResultMovieDetail(e *colly.HTMLElement, id int) *movie.EpisodeMovie {
+	cate := service.One(id)
+	return &movie.EpisodeMovie{
+		Pid:         cate.Id,
+		Name:        cate.Name,
+		Short:       service.collectOnResultMovieDetailShort(e),
+		Title:       service.collectOnResultMovieTitle(e),
+		Keywords:    service.collectOnResultMovieKeywords(e),
+		Description: service.collectOnResultMovieDescription(e),
+		Context:     service.collectOnResultMovieContextShort(e),
+		Source:      e.Request.URL.String(),
+	}
+}
+
+/** 入库剧集详情 **/
+func (service *DefaultMovieService) collectOnResultMovieDetailInsert(res *movie.EpisodeMovie, callback func(int64, error)) {
+	if message := new(DefaultBaseVerify).Begin().Struct(res); message != nil {
+		callback(0, errors.New(new(DefaultBaseVerify).Translate(message.(validator.ValidationErrors))))
+	}
+	if one := service.oneResultLinkDetail(res.Source); one.Id <= 0 {
+		callback(orm.NewOrm().Insert(res))
+	} else {
+		res.Id = one.Id
+		res.Status = 0
+		_, err := orm.NewOrm().Update(res)
+		callback(int64(one.Id), err)
+	}
+}
+
+/******************************************************作品提取END ****************************************/
+/******************************************************作品提取END ****************************************/
 
 /** 启动爬虫 **/
 func (service *DefaultMovieService) Start(uid int) {
@@ -195,22 +362,27 @@ func (service *DefaultMovieService) Start(uid int) {
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) { _ = e.Request.Visit(el.Attr("href")) })
 	})
-	collector.OnHTML("html", func(e *colly.HTMLElement) { // 监听电影
-		if regexp.MustCompile("https://www.juqingba.cn/dianyingjuqing/([0-9]+).html$").MatchString(e.Request.URL.String()) {
+	collector.OnHTML("html", func(e *colly.HTMLElement) {
+		if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(e.Request.URL.String()) {
 			result := service.collectOnResultMovie(e)
-			result.ClassType = 1
 			go service.collectOnResultMovieInsert(result, func(id int64, err error) {
-				if id > 0 {
-					new(DefaultCollectService).createLogsInform(1, uid, "剧情", result.Title, e.Request.URL.String())
-				} else {
-					new(DefaultCollectService).createLogsInform(0, uid, "剧情", error.Error(err), e.Request.URL.String())
+				status, message := service.analysisMessage(result.Title, err)
+				new(DefaultCollectService).createLogsInform(status, uid, "电视剧情", message, e.Request.URL.String())
+				if err == nil && id > 0 {
+					service.collectOnResultMovieExtractEpisode(e, id)
 				}
 			})
 		}
 	})
-	collector.OnHTML("html", func(e *colly.HTMLElement) { // 监听电视
-		if regexp.MustCompile("https://www.juqingba.cn/zjuqing/([0-9]+).html$").MatchString(e.Request.URL.String()) {
-
+	collector.OnHTML("html", func(e *colly.HTMLElement) { // 剧情剧集
+		if regexp.MustCompile(`https://www.juqingba.cn/zjuqing/(.*?).html\?sindhu=([0-9]+)`).MatchString(e.Request.URL.String()) {
+			cid := e.Request.URL.Query()["sindhu"]
+			reagent, _ := strconv.Atoi(cid[0])
+			result := service.collectOnResultMovieDetail(e, reagent)
+			go service.collectOnResultMovieDetailInsert(result, func(id int64, err error) {
+				status, message := service.analysisMessage(result.Title, err)
+				new(DefaultCollectService).createLogsInform(status, uid, "剧集详情", message, e.Request.URL.String())
+			})
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
@@ -275,7 +447,6 @@ func (service *DefaultMovieService) DataTableColumns() []map[string]interface{} 
 	maps = append(maps, map[string]interface{}{"title": "作品名称", "name": "name", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "作品年份", "name": "year", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "内容类型", "name": "class_type", "className": "text-center", "order": false})
-	maps = append(maps, map[string]interface{}{"title": "简短标题", "name": "short", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "对方地址", "name": "source", "className": "text-center", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "发布状态", "name": "status", "className": "text-center data_table_btn_style", "order": false})
 	maps = append(maps, map[string]interface{}{"title": "更新时间", "name": "update_time", "className": "text-center", "order": false})
@@ -287,6 +458,14 @@ func (service *DefaultMovieService) DataTableColumns() []map[string]interface{} 
 func (service *DefaultMovieService) DataTableButtons() []*table.TableButtons {
 	var config = service.ConfigMaps()
 	var array []*table.TableButtons
+	array = append(array, &table.TableButtons{
+		Text:      "爬虫配置",
+		ClassName: "btn btn-sm btn-alt-warning mt-1 open_iframe",
+		Attribute: map[string]string{
+			"href":      beego.URLFor("Movie.Config", ":popup", 1),
+			"data-area": "600px,300px",
+		},
+	})
 	array = append(array, &table.TableButtons{
 		Text:      "发布选中",
 		ClassName: "btn btn-sm btn-alt-primary mt-1 ids_enables",
@@ -327,9 +506,12 @@ func (service *DefaultMovieService) PageListItems(length, draw, page int, search
 		qs = qs.Filter("title__icontains", search)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "name", "year", "class_type", "short", "source", "status", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "name", "year", "class_type", "source", "status", "update_time")
 	for _, v := range lists {
-		v[4] = service.Int2HtmlStatus(v[4], v[0], beego.URLFor("Movie.Push"))
+		v[4] = service.substr2HtmlHref(v[4].(string), 0, 20)
+		v[3] = service.substr2HtmlClass(v[3].(int64))
+		v[1] = service.substr2HtmlHref(v[1].(string), 0, 20)
+		v[5] = service.Int2HtmlStatus(v[5], v[0], beego.URLFor("Movie.Push"))
 	}
 	data := map[string]interface{}{
 		"draw":            draw,         // 请求次数
@@ -346,12 +528,24 @@ func (service *DefaultMovieService) Int2HtmlStatus(val interface{}, id interface
 	return t.AnalysisTypeSwitch(map[string]interface{}{"status": val, "id": id}, "status", url, map[int64]string{-1: "已失败", 0: "待发布", 1: "已发布"})
 }
 
+/**  转为pop提示 **/
+func (service *DefaultMovieService) substr2HtmlHref(s string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, s, s, beego.Substr(s, start, end))
+	return html
+}
+
+func (service *DefaultMovieService) substr2HtmlClass(c int64) string {
+	// 内容类型[0:电视 1:电影 2:综艺]
+	maps := []string{"电视", "电影", "综艺"}
+	return maps[c]
+}
+
 /** 返回表单结构字段如何解析 **/
 func (service *DefaultMovieService) TableColumnsType() map[string][]string {
 	result := map[string][]string{
-		"columns":   {"string", "string", "string", "string", "string", "string", "string", "date"},
-		"fieldName": {"id", "name", "year", "class_type", "short", "source", "status", "update_time"},
-		"action":    {"", "", "", "", "", "", "", ""},
+		"columns":   {"string", "string", "string", "string", "string", "string", "date"},
+		"fieldName": {"id", "name", "year", "class_type", "source", "status", "update_time"},
+		"action":    {"", "", "", "", "", "", ""},
 	}
 	return result
 }
