@@ -12,12 +12,12 @@ type Movie struct {
 	Genre       string    `orm:"column(genre);type(text);default();description(作品类型)" json:"genre" form:"genre" validate:"required" label:"作品类型"`
 	Cover       string    `orm:"column(cover);size(255);type(char);default();description(作品封面)" json:"cover" form:"cover"`
 	Context     string    `orm:"column(context);type(text);default();description(作品介绍)" json:"context" form:"context" validate:"required" label:"作品介绍"`
-	ActorCtx    string    `orm:"column(actor_ctx);type(text);default();description(演员介绍)" json:"actor_ctx" form:"actor_ctx" validate:"required" label:"演员介绍"`
+	ActorCtx    string    `orm:"column(actor_ctx);type(text);default();description(演员介绍)" json:"actor_ctx" form:"actor_ctx"`
 	Title       string    `orm:"column(title);size(150);type(char);default();description(作品标题)" json:"title" form:"title" validate:"required" label:"作品标题"`
 	Keywords    string    `orm:"column(keywords);size(200);type(char);default();description(作品关键字)" json:"keywords" form:"keywords" validate:"required" label:"作品关键字"`
 	Description string    `orm:"column(description);size(255);type(char);default();description(作品描述)" json:"description" form:"description" validate:"required" label:"作品描述"`
 	ClassType   int8      `orm:"index;column(class_type);type(tinyint);default(0);description(内容类型[0:电视 1:电影 2:综艺])" json:"class_type" form:"class_type"`
-	Short       string    `orm:"column(short);size(80);type(char);default();description(简短标题)" json:"short" form:"short" validate:"required" label:"简短标题"`
+	Short       string    `orm:"column(short);size(80);type(char);default();description(简短标题)" json:"short" form:"short"`
 	Logs        string    `orm:"column(logs);size(255);type(char);default();description(发布日志)" json:"logs" form:"logs"`
 	Source      string    `orm:"column(source);size(150);type(char);default();description(任务地址)" json:"source" form:"source" validate:"required" label:"任务地址"`
 	Status      int8      `orm:"index;column(status);type(tinyint);default(0);description(发布状态[-1:失败 0:等待 1:成功])" json:"status" form:"status"`

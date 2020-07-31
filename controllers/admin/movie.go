@@ -1,9 +1,11 @@
 package admin
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/beatrice950201/araneid/controllers"
 	_func "github.com/beatrice950201/araneid/extend/func"
+	"github.com/beatrice950201/araneid/extend/service"
 )
 
 /** 剧情采集 **/
@@ -27,4 +29,16 @@ func (c *Movie) Index() {
 		dataTableCore = dataTableCore.TableButtons(v)
 	}
 	c.TableColumnsRender(dataTableCore.ColumnsItemsMaps, dataTableCore.OrderItemsMaps, dataTableCore.ButtonsItemsMaps, _func.WebPageSize())
+}
+
+/** 爬虫启动与停止 **/
+// @router /movie/status [post]
+func (c *Movie) Status() {
+	status, _ := c.GetInt("status", 0)
+	field := c.GetMustString("field", "非法操作～")
+	service.SocketInstanceGet().InstructHandle(map[string]interface{}{
+		"status": status, "command": "movie",
+		"uid": c.UserInfo.Id, "field": field,
+	})
+	c.Succeed(&controllers.ResultJson{Message: "指令状态已经更改！", Url: beego.URLFor("Movie.Index")})
 }

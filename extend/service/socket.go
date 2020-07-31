@@ -15,6 +15,7 @@ type DefaultSocketService struct {
 	Subscribers         *list.List                   // 目前的用户列表
 	collectService      DefaultCollectService        // 采集层逻辑
 	dictionariesService DefaultDictionariesService   // 词典采集逻辑层
+	movieService        DefaultMovieService          // 剧情采集逻辑层
 }
 
 /** socket常驻内存实例 **/
@@ -69,6 +70,8 @@ func (service *DefaultSocketService) commandHandle(instruct map[string]interface
 		go service.collectService.InstanceBegin(instruct)
 	case "dict": // 词典采集器移交主要服务层处理
 		go service.dictionariesService.CateInstanceBegin(instruct)
+	case "movie": // 剧情采集器移交主要服务层处理
+		go service.movieService.CateInstanceBegin(instruct)
 	}
 }
 
