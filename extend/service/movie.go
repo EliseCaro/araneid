@@ -20,6 +20,55 @@ import (
 
 type DefaultMovieService struct{}
 
+/** 批量删除结果 **/
+func (service *DefaultMovieService) ArrayDelete(array []int) (message error) {
+	_ = orm.NewOrm().Begin()
+	for _, v := range array {
+		if service.extArticle(v).Id == 0 {
+			if _, message = orm.NewOrm().Delete(&movie.Movie{Id: v}); message != nil {
+				_ = orm.NewOrm().Rollback()
+				break
+			}
+		} else {
+			message = errors.New("被挂载或者存在文档数据，不允许删除使用中的栏目！")
+			break
+		}
+	}
+	if message == nil {
+		_ = orm.NewOrm().Commit()
+	}
+	return message
+}
+
+/*** 获取一条详情 **/
+func (service *DefaultMovieService) DetailOne(id int) map[string]string {
+	result := make(map[string]string)
+	detail := service.One(id)
+	result["logs"] = detail.Logs
+	result["title"] = detail.Title
+	result["status"] = strconv.Itoa(int(detail.Status))
+	result["update_time"] = beego.Date(detail.UpdateTime, "Y年m月d H:i:s")
+	maps := map[string]string{
+		"name": detail.Name, "actor": detail.Actor,
+		"director": detail.Director, "year": detail.Year,
+		"district": detail.District, "genre": detail.Genre,
+		"cover": detail.Cover, "context": detail.Context,
+		"actor_ctx": detail.ActorCtx, "title": detail.Title,
+		"keywords": detail.Keywords, "description": detail.Description,
+		"short": detail.Short, "source": detail.Source,
+	}
+	stringJson, _ := json.Marshal(maps)
+	result["result"] = string(stringJson)
+	return result
+}
+
+/** 检测分类是否存在文章 **/
+func (service *DefaultMovieService) extArticle(id int) movie.EpisodeMovie {
+	var item movie.EpisodeMovie
+	_ = orm.NewOrm().QueryTable(new(movie.EpisodeMovie)).Filter("pid", id).One(&item)
+	return item
+}
+
 /** 根据name获取一条数据 **/
 func (service *DefaultMovieService) ConfigByName(name string) movie.ConfigMovie {
 	var item movie.ConfigMovie
@@ -506,11 +555,11 @@ func (service *DefaultMovieService) PageListItems(length, draw, page int, search
 		qs = qs.Filter("title__icontains", search)
 	}
 	recordsTotal, _ := qs.Count()
-	_, _ = qs.Limit(length, length*(page-1)).ValuesList(&lists, "id", "name", "year", "class_type", "source", "status", "update_time")
+	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "year", "class_type", "source", "status", "update_time")
 	for _, v := range lists {
-		v[4] = service.substr2HtmlHref(v[4].(string), 0, 20)
+		v[1] = service.substr2HtmlHref(v[1].(string), v[4].(string), 0, 20)
 		v[3] = service.substr2HtmlClass(v[3].(int64))
-		v[1] = service.substr2HtmlHref(v[1].(string), 0, 20)
+		v[4] = service.substr2HtmlHref(v[4].(string), v[4].(string), 0, 40)
 		v[5] = service.Int2HtmlStatus(v[5], v[0], beego.URLFor("Movie.Push"))
 	}
 	data := map[string]interface{}{
@@ -529,8 +578,8 @@ func (service *DefaultMovieService) Int2HtmlStatus(val interface{}, id interface
 }
 
 /**  转为pop提示 **/
-func (service *DefaultMovieService) substr2HtmlHref(s string, start, end int) string {
-	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s...</a>`, s, s, beego.Substr(s, start, end))
+func (service *DefaultMovieService) substr2HtmlHref(s, urls string, start, end int) string {
+	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s</a>`, urls, s, beego.Substr(s, start, end))
 	return html
 }
 

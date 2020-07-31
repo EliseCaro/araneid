@@ -78,3 +78,26 @@ func (c *Movie) Status() {
 	})
 	c.Succeed(&controllers.ResultJson{Message: "指令状态已经更改！", Url: beego.URLFor("Movie.Index")})
 }
+
+/** 爬取结果删除 **/
+// @router /movie/delete [post]
+func (c *Movie) Delete() {
+	array := c.checkBoxIds(":ids[]", ":ids")
+	if errorMessage := c.movieService.ArrayDelete(array); errorMessage != nil {
+		c.Fail(&controllers.ResultJson{
+			Message: error.Error(errorMessage),
+		})
+	} else {
+		c.Succeed(&controllers.ResultJson{
+			Message: "删除结果成功！马上返回中。。。",
+			Url:     beego.URLFor("Movie.Index"),
+		})
+	}
+}
+
+/** 查看结果  **/
+// @router /movie/detail [get]
+func (c *Movie) Detail() {
+	id := c.GetMustInt(":id", "结果ID不合法...")
+	c.Data["info"] = c.movieService.DetailOne(id)
+}
