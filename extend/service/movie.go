@@ -12,6 +12,9 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/movie"
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -56,6 +59,24 @@ func (service *DefaultMovieService) DetailOne(id int) map[string]string {
 		"actor_ctx": detail.ActorCtx, "title": detail.Title,
 		"keywords": detail.Keywords, "description": detail.Description,
 		"short": detail.Short, "source": detail.Source,
+	}
+	stringJson, _ := json.Marshal(maps)
+	result["result"] = string(stringJson)
+	return result
+}
+
+/*** 获取一条详情 **/
+func (service *DefaultMovieService) DetailOneSection(id int) map[string]string {
+	result := make(map[string]string)
+	detail := service.OneSection(id)
+	result["logs"] = detail.Logs
+	result["title"] = detail.Title
+	result["status"] = strconv.Itoa(int(detail.Status))
+	result["update_time"] = beego.Date(detail.UpdateTime, "Y年m月d H:i:s")
+	maps := map[string]string{
+		"name": detail.Name, "short": detail.Short, "pid": strconv.Itoa(detail.Pid),
+		"title": detail.Title, "keywords": detail.Keywords,
+		"description": detail.Description, "context": detail.Context, "source": detail.Source,
 	}
 	stringJson, _ := json.Marshal(maps)
 	result["result"] = string(stringJson)
@@ -111,9 +132,20 @@ func (service *DefaultMovieService) One(id int) movie.Movie {
 	return item
 }
 
+/** 获取一条 **/
+func (service *DefaultMovieService) OneSection(id int) movie.EpisodeMovie {
+	var item movie.EpisodeMovie
+	_ = orm.NewOrm().QueryTable(new(movie.EpisodeMovie)).Filter("id", id).One(&item)
+	return item
+}
+
 /** 编码转换 **/
 func (service *DefaultMovieService) coverGBKToUTF8(src string) string {
-	return mahonia.NewDecoder("gbk").ConvertString(src)
+	srcCoder := mahonia.NewDecoder("gbk")
+	srcResult := srcCoder.ConvertString(src)
+	tagCoder := mahonia.NewDecoder("utf-8")
+	_, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
+	return string(cdata)
 }
 
 /** 解析通知错误 **/
@@ -265,7 +297,7 @@ func (service *DefaultMovieService) collectOnResultMovieCover(e *colly.HTMLEleme
 func (service *DefaultMovieService) collectOnResultMovieContext(e *colly.HTMLElement) string {
 	str := e.ChildText(".m_Left3 > .m_jq")
 	str = service.coverGBKToUTF8(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n", "\t"})
 	return str
 }
 
@@ -285,7 +317,7 @@ func (service *DefaultMovieService) collectOnResultMovieActorCtx(e *colly.HTMLEl
 			str = service.coverGBKToUTF8(str)
 			re, _ := regexp.Compile("\\<table[\\S\\s]+?\\</table\\>")
 			str = re.ReplaceAllString(str, "")
-			content = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
+			content = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n", "\t"})
 		})
 		_ = collector.Visit(urls)
 		collector.Wait()
@@ -359,7 +391,7 @@ func (service *DefaultMovieService) collectOnResultMovieContextShort(e *colly.HT
 	str, _ := e.DOM.Find(".m_jq > .ndfj").Html()
 	str = service.coverGBKToUTF8(str)
 	str = beego.HTML2str(str)
-	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n"})
+	str = new(DefaultCollectService).eliminateTrim(str, []string{"　", "\n", "\t"})
 	return str
 }
 
@@ -409,7 +441,14 @@ func (service *DefaultMovieService) Start(uid int) {
 		}
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
-		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) { _ = e.Request.Visit(el.Attr("href")) })
+		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) {
+			if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(el.Attr("href")) {
+				_ = e.Request.Visit(el.Attr("href"))
+			}
+			if regexp.MustCompile("list_([0-9]+)_([0-9]+).html$").MatchString(el.Attr("href")) {
+				_ = e.Request.Visit("https://www.juqingba.cn/dianshiju/" + el.Attr("href"))
+			}
+		})
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(e.Request.URL.String()) {
@@ -438,7 +477,7 @@ func (service *DefaultMovieService) Start(uid int) {
 		new(DefaultCollectService).createLogsInform(0, uid, "剧情采集", error.Error(err), r.Request.URL.String())
 	})
 	if _, err := orm.NewOrm().Update(&movie.ConfigMovie{Id: 1, Value: "1"}, "Value"); err == nil {
-		_ = collector.Visit("https://www.juqingba.cn/")
+		_ = collector.Visit("https://www.juqingba.cn/dianshiju/")
 		service.createLogsInformStatus("开始爬取剧情采集", uid)
 		collector.Wait()
 	} else {
@@ -468,6 +507,149 @@ func (service *DefaultMovieService) createLogsInformStatus(status string, receiv
 	go new(DefaultInformService).SendSocketInform([]int{receiver}, 0, 0, 4, htmlInfo)
 }
 
+/** 发送发布状态通知 **/
+func (service *DefaultMovieService) createLogsInformStatusPush(status string, receiver int) {
+	var htmlInfo string
+	nowTime := beego.Date(time.Now(), "m月d日 H:i")
+	htmlInfo = fmt.Sprintf(`
+		名为<a href="javascript:void(0);">剧情采集</a>的发布器;在%s的时候%s；
+		您可以<a target="_blank" href="%s">查看发布结果</a>;`,
+		nowTime, status, beego.URLFor("Movie.Index"),
+	)
+	go new(DefaultInformService).SendSocketInform([]int{receiver}, 0, 0, 4, htmlInfo)
+}
+
+/** 停止分发布 **/
+func (service *DefaultMovieService) StopPush(uid int, message string) {
+	if _, err := orm.NewOrm().Update(&movie.ConfigMovie{Id: 4, Value: "0"}, "Value"); err != nil {
+		logs.Warn("停止剧情采集发布器失败！失败原因:%s", error.Error(err))
+	} else {
+		service.createLogsInformStatusPush(message, uid)
+	}
+}
+
+/** 获取一条可以发布的数据;从ID升序发布 **/
+func (service *DefaultMovieService) PushDetail() map[string]interface{} {
+	var index movie.Movie
+	_ = orm.NewOrm().QueryTable(new(movie.Movie)).Filter("status", 0).OrderBy("id").One(&index)
+	if index.Id > 0 {
+		return service.PushDetailIndex(index.Id)
+	}
+	var detail movie.EpisodeMovie
+	_ = orm.NewOrm().QueryTable(new(movie.EpisodeMovie)).Filter("status", 0).OrderBy("id").One(&detail)
+	if detail.Id > 0 {
+		return service.PushDetailDetail(index.Id)
+	}
+	return map[string]interface{}{}
+}
+
+/** 获取一条电视可发布数据 **/
+func (service *DefaultMovieService) PushDetailIndex(id int) map[string]interface{} {
+	var index movie.Movie
+	_ = orm.NewOrm().QueryTable(new(movie.Movie)).Filter("id", id).One(&index)
+	result := service.DetailOne(index.Id)
+	return map[string]interface{}{
+		"id":     index.Id,
+		"pid":    "0",
+		"type":   0,
+		"title":  index.Title,
+		"source": index.Source,
+		"result": result["result"],
+		"update": strconv.FormatInt(index.UpdateTime.Unix(), 10),
+		"create": strconv.FormatInt(index.CreateTime.Unix(), 10),
+	}
+}
+
+/** 获取一条剧情可发布数据 **/
+func (service *DefaultMovieService) PushDetailDetail(id int) map[string]interface{} {
+	var index movie.EpisodeMovie
+	_ = orm.NewOrm().QueryTable(new(movie.EpisodeMovie)).Filter("id", id).One(&index)
+	result := service.DetailOneSection(index.Id)
+	return map[string]interface{}{
+		"id":     index.Id,
+		"pid":    strconv.Itoa(index.Pid),
+		"title":  index.Title,
+		"type":   1,
+		"source": index.Source,
+		"result": result["result"],
+		"update": strconv.FormatInt(index.UpdateTime.Unix(), 10),
+		"create": strconv.FormatInt(index.CreateTime.Unix(), 10),
+	}
+}
+
+/**  更新发布结果 **/
+func (service *DefaultMovieService) pushDetailAPIResult(t, id int, status int8, message error) {
+	if t == 0 {
+		if _, err := orm.NewOrm().Update(&movie.Movie{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
+			logs.Warn("更新电视发布结果失败；失败原因：%s", error.Error(err))
+		}
+	} else {
+		if _, err := orm.NewOrm().Update(&movie.EpisodeMovie{Id: id, Status: status, Logs: error.Error(message)}, "Status", "Logs"); err != nil {
+			logs.Warn("更新电视剧集发布结果失败；失败原因：%s", error.Error(err))
+		}
+	}
+}
+
+/** 启动数据发布器 **/
+func (service *DefaultMovieService) StartPush(uid int) {
+	if _, err := orm.NewOrm().Update(&movie.ConfigMovie{Id: 4, Value: "1"}, "Value"); err != nil {
+		logs.Warn("启动[%s]发布器失败！失败原因:%s", "剧情采集", error.Error(err))
+	} else {
+		config := service.ConfigMaps()
+		pushTime, _ := strconv.ParseFloat(config["push_time"].(string), 64)
+		service.createLogsInformStatusPush("剧情采集发布任务启动", uid)
+		for {
+			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 1 {
+				item := service.PushDetail()
+				if _, ok := item["id"]; ok == true {
+					service.PushDetailAPI(item)
+					time.Sleep(time.Duration(pushTime*60*60) * time.Second)
+				} else {
+					logs.Warn("[%s]发布已经全部完成！已成功退出！", "剧情采集")
+					break
+				}
+			} else {
+				logs.Warn("[%s]停止了发布任务器！已成功退出！", "剧情采集")
+				break
+			}
+		}
+	}
+	defer func() { service.StopPush(uid, "剧情采集发布任务完成") }()
+}
+
+/** 发布一条分类数据;返回格式：{status:[false|true],message:[message]} **/
+func (service *DefaultMovieService) PushDetailAPI(item map[string]interface{}) {
+	config := service.ConfigMaps()
+	if resp, err := http.PostForm(config["send_domain"].(string), url.Values{
+		"id":       {strconv.Itoa(item["id"].(int))},
+		"pid":      {item["pid"].(string)},
+		"title":    {item["title"].(string)},
+		"source":   {item["source"].(string)},
+		"result":   {item["result"].(string)},
+		"update":   {item["update"].(string)},
+		"create":   {item["create"].(string)},
+		"password": {beego.AppConfig.String("collect_collect_password")},
+	}); err == nil {
+		if body, err := ioutil.ReadAll(resp.Body); err != nil {
+			service.pushDetailAPIResult(item["type"].(int), item["id"].(int), -1, err)
+		} else {
+			result := make(map[string]interface{})
+			if err := json.Unmarshal(body, &result); err == nil && len(result) > 0 {
+				if result["status"].(bool) == true {
+					service.pushDetailAPIResult(item["type"].(int), item["id"].(int), 1, errors.New(result["message"].(string)))
+				} else {
+					service.pushDetailAPIResult(item["type"].(int), item["id"].(int), -1, errors.New(result["message"].(string)))
+				}
+			} else {
+				service.pushDetailAPIResult(item["type"].(int), item["id"].(int), -1, errors.New("接口返回结果解析失败！请检查返回格式！"))
+			}
+		}
+		defer resp.Body.Close()
+	} else {
+		service.pushDetailAPIResult(item["type"].(int), item["id"].(int), -1, err)
+	}
+}
+
 /** 爬虫操纵命令 **/
 func (service *DefaultMovieService) CateInstanceBegin(instruct map[string]interface{}) {
 	if instruct["field"].(string) == "status" {
@@ -477,13 +659,13 @@ func (service *DefaultMovieService) CateInstanceBegin(instruct map[string]interf
 			service.Stop(instruct["uid"].(int), "停止爬取剧情采集")
 		}
 	}
-	//if instruct["field"].(string) == "send_status" {
-	//	if instruct["status"].(int) == 1 {
-	//		service.StartPush(instruct["uid"].(int))
-	//	} else {
-	//		service.StopPush(instruct["uid"].(int), "停止发布剧情采集")
-	//	}
-	//}
+	if instruct["field"].(string) == "send_status" {
+		if instruct["status"].(int) == 1 {
+			service.StartPush(instruct["uid"].(int))
+		} else {
+			service.StopPush(instruct["uid"].(int), "停止发布剧情采集")
+		}
+	}
 }
 
 /*********************************以下为表格渲染*******************************************8/
@@ -507,6 +689,22 @@ func (service *DefaultMovieService) DataTableColumns() []map[string]interface{} 
 func (service *DefaultMovieService) DataTableButtons() []*table.TableButtons {
 	var config = service.ConfigMaps()
 	var array []*table.TableButtons
+	for k, v := range []map[string]string{
+		{"title": "停止发布", "statusCls": "btn-alt-danger"},
+		{"title": "启动发布", "statusCls": "btn-alt-success"},
+	} {
+		if intStatus, err := strconv.Atoi(config["send_status"].(string)); err == nil && intStatus != k {
+			array = append(array, &table.TableButtons{
+				Text:      v["title"],
+				ClassName: "btn btn-sm " + v["statusCls"] + " mt-1 handle_collect",
+				Attribute: map[string]string{
+					"data-action": beego.URLFor("Movie.Status"),
+					"data-status": strconv.Itoa(k),
+					"data-field":  "send_status",
+				},
+			})
+		}
+	}
 	array = append(array, &table.TableButtons{
 		Text:      "爬虫配置",
 		ClassName: "btn btn-sm btn-alt-warning mt-1 open_iframe",
@@ -557,9 +755,9 @@ func (service *DefaultMovieService) PageListItems(length, draw, page int, search
 	recordsTotal, _ := qs.Count()
 	_, _ = qs.Limit(length, length*(page-1)).OrderBy("-id").ValuesList(&lists, "id", "name", "year", "class_type", "source", "status", "update_time")
 	for _, v := range lists {
-		v[1] = service.substr2HtmlHref(v[1].(string), v[4].(string), 0, 20)
+		v[1] = service.Substr2HtmlHref(v[1].(string), v[4].(string), 0, 20)
 		v[3] = service.substr2HtmlClass(v[3].(int64))
-		v[4] = service.substr2HtmlHref(v[4].(string), v[4].(string), 0, 40)
+		v[4] = service.Substr2HtmlHref(v[4].(string), v[4].(string), 0, 40)
 		v[5] = service.Int2HtmlStatus(v[5], v[0], beego.URLFor("Movie.Push"))
 	}
 	data := map[string]interface{}{
@@ -578,13 +776,12 @@ func (service *DefaultMovieService) Int2HtmlStatus(val interface{}, id interface
 }
 
 /**  转为pop提示 **/
-func (service *DefaultMovieService) substr2HtmlHref(s, urls string, start, end int) string {
+func (service *DefaultMovieService) Substr2HtmlHref(s, urls string, start, end int) string {
 	html := fmt.Sprintf(`<a href="%s" target="_blank" class="badge badge-primary js-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="%s">%s</a>`, urls, s, beego.Substr(s, start, end))
 	return html
 }
 
 func (service *DefaultMovieService) substr2HtmlClass(c int64) string {
-	// 内容类型[0:电视 1:电影 2:综艺]
 	maps := []string{"电视", "电影", "综艺"}
 	return maps[c]
 }
@@ -622,7 +819,7 @@ func (service *DefaultMovieService) TableButtonsType() []*table.TableButtons {
 			Text:      "剧情",
 			ClassName: "btn btn-sm btn-alt-success jump_urls",
 			Attribute: map[string]string{
-				"data-action": beego.URLFor("Movie.Index", ":id", "__ID__"),
+				"data-action": beego.URLFor("Section.Index", ":cid", "__ID__"),
 			},
 		},
 	}

@@ -101,3 +101,13 @@ func (c *Movie) Detail() {
 	id := c.GetMustInt(":id", "结果ID不合法...")
 	c.Data["info"] = c.movieService.DetailOne(id)
 }
+
+/** 发布结果；指定发布  **/
+// @router /movie/push [post]
+func (c *Movie) Push() {
+	array := c.checkBoxIds(":ids[]", ":ids")
+	for _, v := range array {
+		c.movieService.PushDetailAPI(c.movieService.PushDetailIndex(v))
+	}
+	c.Succeed(&controllers.ResultJson{Message: "提交发布成功！马上返回中。。。", Url: beego.URLFor("Movie.Index")})
+}

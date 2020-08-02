@@ -50,7 +50,7 @@ func coreDbBegin() {
 	port := beego.AppConfig.String("db_port")
 	charset := beego.AppConfig.String("db_charset")
 	prefix := beego.AppConfig.String("db_prefix")
-	_ = orm.RegisterDataBase("default", "mysql", fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%s`, username, password, host, port, database, charset, `Asia%2FShanghai`), 30)
+	_ = orm.RegisterDataBase("default", "mysql", fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%s`, username, password, host, port, database, charset, `Asia%2FShanghai`))
 	orm.RegisterModelWithPrefix(
 		prefix,
 		new(users.Users), new(roles.Roles), new(menus.Menus), new(spider.Match), new(spider.Robot), new(spider.Class),
