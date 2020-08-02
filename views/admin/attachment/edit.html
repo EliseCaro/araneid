@@ -1,6 +1,6 @@
 <div class="block overflow-hidden block-themed mb-0">
     <div class="col-12 p-0 block-header">
-        {{ if eq $.info.Mime "image/jpeg"}}
+        {{ if eq $.info.Mime "image/jpeg" "image/png" "image/gif" }}
             <div style="background: url('{{$.info.Path}}') center;background-size: cover;height: 168px;" class="block-content block-content-full text-center"></div>
         {{else}}
             <div class="block-content block-content-full text-center">
