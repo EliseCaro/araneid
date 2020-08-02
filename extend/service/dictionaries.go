@@ -175,8 +175,14 @@ func (service *DefaultDictionariesService) StartPush(uid int) {
 		service.createLogsInformStatusPush("查字词典发布任务启动", uid)
 		for {
 			if status, _ := strconv.Atoi(service.ConfigMaps()["send_status"].(string)); status == 1 {
-				service.PushDetailAPI(service.pushDetail())
-				time.Sleep(time.Duration(pushTime*60*60) * time.Second)
+				item := service.pushDetail()
+				if item.Id > 0 {
+					service.PushDetailAPI(item)
+					time.Sleep(time.Duration(pushTime*60*60) * time.Second)
+				} else {
+					logs.Warn("[%s]发布已经全部完成！已成功退出！", "查字词典")
+					break
+				}
 			} else {
 				logs.Warn("[%s]停止了发布任务器！已成功退出！", "查字词典")
 				break

@@ -615,8 +615,14 @@ func (service *DefaultCollectService) pushStart(id, uid int) {
 		service.createLogsInformPushStatus("开始发布数据", uid, detail.Id, detail.Name)
 		for {
 			if service.acquirePushStatus(id, "PushStatus") == 1 {
-				service.PushDetailAPI(service.pushDetail(id))
-				time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
+				item := service.pushDetail(id)
+				if item.Id > 0 {
+					service.PushDetailAPI(item)
+					time.Sleep(time.Duration(detail.PushTime*60*60) * time.Second)
+				} else {
+					logs.Warn("[%s]发布已经全部完成！已成功退出！", detail.Name)
+					break
+				}
 			} else {
 				logs.Warn("[%s]停止了发布任务器！已成功退出！", detail.Name)
 				break
