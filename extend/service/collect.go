@@ -230,7 +230,7 @@ func (service *DefaultCollectService) collectInstance(interval, depth int, domai
 			logs.Error("采集器启动redis链接失败！请检查配置；失败原因：" + e.Error())
 		} else {
 			_ = storage.Clear()
-			logs.Error("采集器启动redis链接转换完成；")
+			//logs.Error("采集器启动redis链接转换完成；")
 		}
 	}
 	_ = collector.Limit(&colly.LimitRule{DomainGlob: domain, Parallelism: 3, RandomDelay: time.Duration(interval) * time.Second})

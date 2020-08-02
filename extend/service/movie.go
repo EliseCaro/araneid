@@ -7,11 +7,12 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
-	"github.com/axgle/mahonia"
 	table "github.com/beatrice950201/araneid/extend/func"
 	"github.com/beatrice950201/araneid/extend/model/movie"
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
+	"github.com/qiniu/iconv"
+	"github.com/saintfish/chardet"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -141,11 +142,20 @@ func (service *DefaultMovieService) OneSection(id int) movie.EpisodeMovie {
 
 /** 编码转换 **/
 func (service *DefaultMovieService) coverGBKToUTF8(src string) string {
-	srcCoder := mahonia.NewDecoder("gbk")
-	srcResult := srcCoder.ConvertString(src)
-	tagCoder := mahonia.NewDecoder("utf-8")
-	_, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
-	return string(cdata)
+	if service.isGBK([]byte(src)) != "UTF-8" {
+		con, err := iconv.Open("utf-8", "GBK")
+		if err == nil {
+			src = con.ConvString(src)
+			defer con.Close()
+		}
+	}
+	return src
+}
+
+/** 编码检测 **/
+func (service *DefaultMovieService) isGBK(data []byte) (t string) {
+	charset, _ := chardet.NewTextDetector().DetectBest(data)
+	return charset.Charset
 }
 
 /** 解析通知错误 **/
@@ -441,14 +451,20 @@ func (service *DefaultMovieService) Start(uid int) {
 		}
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
-		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) {
-			if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(el.Attr("href")) {
-				_ = e.Request.Visit(el.Attr("href"))
-			}
-			if regexp.MustCompile("list_([0-9]+)_([0-9]+).html$").MatchString(el.Attr("href")) {
-				_ = e.Request.Visit("https://www.juqingba.cn/dianshiju/" + el.Attr("href"))
+		e.ForEach(".m_Box8 li", func(_ int, el *colly.HTMLElement) {
+			href, _ := el.DOM.Find("a[href]").Attr("href")
+			if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(href) {
+				_ = e.Request.Visit(href)
 			}
 		})
+		if "https://www.juqingba.cn/dianshiju/" == e.Request.URL.String() {
+			e.ForEach(".pagelist > li > select option", func(_ int, el *colly.HTMLElement) {
+				if regexp.MustCompile("list_([0-9]+)_([0-9]+).html$").MatchString(el.Attr("value")) {
+					href := fmt.Sprintf(`https://www.juqingba.cn/dianshiju/%s`, el.Attr("value"))
+					_ = e.Request.Visit(href)
+				}
+			})
+		}
 	})
 	collector.OnHTML("html", func(e *colly.HTMLElement) {
 		if regexp.MustCompile("https://www.juqingba.cn/dianshiju/([0-9]+).html$").MatchString(e.Request.URL.String()) {
