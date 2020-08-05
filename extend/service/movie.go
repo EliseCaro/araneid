@@ -1,7 +1,6 @@
 package service
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,9 +11,8 @@ import (
 	"github.com/beatrice950201/araneid/extend/model/movie"
 	"github.com/go-playground/validator"
 	"github.com/gocolly/colly"
+	"github.com/qiniu/iconv"
 	"github.com/saintfish/chardet"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -145,11 +143,10 @@ func (service *DefaultMovieService) OneSection(id int) movie.EpisodeMovie {
 /** 编码转换 **/
 func (service *DefaultMovieService) coverGBKToUTF8(src string) string {
 	if service.isGBK([]byte(src)) != "UTF-8" {
-		I := bytes.NewReader([]byte(src))
-		O := transform.NewReader(I, simplifiedchinese.GBK.NewDecoder())
-		d, err := ioutil.ReadAll(O)
+		con, err := iconv.Open("utf-8", "GBK")
 		if err == nil {
-			return string(d)
+			src = con.ConvString(src)
+			defer con.Close()
 		}
 	}
 	return src
