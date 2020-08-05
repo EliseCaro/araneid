@@ -153,14 +153,14 @@ func (service *DefaultCollectService) ExtractDocumentMatching(url string, matchi
 			if value := service.extractMatchingField(v, e); value != "" {
 				result[v.Field] = value
 			} else {
-				message = errors.New("字段匹配不齐全；已被强制过滤！")
+				message = errors.New(v.Field + "字段匹配不齐全；已被强制过滤！")
 				break
 			}
 		}
 		if _, ok := result["title"]; ok == true {
 			result["meta_title"] = result["title"]
 		} else {
-			message = errors.New("字段匹配不齐全；已被强制过滤！")
+			message = errors.New("TITLE字段匹配不齐全；已被强制过滤！")
 		}
 	})
 	collector.OnError(func(r *colly.Response, err error) {
@@ -310,6 +310,10 @@ func (service *DefaultCollectService) extractMatchingField(m *collect.Matching, 
 	var stringHtml string
 	if m.Form == 1 || m.Form == 2 {
 		stringHtml, _ = e.DOM.Find(m.Selector).Attr(m.AttrName)
+		if m.Form == 1 && stringHtml != "" { // 如果是资源将启用下载
+			completion := new(DefaultCollectService).completionSrc(e.Request.URL.String(), stringHtml)
+			stringHtml = service.download(completion)
+		}
 		return stringHtml
 	}
 	if m.Filtration == 1 {

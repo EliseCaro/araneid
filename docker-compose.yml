@@ -1,0 +1,12 @@
+version: '2.1'
+services:
+  builder:
+    image: "tmp/araneid_build"
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    container_name: "araneid_build"
+    volumes:
+      - $PWD:/go/src/tmp
+
+

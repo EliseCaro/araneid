@@ -46,15 +46,13 @@ func (service *DefaultAdjunctService) DownloadFileCloud(url string, cloud map[st
 	up := upyun.NewUpYun(&upyun.UpYunConfig{Bucket: cloud["bucket"], Operator: cloud["name"], Password: cloud["password"]})
 	local := service.DownloadFileLocal(url)
 	if local != url {
-		localName := path.Base(local)
-		if err := up.Put(&upyun.PutObjectConfig{Path: "/" + localName, LocalPath: local}); err != nil {
+		if err := up.Put(&upyun.PutObjectConfig{Path: "/" + local, LocalPath: local}); err != nil {
 			logs.Warn("远程资源拉取上传到云端失败！失败原因:%s", error.Error(err))
 		} else {
-			url = localName
 			_ = os.Remove(local)
 		}
 	}
-	return url
+	return local
 }
 
 /**  下载远程附件下载到本地**/
