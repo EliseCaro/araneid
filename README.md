@@ -1,10 +1,12 @@
-# 大型站群系统（蜘蛛池系统）
+# 天河站群系统（蜘蛛池系统）
 
-> 一个基于 beego 开发的站群系统
+> 一个基于Glang语言开发的站群系统（蜘蛛池系统）
 
 ### 安装系统
 
 ``` bash
+本系统采用beego框架，在开始前请确保你已经安装就绪；
+
 拉取代码：git clone https://github.com/Beatrice950201/araneid.git
 
 进入文件夹：cd araneid
@@ -47,6 +49,12 @@ Glang开发；实时服务器性能监控；多功能采集器；实时消息通
 ### 视频演示功能
 
 [播放视频](http://static.bkybj.com/luJ7-SzbU8iQl255B6bhAPuex8na)
+
+### 站点演示功能
+
+[点击跳转](http://admin.liruoxi.cn/)
+
+如站点点无法打开，请不要认为不在维护，仅仅是因为能力有限，无法续费演示服务器；
 
 ### 如有疑问请联系本人
 
