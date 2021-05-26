@@ -43,8 +43,8 @@ Glang开发；实时服务器性能监控；多功能采集器；实时消息通
 ```
 ### 简单演示图片
 
-![](http://qqsa18zl7.hn-bkt.clouddn.com/araneid_01.png?imageView2/2/w/1012)
-![](http://qqsa18zl7.hn-bkt.clouddn.com/araneid_02.png?imageView2/2/w/1012)
+![](http://preview.bkybj.com/araneid_01.png?imageView2/2/w/1012)
+![](http://preview.bkybj.com/araneid_02.png?imageView2/2/w/1012)
 
 ### 视频演示功能
 
