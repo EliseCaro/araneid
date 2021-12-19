@@ -43,12 +43,12 @@ Glang开发；实时服务器性能监控；多功能采集器；实时消息通
 ```
 ### 简单演示图片
 
-![](https://github.com/EliseCaro/araneid/blob/master/static/index/image/demo01.png)
-![](https://github.com/EliseCaro/araneid/blob/master/static/index/image/demo02.png)
+![](http://araneid-demo.test.upcdn.net/demo01.png)
+![](http://araneid-demo.test.upcdn.net/demo02.png)
 
 ### 视频演示功能
 
-[播放视频](https://github.com/EliseCaro/araneid/blob/master/static/index/image/demo.mp4)
+[播放视频](http://araneid-demo.test.upcdn.net/demo.mp4)
 
 ### 如有疑问请联系本人
 
