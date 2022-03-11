@@ -3,9 +3,7 @@
 > 一个基于Glang语言开发的站群系统（蜘蛛池系统）
 
 ### 特别说明
-``` bash
-  1：该项目不在更新维护，项目移步至[https://github.com/EliseCaro/eibk_client](天河站群商业版)
-```
+该版本不再更新维护；请移步至[https://github.com/EliseCaro/eibk_client](天河站群（商业版）)
 
 ### 安装系统
 
