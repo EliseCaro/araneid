@@ -3,7 +3,7 @@
 > 一个基于Glang语言开发的站群系统（蜘蛛池系统）
 
 ### 特别说明
-该版本不再更新维护；请移步至[https://github.com/EliseCaro/eibk_client](天河站群（商业版）)
+该版本不再更新维护；请移步至[天河站群（商业版）](https://github.com/EliseCaro/website)
 
 ### 安装系统
 
